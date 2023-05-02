@@ -15,16 +15,16 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $username =['Nilzen', 'rzr75'];
-        for ($i = 0; $i < 2; $i++) {
+        foreach (['Nilzen', 'rzr75'] as $username) {
             $user = new User();
-            $user->setUsername($username[$i]);
+            $user->setUsername($username);
             $user->setPassword($this->userPasswordHasher->hashPassword(
                 $user,
                 'test'
             ));
             $manager->persist($user);
         }
+
         $manager->flush();
     }
 }
