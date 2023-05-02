@@ -80,7 +80,8 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
-        ]
+        ],
+        "phpstan": "./vendor/bin/phpstan analyse src --level=max"
     },
     "conflict": {
         "symfony/symfony": "*"
@@ -92,6 +93,7 @@
         }
     },
     "require-dev": {
+        "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^9.5",
         "symfony/browser-kit": "6.2.*",
         "symfony/css-selector": "6.2.*",
