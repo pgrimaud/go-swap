@@ -66,7 +66,7 @@ class ImportPokemonsCommand extends Command
                         return;
                     } else {
                         $pokemon = new Pokemon();
-                        $pokemon->setNumber($matches[1]);
+                        $pokemon->setNumber(intval($matches[1]));
                         $pokemon->setFrenchName($matches[2]);
                         $pokemon->setGeneration($generation . "G");
                         $pokemon->setIsShiny(false);
