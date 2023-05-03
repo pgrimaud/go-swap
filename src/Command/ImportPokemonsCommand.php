@@ -30,6 +30,7 @@ class ImportPokemonsCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $this->importPokemons();
         $this->importShiny();
+        $this->importEnglishName();
         $io->success('Done !');
 
         return Command::SUCCESS;
@@ -108,5 +109,27 @@ class ImportPokemonsCommand extends Command
                     }
                 });
         }
+    }
+
+    private function importEnglishName(): void
+    {
+        $client = HttpClient::create();
+        $response = $client->request(
+            'GET',
+            'https://pokeapi.co/api/v2/pokemon?limit=1000'
+        );
+
+        foreach ($response->toArray()['results'] as $englishPokemon) {
+            $id = explode('/', $englishPokemon['url'])[6];
+            $pokemon = $this->entityManager->getRepository(Pokemon::class)->findOneBy(['number' => $id]);
+
+            if ($pokemon) {
+                $pokemon->setEnglishName(ucfirst($englishPokemon['name']));
+                $this->entityManager->persist($pokemon);
+                $this->entityManager->flush();
+            }
+
+        }
+
     }
 }
