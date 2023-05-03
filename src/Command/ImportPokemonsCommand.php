@@ -31,6 +31,7 @@ class ImportPokemonsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $this->importPokemons();
+        $this->importShiny();
         $io->success('Done !');
 
         return Command::SUCCESS;
@@ -48,7 +49,7 @@ class ImportPokemonsCommand extends Command
             } else {
                 $url = 'https://www.pokebip.com/page/jeuxvideo/pokemon_go/pokemon/' . $generation . 'g';
             }
-            $test = $browser->request('GET', $url)
+            $browser->request('GET', $url)
                 ->filter(".bipcode tbody tr td:nth-child(1)")
                 ->each(function (Crawler $node) use ($generation) {
                     if ($node->filter("em")->count() >= 1) {
@@ -73,6 +74,38 @@ class ImportPokemonsCommand extends Command
                         $this->entityManager->persist($pokemon);
                         $this->entityManager->flush();
 
+                    }
+                });
+
+        }
+
+    }
+
+    private function importShiny(): void
+    {
+        $browser = new HttpBrowser(HttpClient::create());
+        foreach (range(1, 9) as $generation) {
+
+            if ($generation === 1) {
+                $url = 'https://www.pokebip.com/page/jeuxvideo/pokemon_go/pokemon_chromatiques';
+            } else if ($generation === 9) {
+                $url = 'https://www.pokebip.com/page/jeuxvideo/pokemon_go/chromatiques/autres';
+            } else {
+                $url = 'https://www.pokebip.com/page/jeuxvideo/pokemon_go/chromatiques/' . $generation . 'g';
+            }
+            $browser->request('GET', $url)
+                ->filter(".bipcode tr td:nth-child(1)")
+                ->each(function (Crawler $node) {
+                    dump($node->text());
+                    if (str_contains($node->text(), "#")) {
+                        preg_match('#([0-9]{3,4}) (.*)#', $node->text(), $matches);
+                        dump($matches);
+                        $pokemon = $this->entityManager->getRepository(Pokemon::class)->findOneBy(['number' => $matches[1]]);
+                        if ($pokemon) {
+                            $pokemon->setIsShiny(true);
+                            $this->entityManager->persist($pokemon);
+                            $this->entityManager->flush();
+                        }
                     }
                 });
         }
