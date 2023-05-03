@@ -7,9 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DomCrawler\Crawler;
@@ -93,14 +91,15 @@ class ImportPokemonsCommand extends Command
             } else {
                 $url = 'https://www.pokebip.com/page/jeuxvideo/pokemon_go/chromatiques/' . $generation . 'g';
             }
+
             $browser->request('GET', $url)
                 ->filter(".bipcode tr td:nth-child(1)")
                 ->each(function (Crawler $node) {
-                    dump($node->text());
+
                     if (str_contains($node->text(), "#")) {
                         preg_match('#([0-9]{3,4}) (.*)#', $node->text(), $matches);
-                        dump($matches);
                         $pokemon = $this->entityManager->getRepository(Pokemon::class)->findOneBy(['number' => $matches[1]]);
+
                         if ($pokemon) {
                             $pokemon->setIsShiny(true);
                             $this->entityManager->persist($pokemon);

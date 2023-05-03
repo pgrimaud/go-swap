@@ -20,10 +20,10 @@ class Pokemon
     private ?string $generation = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $french_name = null;
+    private ?string $frenchName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $english_name = null;
+    private ?string $englishName = null;
 
     #[ORM\Column]
     private ?bool $isShiny = null;
@@ -59,24 +59,24 @@ class Pokemon
 
     public function getFrenchName(): ?string
     {
-        return $this->french_name;
+        return $this->frenchName;
     }
 
-    public function setFrenchName(string $french_name): self
+    public function setFrenchName(string $frenchName): self
     {
-        $this->french_name = $french_name;
+        $this->frenchName = $frenchName;
 
         return $this;
     }
 
     public function getEnglishName(): ?string
     {
-        return $this->english_name;
+        return $this->englishName;
     }
 
-    public function setEnglishName(?string $english_name): self
+    public function setEnglishName(?string $englishName): self
     {
-        $this->english_name = $english_name;
+        $this->englishName = $englishName;
 
         return $this;
     }
