@@ -108,36 +108,6 @@ class Pokemon
     /**
      * @return Collection<int, UserPokemon>
      */
-    public function getUser(): Collection
-    {
-        return $this->user;
-    }
-
-    public function addUser(UserPokemon $user): self
-    {
-        if (!$this->user->contains($user)) {
-            $this->user->add($user);
-            $user->setPokemon($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(UserPokemon $user): self
-    {
-        if ($this->user->removeElement($user)) {
-            // set the owning side to null (unless already changed)
-            if ($user->getPokemon() === $this) {
-                $user->setPokemon(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, UserPokemon>
-     */
     public function getUserPokemon(): Collection
     {
         return $this->userPokemon;
