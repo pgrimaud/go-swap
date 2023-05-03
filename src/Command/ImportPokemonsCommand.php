@@ -28,9 +28,11 @@ class ImportPokemonsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+
         $this->importPokemons();
         $this->importShiny();
         $this->importEnglishName();
+
         $io->success('Done !');
 
         return Command::SUCCESS;
@@ -41,6 +43,7 @@ class ImportPokemonsCommand extends Command
         $browser = new HttpBrowser(HttpClient::create());
 
         foreach (range(1, 10) as $generation) {
+
             if ($generation === 1) {
                 $url = 'https://www.pokebip.com/page/jeuxvideo/pokemon_go/pokemon';
             } else if ($generation === 10) {
@@ -48,6 +51,7 @@ class ImportPokemonsCommand extends Command
             } else {
                 $url = 'https://www.pokebip.com/page/jeuxvideo/pokemon_go/pokemon/' . $generation . 'g';
             }
+
             $browser->request('GET', $url)
                 ->filter(".bipcode tbody tr td:nth-child(1)")
                 ->each(function (Crawler $node) use ($generation) {
@@ -62,17 +66,16 @@ class ImportPokemonsCommand extends Command
 
                     preg_match('#([0-9]{3,4}) (.*)#', $tdValue, $matches);
                     $pokemon = $this->entityManager->getRepository(Pokemon::class)->findOneBy(['number' => $matches[1]]);
-                    if ($pokemon) {
-                        return;
-                    } else {
+
+                    if (!$pokemon) {
                         $pokemon = new Pokemon();
                         $pokemon->setNumber(intval($matches[1]));
                         $pokemon->setFrenchName($matches[2]);
                         $pokemon->setGeneration($generation . "G");
                         $pokemon->setIsShiny(false);
+
                         $this->entityManager->persist($pokemon);
                         $this->entityManager->flush();
-
                     }
                 });
 
@@ -83,6 +86,7 @@ class ImportPokemonsCommand extends Command
     private function importShiny(): void
     {
         $browser = new HttpBrowser(HttpClient::create());
+
         foreach (range(1, 9) as $generation) {
 
             if ($generation === 1) {
@@ -103,6 +107,7 @@ class ImportPokemonsCommand extends Command
 
                         if ($pokemon) {
                             $pokemon->setIsShiny(true);
+
                             $this->entityManager->persist($pokemon);
                             $this->entityManager->flush();
                         }
@@ -116,7 +121,7 @@ class ImportPokemonsCommand extends Command
         $client = HttpClient::create();
         $response = $client->request(
             'GET',
-            'https://pokeapi.co/api/v2/pokemon?limit=1000'
+            'https://pokeapi.co/api/v2/pokemon?limit=10000'
         );
 
         foreach ($response->toArray()['results'] as $englishPokemon) {
@@ -125,6 +130,7 @@ class ImportPokemonsCommand extends Command
 
             if ($pokemon) {
                 $pokemon->setEnglishName(ucfirst($englishPokemon['name']));
+
                 $this->entityManager->persist($pokemon);
                 $this->entityManager->flush();
             }
