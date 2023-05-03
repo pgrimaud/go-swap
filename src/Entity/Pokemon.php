@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PokemonRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PokemonRepository::class)]
@@ -27,6 +29,16 @@ class Pokemon
 
     #[ORM\Column]
     private ?bool $isShiny = null;
+
+    #[ORM\OneToMany(mappedBy: 'pokemon', targetEntity: UserPokemon::class, orphanRemoval: true)]
+    private Collection $userPokemon;
+
+    public function __construct()
+    {
+        $this->userPokemon = new ArrayCollection();
+    }
+
+
 
     public function getId(): ?int
     {
@@ -89,6 +101,66 @@ class Pokemon
     public function setIsShiny(bool $isShiny): self
     {
         $this->isShiny = $isShiny;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserPokemon>
+     */
+    public function getUser(): Collection
+    {
+        return $this->user;
+    }
+
+    public function addUser(UserPokemon $user): self
+    {
+        if (!$this->user->contains($user)) {
+            $this->user->add($user);
+            $user->setPokemon($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(UserPokemon $user): self
+    {
+        if ($this->user->removeElement($user)) {
+            // set the owning side to null (unless already changed)
+            if ($user->getPokemon() === $this) {
+                $user->setPokemon(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserPokemon>
+     */
+    public function getUserPokemon(): Collection
+    {
+        return $this->userPokemon;
+    }
+
+    public function addUserPokemon(UserPokemon $userPokemon): self
+    {
+        if (!$this->userPokemon->contains($userPokemon)) {
+            $this->userPokemon->add($userPokemon);
+            $userPokemon->setPokemon($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserPokemon(UserPokemon $userPokemon): self
+    {
+        if ($this->userPokemon->removeElement($userPokemon)) {
+            // set the owning side to null (unless already changed)
+            if ($userPokemon->getPokemon() === $this) {
+                $userPokemon->setPokemon(null);
+            }
+        }
 
         return $this;
     }

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -28,6 +30,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserPokemon::class, orphanRemoval: true)]
+    private Collection $userPokemon;
+
+    public function __construct()
+    {
+        $this->userPokemon = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -97,5 +107,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, UserPokemon>
+     */
+    public function getUserPokemon(): Collection
+    {
+        return $this->userPokemon;
+    }
+
+    public function addUserPokemon(UserPokemon $userPokemon): self
+    {
+        if (!$this->userPokemon->contains($userPokemon)) {
+            $this->userPokemon->add($userPokemon);
+            $userPokemon->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserPokemon(UserPokemon $userPokemon): self
+    {
+        if ($this->userPokemon->removeElement($userPokemon)) {
+            // set the owning side to null (unless already changed)
+            if ($userPokemon->getUser() === $this) {
+                $userPokemon->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }
