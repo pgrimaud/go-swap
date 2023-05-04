@@ -53,6 +53,7 @@ class SecurityController extends AbstractController
             );
         } else {
             if ($form->getErrors(true)->count() > 0) {
+                /* @phpstan-ignore-next-line */
                 $error = $form->getErrors(true)->current()->getMessage();
             }
         }
