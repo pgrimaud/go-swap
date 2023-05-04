@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
-use App\Entity\Pokemon;
 use App\Entity\UserPokemon;
+use App\Helper\PokedexHelper;
+use App\Repository\PokemonRepository;
+use App\Repository\UserPokemonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,52 +14,83 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PokemonController extends AbstractController
 {
-
     #[Route('/add', name: 'add_pokemon')]
-    public function add(Request $request): Response
+    public function add(
+        Request                $request,
+        EntityManagerInterface $entityManager,
+        PokemonRepository      $pokemonRepository,
+        UserPokemonRepository  $userPokemonRepository,
+    ): Response
     {
         $user = $this->getUser();
-        $id = $request->request->get("id");
-        $pokedex = $request->request->get("pokedex");
 
-        $pokemon = EntityManagerInterface::class->getRepository(Pokemon::class)->findOneBy(['number' => $id]);
+        $data = $request->request->all();
+        $id = $data['id'];
+        $pokedex = $data['pokedex'];
 
-        $userPokemon = new UserPokemon();
-        $userPokemon->setUser($user);
-        $userPokemon->setPokemon($pokemon);
-        switch ($pokedex) {
-            case "shiny":
-                $userPokemon->setShiny(true);
-                break;
-            case "normal":
-                $userPokemon->setNormal(true);
-                break;
-            case "lucky":
-               $userPokemon->setLucky(true);
-                break;
-            case "three_stars":
-                $userPokemon->setThreeStars(true);
-                break;
+        $alreadyExist = $userPokemonRepository->findOneBy(['user' => $user, 'pokemon' => $id]);
+
+        if (!$alreadyExist) {
+            $pokemon = $pokemonRepository->findOneBy(['number' => $id]);
+
+            $userPokemon = new UserPokemon();
+            $userPokemon->setUser($user);
+            $userPokemon->setPokemon($pokemon);
+            $userPokemon->setShiny(false);
+            $userPokemon->setNormal(false);
+            $userPokemon->setLucky(false);
+            $userPokemon->setThreeStars(false);
+
+        } else {
+            $userPokemon = $alreadyExist;
         }
-        EntityManagerInterface::class->flush($userPokemon);
-        EntityManagerInterface::class->persist();
 
-        return $this->render('pokemon/index.html.twig', [
-            'controller_name' => 'PokemonController',
+        if (!PokedexHelper::exist($pokedex)) {
+            return $this->json([
+                'message' => 'Pokedex not found',
+            ]);
+        }
+
+        $method = 'set' . ucfirst($pokedex);
+        $userPokemon->$method(true);
+
+        $entityManager->persist($userPokemon);
+        $entityManager->flush();
+
+        return $this->json([
+            'message' => 'Pokemon added',
         ]);
     }
 
     #[Route('/delete', name: 'delete_pokemon')]
-    public function delete(Request $request): Response
+    public function delete(
+        Request                $request,
+        EntityManagerInterface $entityManager,
+        UserPokemonRepository  $userPokemonRepository
+    ): Response
     {
-        $user = $this->getUser();
+        $data = $request->request->all();
+        $id = $data['id'];
+        $pokedex = $data['pokedex'];
 
+        $userPokemon = $userPokemonRepository->findOneBy(['user' => $this->getUser(), 'pokemon' => $id]);
 
-        return $this->render('pokemon/index.html.twig', [
-            'controller_name' => 'PokemonController',
+        if (!PokedexHelper::exist($pokedex)) {
+            return $this->json([
+                'message' => 'Pokedex not found',
+            ]);
+        }
+
+        if ($userPokemon) {
+            $method = 'set' . ucfirst($pokedex);
+            $userPokemon->$method(false);
+
+            $entityManager->persist($userPokemon);
+            $entityManager->flush();
+        }
+
+        return $this->json([
+            'message' => 'Pokemon deleted',
         ]);
     }
-
-
-
 }

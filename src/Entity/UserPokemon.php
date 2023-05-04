@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserPokemonRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserPokemonRepository::class)]
 class UserPokemon
@@ -15,7 +16,7 @@ class UserPokemon
 
     #[ORM\ManyToOne(inversedBy: 'userPokemon')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    private User|UserInterface|null $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'userPokemon')]
     #[ORM\JoinColumn(nullable: false)]
@@ -38,12 +39,12 @@ class UserPokemon
         return $this->id;
     }
 
-    public function getUser(): ?User
+    public function getUser(): User|UserInterface|null
     {
         return $this->user;
     }
 
-    public function setUser(?User $user): self
+    public function setUser(User|UserInterface|null $user): self
     {
         $this->user = $user;
 
