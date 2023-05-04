@@ -14,7 +14,7 @@ class UserPokemon
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'userPokemon')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'userPokemon')]
     #[ORM\JoinColumn(nullable: false)]
     private User|UserInterface|null $user = null;
 
