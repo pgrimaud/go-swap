@@ -27,3 +27,9 @@
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
+
+public/images/normal
+public/images/shiny
+
+!public/images/normal/.gitkeep
+!public/images/shiny/.gitkeep
