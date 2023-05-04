@@ -1,11 +1,48 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello AppController!{% endblock %}
-
 {% block body %}
-    <div class="mx-auto">
-        <h1 class="text-3xl font-bold underline">
-            Hello world!
-        </h1>
+    <div class="h-full p-6">
+        <div class="w-full container mx-auto">
+            <div class="w-full flex items-center justify-between">
+                <a class="flex items-center text-indigo-400 no-underline hover:no-underline font-bold text-2xl lg:text-4xl"
+                   href="{{ path('app_index') }}">
+                    <img src="{{ asset('images/logo.png') }}" style="width:70px;"><span
+                            class="ml-3 bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-pink-500 to-purple-500">Go Trade</span>
+                </a>
+
+                <div class="flex w-1/2 justify-end content-center">
+                    <a class="inline-block text-blue-300 no-underline hover:text-pink-500 hover:text-underline text-center h-10 p-2 md:h-auto md:p-4 transform hover:scale-125 duration-300 ease-in-out"
+                       href="{{ path('app_logout') }}">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="h-full">
+            <div class="container pt-24 md:pt-36 mx-auto flex flex-wrap flex-col md:flex-row items-start">
+                <div class="flex flex-col w-full xl:w-2/5 justify-center lg:items-start overflow-y-hidden">
+                    <h1 class="my-4 text-3xl md:text-5xl text-white opacity-75 font-bold leading-tight text-center md:text-left">
+                        Hello {{ app.user.username }}!
+                    </h1>
+                    <p class="leading-normal text-base md:text-2xl mb-8 text-center md:text-left">
+                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-pink-500 to-purple-500 font-bold">Go Trade</span>: Swap, unlock & complete.
+                    </p>
+                </div>
+            </div>
+
+            <div class="container pt-4 md:pt-4 mx-auto flex flex-wrap flex-col md:flex-row items-start">
+
+                <div class="w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+                    <h5 class="mb-4 text-xl font-medium text-gray-500 dark:text-gray-400">Standard plan</h5>
+                    <div class="flex items-baseline text-gray-900 dark:text-white">
+                        <span class="text-3xl font-semibold">$</span>
+                        <span class="text-5xl font-extrabold tracking-tight">49</span>
+                        <span class="ml-1 text-xl font-normal text-gray-500 dark:text-gray-400">/month</span>
+                    </div>
+                    <button type="button" class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-200 dark:focus:ring-blue-900 font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center">Choose plan</button>
+                </div>
+        </div>
+        </div>
     </div>
 {% endblock %}

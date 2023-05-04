@@ -16,14 +16,13 @@
 
         <style>
             @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap");
-
             html {
                 font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
             }
         </style>
-
     </head>
-    <body class="leading-normal tracking-normal text-indigo-400 m-6 bg-cover bg-fixed" style="background-image: url('{{ asset('images/header.png') }}');">
+    <body class="leading-normal tracking-normal text-indigo-400 h-screen bg-cover bg-fixed" style="background-image: url('{{ asset('images/header.png') }}');">
         {% block body %}{% endblock %}
+        <script src="https://kit.fontawesome.com/084159f03b.js" crossorigin="anonymous" rel="preload"></script>
     </body>
 </html>

@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Go Trade - Register{% endblock %}
+
+{% block body %}
+    <div class="h-full container mx-auto flex flex-wrap flex-col items-center mb-60">
+        <div class="h-full flex items-center justify-center flex-col">
+            {{ form_start(registrationForm, {'attr': {'class': 'flex items-center flex-col justify-center bg-gray-900 opacity-75 w-full shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4'}}) }}
+                <a class="flex items-center text-indigo-400 no-underline hover:no-underline font-bold text-2xl lg:text-4xl mb-8"
+                   href="{{ path('app_index') }}">
+                    <img src="{{ asset('images/logo.png') }}" style="width:70px;"><span
+                            class="ml-3 bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-pink-500 to-purple-500">Go Trade</span>
+                </a>
+
+                {% if formError %}
+                    <div class="mb-4 text-pink-400">{{ formError }}</div>
+                {% endif %}
+
+                {{ form_widget(registrationForm.username, {
+                    'attr': {
+                        'class': 'w-96 shadow appearance-none border rounded w-full p-3 text-gray-700 leading-tight mb-4',
+                        'placeholder': 'Username',
+                        'required': 'required',
+                        'autocomplete': 'off',
+                        'spellcheck': 'false',
+                        'autofocus': 'autofocus'
+                    }
+                }) }}
+
+                {{ form_widget(registrationForm.plainPassword.first, {
+                    'attr': {
+                        'class': 'w-96 shadow appearance-none border rounded w-full p-3 text-gray-700 leading-tight mb-4',
+                        'placeholder': 'Password',
+                        'required': 'required',
+                        'autocomplete': 'new-password'
+                    }
+                }) }}
+
+                {{ form_widget(registrationForm.plainPassword.second, {
+                    'attr': {
+                        'class': 'w-96 shadow appearance-none border rounded w-full p-3 text-gray-700 leading-tight mb-8',
+                        'placeholder': 'Confirm new password',
+                        'required': 'required',
+                        'autocomplete': 'new-password'
+                    }
+                }) }}
+
+                <button class="bg-gradient-to-r from-purple-800 to-green-500 hover:from-pink-500 hover:to-green-500 text-white font-bold py-2 px-12 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
+                        type="submit">
+                    Register
+                </button>
+
+
+                <a href="{{ path('app_login') }}" class="mt-2 text-xs">Already have an account?</a>
+            {{ form_end(registrationForm) }}
+        </div>
+    </div>
+{% endblock %}
