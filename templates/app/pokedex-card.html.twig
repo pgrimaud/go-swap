@@ -9,7 +9,8 @@
         <span class="text-s tracking-tight">{{ (dex.caught / dex.total * 100)|round(2) }}%</span>
         <br>
     </div>
-    <a href="#" class="bg-gradient-to-r {{ random_button() }} text-white font-bold py-2 px-12 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out mt-10">
+    <a href="{{ path('show_pokedex', {'type' : dex.type}) }}"
+       class="bg-gradient-to-r {{ random_button() }} text-white font-bold py-2 px-12 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out mt-10">
         View
     </a>
 </div>
