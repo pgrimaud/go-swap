@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\UserPokemon;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @extends ServiceEntityRepository<UserPokemon>
@@ -39,28 +40,14 @@ class UserPokemonRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return UserPokemon[] Returns an array of UserPokemon objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('u.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?UserPokemon
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function countByPokedex(?UserInterface $user, string $type): int
+    {
+        return intval($this->createQueryBuilder('up')
+            ->select('COUNT(up.id)')
+            ->where('up.user = :user')
+            ->andWhere('up.' . $type . ' = true')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getSingleScalarResult());
+    }
 }

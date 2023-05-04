@@ -10,14 +10,14 @@ class PokedexHelper
     public const POKEDEX_THREE_STARS = 'threeStars';
 
     public const POKEDEX =[
-        self::POKEDEX_NORMAL,
-        self::POKEDEX_SHINY,
-        self::POKEDEX_LUCKY,
-        self::POKEDEX_THREE_STARS,
+        self::POKEDEX_NORMAL => 'Normal',
+        self::POKEDEX_SHINY => 'Shiny',
+        self::POKEDEX_LUCKY => 'Lucky',
+        self::POKEDEX_THREE_STARS => '3 Stars',
     ];
 
     public static function exist(string $pokedex): bool
     {
-        return in_array($pokedex, self::POKEDEX);
+        return isset(self::POKEDEX[$pokedex]);
     }
 }
