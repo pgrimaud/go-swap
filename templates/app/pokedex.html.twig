@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="h-full p-6">
+        {% include 'partials/header.html.twig' %}
+
+        <div class="w-1/2 flex m-auto mb-12 mt-12">
+            <input type="text" class="w-full rounded-3xl h-14 p-4" placeholder="Search for a pokemon ...">
+            <!-- <i class="fa-solid fa-magnifying-glass mr-5 mt-4 text-2xl "></i> -->
+        </div>
+
+        <div class="flex flex-row justify-center gap-6 mb-6">
+            <div class="bg-white p-4 rounded-full"><p>Pokedex Normal</p></div>
+            <div class="bg-white p-4 rounded-full"><p>Pokedex Shiny</p></div>
+            <div class="bg-white p-4 rounded-full"><p>Pokedex Lucky</p></div>
+            <div class="bg-white p-4 rounded-full"><p>Pokedex 3 Stars</p></div>
+        </div>
+
+        <div class="h-fit flex flex-row flex-wrap  gap-4 justify-center h-fit p-6 ">
+            {% for pokemon in pokemons %}
+                <div class="flex flex-col w-1/6 p-4 justify-between h-full w-full    bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 ">
+                    <img src="{{ asset('images/logo.png') }}" alt="" class="w-fit" loading="lazy">
+                    <div class="flex flex-row gap-1 justify-center justify-around">
+                        <p>#{{ pokemon.number }}</p>
+                        <p class="whitespace-nowrap">{{ pokemon.frenchName }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+{% endblock %}
