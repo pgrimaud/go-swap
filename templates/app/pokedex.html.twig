@@ -15,7 +15,7 @@
             <button class="bg-gradient-to-r text-white py-2 px-6 rounded border-white {% if app.request.get('type') == 'normal' %}bg-gradient-to-r from-pink-400 to-purple-600{% else %}bg-slate-700{% endif %}">
                 Normal
             </button>
-            <button class="bg-gradient-to-r text-white py-2 px-6 rounded border-white {% if app.request.get('type') == 'shiny' %}bg-gradient-to-r from-pink-400 to-purple-600{% else %}bg-slate-700{% endif %}">
+            <button id="shiny" class="bg-gradient-to-r text-white py-2 px-6 rounded border-white {% if app.request.get('type') == 'shiny' %}bg-gradient-to-r from-pink-400 to-purple-600{% else %}bg-slate-700{% endif %}">
                 Shiny
             </button>
             <button class="bg-gradient-to-r text-white py-2 px-6 rounded border-white {% if app.request.get('type') == 'lucky' %}bg-gradient-to-r from-pink-400 to-purple-600{% else %}bg-slate-700{% endif %}">
@@ -28,12 +28,12 @@
 
         <div class="h-fit flex flex-row flex-wrap  gap-4 justify-center p-6" id="pokedex">
             {% for pokemon in pokemons %}
-                <div class="poke-card flex flex-col w-1/6 p-4 justify-between h-full bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10"
-                data-name-fr="{{ pokemon.frenchName|lower }}" data-name-en="{{ pokemon.englishName|lower }}" data-number="{{ pokemon.number }}">
-                    <img src="{{ asset('images/logo.png') }}" alt="" class="w-fit" loading="lazy">
+                <div class="poke-card flex flex-col w-[200px] p-4 justify-center items-center h-full bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10"
+                data-name-fr="{{ pokemon.frenchName|lower }}" data-name-en="{{ pokemon.englishName|lower }}" data-number="{{ pokemon.number }}" data-shiny="{{ pokemon.isShiny }}">
+                    <img src="{{ asset('images/normal/' ~ pokemon.number ~ '.png') }}" alt="" class="w-fit {% if app.request.get('type') == 'shiny' %}hidden{% endif%} normal-picture" loading="lazy">
+                    <img src="{{ asset('images/shiny/' ~ pokemon.number ~ '.png') }}" alt="" class="w-fit {% if app.request.get('type') != 'shiny' %}hidden{% endif%} shiny-picture" loading="lazy">
                     <div class="flex flex-row gap-1 justify-center">
-                        <p>#{{ pokemon.number }}</p>
-                        <p class="whitespace-nowrap">{{ pokemon.frenchName }}</p>
+                        <p class="whitespace-nowrap text-sm white text-white">#{{ pokemon.number }} {{ pokemon.frenchName }}</p>
                     </div>
                 </div>
             {% endfor %}

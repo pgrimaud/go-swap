@@ -8,6 +8,25 @@ document.querySelectorAll('#filters button').forEach(el => {
 
         event.target.classList.add('from-pink-400')
         event.target.classList.add('to-purple-600')
+
+        if (event.target.getAttribute('id') === 'shiny') {
+            document.querySelectorAll('.shiny-picture').forEach(el => {
+                el.classList.remove('hidden')
+            })
+
+            document.querySelectorAll('.normal-picture').forEach(el => {
+                el.classList.add('hidden')
+            })
+        } else {
+            document.querySelectorAll('.shiny-picture').forEach(el => {
+                el.classList.add('hidden')
+            })
+
+            document.querySelectorAll('.normal-picture').forEach(el => {
+                el.classList.remove('hidden')
+            })
+        }
+
     })
 })
 

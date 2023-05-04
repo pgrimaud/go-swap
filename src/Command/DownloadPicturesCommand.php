@@ -47,13 +47,13 @@ class DownloadPicturesCommand extends Command
         foreach ($pokemonRepository as $pokemon) {
             $progressBar->advance();
 
-            if (file_exists("public/images/normal/" . $pokemon->getNumber() . ".jpg")) {
+            if (file_exists("public/images/normal/" . $pokemon->getNumber() . ".png")) {
                 continue;
             }
 
             $url = 'https://www.pokebip.com/pages/icones/poke/GO/' . $pokemon->getNumber() . '.png';
             $image = file_get_contents($url);
-            $fp = fopen("public/images/normal/" . $pokemon->getNumber() . ".jpg", "w");
+            $fp = fopen("public/images/normal/" . $pokemon->getNumber() . ".png", "w");
             if ($fp && $image) {
                 fwrite($fp, $image);
                 fclose($fp);
@@ -71,7 +71,7 @@ class DownloadPicturesCommand extends Command
         foreach ($pokemonRepository as $pokemon) {
             $progressBar->advance();
 
-            if (file_exists("public/images/shiny/" . $pokemon->getNumber() . ".jpg")) {
+            if (file_exists("public/images/shiny/" . $pokemon->getNumber() . ".png")) {
                 continue;
             }
 
@@ -84,7 +84,7 @@ class DownloadPicturesCommand extends Command
             $url = 'https://www.pokebip.com/pages/icones/pokechroma/GO/' . $pokemon->getNumber() . $endUrl;
 
             $image = file_get_contents($url);
-            $fp = fopen("public/images/shiny/" . $pokemon->getNumber() . ".jpg", "w");
+            $fp = fopen("public/images/shiny/" . $pokemon->getNumber() . ".png", "w");
             if ($fp && $image) {
                 fwrite($fp, $image);
                 fclose($fp);
