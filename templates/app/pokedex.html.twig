@@ -4,23 +4,34 @@
     <div class="h-full p-6">
         {% include 'partials/header.html.twig' %}
 
-        <div class="w-1/2 flex m-auto mb-12 mt-12">
-            <input type="text" class="w-full rounded-3xl h-14 p-4" placeholder="Search for a pokemon ...">
-            <!-- <i class="fa-solid fa-magnifying-glass mr-5 mt-4 text-2xl "></i> -->
+        <div class="w-1/2 flex m-auto mb-4 mt-12">
+            <input placeholder="Search for a pokemon..." type="text" autofocus autocomplete="off" spellcheck="false"
+                   class="w-full shadow appearance-none border rounded p-3 text-gray-700 leading-tight mb-4"
+                   id="search"
+            >
         </div>
 
-        <div class="flex flex-row justify-center gap-6 mb-6">
-            <div class="bg-white p-4 rounded-full"><p>Pokedex Normal</p></div>
-            <div class="bg-white p-4 rounded-full"><p>Pokedex Shiny</p></div>
-            <div class="bg-white p-4 rounded-full"><p>Pokedex Lucky</p></div>
-            <div class="bg-white p-4 rounded-full"><p>Pokedex 3 Stars</p></div>
+        <div class="flex flex-row justify-center gap-10 mb-6" id="filters">
+            <button class="bg-gradient-to-r text-white py-2 px-6 rounded border-white {% if app.request.get('type') == 'normal' %}bg-gradient-to-r from-pink-400 to-purple-600{% else %}bg-slate-700{% endif %}">
+                Normal
+            </button>
+            <button class="bg-gradient-to-r text-white py-2 px-6 rounded border-white {% if app.request.get('type') == 'shiny' %}bg-gradient-to-r from-pink-400 to-purple-600{% else %}bg-slate-700{% endif %}">
+                Shiny
+            </button>
+            <button class="bg-gradient-to-r text-white py-2 px-6 rounded border-white {% if app.request.get('type') == 'lucky' %}bg-gradient-to-r from-pink-400 to-purple-600{% else %}bg-slate-700{% endif %}">
+                Lucky
+            </button>
+            <button class="bg-gradient-to-r text-white py-2 px-6 rounded border-white {% if app.request.get('type') == 'threeStars' %}bg-gradient-to-r from-pink-400 to-purple-600{% else %}bg-slate-700{% endif %}">
+                3 Stars
+            </button>
         </div>
 
-        <div class="h-fit flex flex-row flex-wrap  gap-4 justify-center h-fit p-6 ">
+        <div class="h-fit flex flex-row flex-wrap  gap-4 justify-center p-6" id="pokedex">
             {% for pokemon in pokemons %}
-                <div class="flex flex-col w-1/6 p-4 justify-between h-full     bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 ">
+                <div class="poke-card flex flex-col w-1/6 p-4 justify-between h-full bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10"
+                data-name-fr="{{ pokemon.frenchName|lower }}" data-name-en="{{ pokemon.englishName|lower }}" data-number="{{ pokemon.number }}">
                     <img src="{{ asset('images/logo.png') }}" alt="" class="w-fit" loading="lazy">
-                    <div class="flex flex-row gap-1 justify-center justify-around">
+                    <div class="flex flex-row gap-1 justify-center">
                         <p>#{{ pokemon.number }}</p>
                         <p class="whitespace-nowrap">{{ pokemon.frenchName }}</p>
                     </div>
