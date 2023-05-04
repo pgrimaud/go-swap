@@ -134,4 +134,9 @@ class Pokemon
 
         return $this;
     }
+
+    public function __toString()
+    {
+        return $this->frenchName;
+    }
 }

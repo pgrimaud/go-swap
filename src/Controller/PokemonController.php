@@ -14,6 +14,14 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PokemonController extends AbstractController
 {
+    #[Route('/pokedex', name: 'show_pokedex')]
+    public function show(PokemonRepository $pokemonRepository): Response
+    {
+        return $this->render('app/pokedex.html.twig', [
+            'pokemons' =>$pokemonRepository->findBy([],['number' => 'ASC']),
+        ]);
+    }
+
     #[Route('/add', name: 'add_pokemon')]
     public function add(
         Request                $request,
