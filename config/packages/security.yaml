@@ -20,6 +20,9 @@ security:
             custom_authenticator: App\Security\AppAuthenticator
             logout:
                 path: app_logout
+            remember_me:
+                secret: '%kernel.secret%' # required
+                lifetime: 31536000 # 1 year in seconds
                 # where to redirect after logout
                 # target: app_any_route
 
@@ -32,8 +35,9 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/register, roles: PUBLIC_ACCESS }
+        - { path: ^/, roles: ROLE_USER }
 
 when@test:
     security:
