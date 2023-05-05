@@ -5,10 +5,10 @@
         {% include 'partials/header.html.twig' %}
 
         <div class="w-1/2 flex flex-col m-auto mb-4 mt-12">
-            {% if app.request.get('id')%}
-            <h1 class="text-center text-white text-3xl mb-10"> {{ pokedexUsername.username }}'s Pokedex</h1>
+            {% if app.request.get('id') %}
+                <h1 class="text-center text-white text-3xl mb-10"> {{ pokedexUsername.username }}'s Pokédex</h1>
             {% else %}
-            <h1 class="text-center text-white text-3xl mb-10">Your Pokédex</h1>
+                <h1 class="text-center text-white text-3xl mb-10">Your Pokédex</h1>
             {% endif %}
             <input placeholder="Search for a pokemon..." type="text" autofocus autocomplete="off" spellcheck="false"
                    class="w-full shadow appearance-none border rounded p-3 text-gray-700 leading-tight mb-4"
@@ -18,7 +18,7 @@
 
         <div class="flex flex-row justify-center gap-10 mb-6" id="filters">
             <button id="normal"
-                    class="bg-gradient-to-r text-white py-2 px-6 rounded border-white {% if app.request.get('type') == 'normal' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
+                    class="bg-gradient-to-r text-white py-2 px-6 rounded border-white {% if app.request.get('type') == 'normal' or app.request.get('type') == '' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
                 Normal
             </button>
             <button id="shiny"
@@ -37,9 +37,9 @@
 
         <div class="h-fit flex flex-row flex-wrap gap-4 justify-center p-6" id="pokedex">
             {% for pokemon in pokemons %}
-                <div class="border-4 border-gray-400 border-opacity-20 cursor-pointer poke-card flex flex-col w-[200px] p-4 justify-center items-center h-full bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10"
+                <div class="border-4 border-gray-400 border-opacity-20 cursor-pointer poke-card flex flex-col w-[200px] p-4 justify-center items-center h-full bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 {% if app.request.get('id') == false %}poke-card-user{% endif %}"
                      data-name-fr="{{ pokemon.frenchName|lower }}" data-name-en="{{ pokemon.englishName|lower }}"
-                     data-number="{{ pokemon.number }}" data-shiny="{{ pokemon.isShiny }}"
+                     data-number="{{ pokemon.number }}" data-internal-id="{{ pokemon.id }}" data-shiny="{{ pokemon.isShiny }}"
                      data-pokedex-normal="{% if userPokemons[pokemon.number] is defined %}{{ userPokemons[pokemon.number].normal }}{% else %}0{% endif %}"
                      data-pokedex-shiny="{% if userPokemons[pokemon.number] is defined %}{{ userPokemons[pokemon.number].shiny }}{% else %}0{% endif %}"
                      data-pokedex-lucky="{% if userPokemons[pokemon.number] is defined %}{{ userPokemons[pokemon.number].lucky }}{% else %}0{% endif %}"

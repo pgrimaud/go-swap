@@ -14,18 +14,20 @@ if (document.querySelector('#search')) {
         })
     })
 
-    document.querySelectorAll('#pokedex .poke-card').forEach(el => {
+    document.querySelectorAll('#pokedex .poke-card-user').forEach(el => {
 
         el.addEventListener('click', (event) => {
             const data = new FormData();
-            data.append('id', el.dataset.number);
+            data.append('id', el.dataset.internalId);
             data.append('pokedex', document.querySelector('.active-filter').getAttribute('id'));
 
             if (el.classList.contains('pokemon-catched')) {
+                el.setAttribute(`data-pokedex-${document.querySelector('.active-filter').getAttribute('id')}`, 0)
                 fetchApi(data, "/delete")
                 el.classList.add('border-gray-400', 'border-opacity-20')
                 el.classList.remove('pokemon-catched', 'border-green-600')
             } else {
+                el.setAttribute(`data-pokedex-${document.querySelector('.active-filter').getAttribute('id')}`, 1)
                 fetchApi(data, "/add")
                 el.classList.add('pokemon-catched', 'border-green-600')
                 el.classList.remove('border-gray-400', 'border-opacity-20')
@@ -42,7 +44,7 @@ if (document.querySelector('#search')) {
     })
 
     // add border to pokemon catched
-    document.querySelectorAll('.poke-card').forEach(el => {
+    document.querySelectorAll('.poke-card-user').forEach(el => {
         const pokedex = document.querySelector('#filters button.to-purple-600').getAttribute('id')
 
         if (el.getAttribute(`data-pokedex-${pokedex}`) === '1') {
