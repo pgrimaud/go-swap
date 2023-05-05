@@ -28,14 +28,14 @@ class PokemonController extends AbstractController
     }
 
     #[Route('/pokedex-friend/{id}', name: 'showFriends_pokedex')]
-    public function showFriends($id,UserRepository $userRepository,PokemonRepository $pokemonRepository, UserPokemonRepository $userPokemonRepository, EntityManagerInterface $entityManager): Response
+    public function showFriends(int $id,UserRepository $userRepository,PokemonRepository $pokemonRepository, UserPokemonRepository $userPokemonRepository, EntityManagerInterface $entityManager): Response
     {
         $query = $pokemonRepository->getUserPokemon($userRepository->findOneBy(["id"=>$id]));
 
         return $this->render('app/pokedex.html.twig', [
             'pokemons' => $pokemonRepository->findBy([], ['number' => 'ASC']),
             'userPokemons' => $query,
-            'pokedexUsername' => $userRepository->findOneBy(["id"=>$id])->getUsername(),
+            'pokedexUsername' => $userRepository->findOneBy(["id"=>$id]),
         ]);
     }
 
