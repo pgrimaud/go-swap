@@ -5,7 +5,11 @@
         {% include 'partials/header.html.twig' %}
 
         <div class="w-1/2 flex flex-col m-auto mb-4 mt-12">
+            {% if app.request.get('id')%}
+            <h1 class="text-center text-white text-3xl mb-10"> {{ pokedexUsername }}'s Pokedex</h1>
+            {% else %}
             <h1 class="text-center text-white text-3xl mb-10">Your Pokédex</h1>
+            {% endif %}
             <input placeholder="Search for a pokemon..." type="text" autofocus autocomplete="off" spellcheck="false"
                    class="w-full shadow appearance-none border rounded p-3 text-gray-700 leading-tight mb-4"
                    id="search"
@@ -39,8 +43,8 @@
                      
                      data-pokedex-normal="{% if userPokemons[pokemon.number] is defined %}{{ userPokemons[pokemon.number].normal }}{% else %}0{% endif %}"
                      data-pokedex-shiny="{% if userPokemons[pokemon.number] is defined %}{{ userPokemons[pokemon.number].shiny }}{% else %}0{% endif %}"
-                     data-pokedex-lucky="{% if userPokemons[pokemon.number] is defined %}{{ userPokemons[pokemon.number].normal }}{% else %}0{% endif %}"
-                     data-pokedex-three-stars="{% if userPokemons[pokemon.number] is defined %}{{ userPokemons[pokemon.number].normal }}{% else %}0{% endif %}"
+                     data-pokedex-lucky="{% if userPokemons[pokemon.number] is defined %}{{ userPokemons[pokemon.number].lucky }}{% else %}0{% endif %}"
+                     data-pokedex-three-stars="{% if userPokemons[pokemon.number] is defined %}{{ userPokemons[pokemon.number].threeStars }}{% else %}0{% endif %}"
                 >
                     <div class="background w-full h-full absolute z-0 opacity-30 rounded-md background-lucky {% if app.request.get('type') != 'lucky' %}hidden{% endif %}"
                          style="background-image: url('{{ asset('images/lucky.jpg') }}');"></div>
