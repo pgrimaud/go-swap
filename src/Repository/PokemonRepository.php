@@ -3,8 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Pokemon;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @extends ServiceEntityRepository<Pokemon>
@@ -39,29 +41,15 @@ class PokemonRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Pokemon[] Returns an array of Pokemon objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-    public function findOneBySomeField($value): ?Pokemon
+    public function getUserPokemon(User|UserInterface|null $user): array
     {
-        return $this->createQueryBuilder('p')
-            ->select()
+        return $this->createQueryBuilder('p', 'p.number')
+            ->select('p.number', 'up.shiny', 'up.normal', 'up.lucky', 'up.threeStars')
             ->join('p.userPokemon', 'up')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
+            ->andWhere('up.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('p.number', 'ASC')
             ->getQuery()
-            ->getOneOrNullResult();
+            ->getArrayResult();
     }
 }

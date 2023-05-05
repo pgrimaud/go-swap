@@ -55,13 +55,19 @@ class ImportPokemonsCommand extends Command
             $browser->request('GET', $url)
                 ->filter(".bipcode tbody tr td:nth-child(1)")
                 ->each(function (Crawler $node) use ($generation) {
-                    if ($node->filter("em")->count() >= 1) {
+
+                    if ($node->filter("em")->count() >= 1 && $node->filter("em")->text() !== "Possède l'apparence d'un autre Pokémon") {
                         return;
                     }
+
                     if ($node->filter("span")->count() >= 1) {
                         $tdValue = str_replace($node->filter("span")->text(), "", $node->text());
                     } else {
                         $tdValue = $node->text();
+                    }
+
+                    if ($node->text() === "#132 MétamorphPossède l'apparence d'un autre Pokémon") {
+                        $tdValue = str_replace($node->filter("em")->text(), "", $node->text());;
                     }
 
                     preg_match('#([0-9]{3,4}) (.*)#', $tdValue, $matches);
