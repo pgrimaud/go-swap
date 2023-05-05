@@ -6,6 +6,7 @@ use App\Entity\UserPokemon;
 use App\Helper\PokedexHelper;
 use App\Repository\PokemonRepository;
 use App\Repository\UserPokemonRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,6 +24,18 @@ class PokemonController extends AbstractController
         return $this->render('app/pokedex.html.twig', [
             'pokemons' => $pokemonRepository->findBy([], ['number' => 'ASC']),
             'userPokemons' => $query,
+        ]);
+    }
+
+    #[Route('/pokedex-friend/{id}', name: 'showFriends_pokedex')]
+    public function showFriends(int $id,UserRepository $userRepository,PokemonRepository $pokemonRepository, UserPokemonRepository $userPokemonRepository, EntityManagerInterface $entityManager): Response
+    {
+        $query = $pokemonRepository->getUserPokemon($userRepository->findOneBy(["id"=>$id]));
+
+        return $this->render('app/pokedex.html.twig', [
+            'pokemons' => $pokemonRepository->findBy([], ['number' => 'ASC']),
+            'userPokemons' => $query,
+            'pokedexUsername' => $userRepository->findOneBy(["id"=>$id]),
         ]);
     }
 
