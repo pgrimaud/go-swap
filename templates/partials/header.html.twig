@@ -6,7 +6,8 @@
                     class="ml-3 bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-pink-500 to-purple-500">Go Trade</span>
         </a>
 
-        <div class="flex w-1/2 justify-end content-center">
+        <div class="flex w-1/2 justify-end content-center items-center">
+            {{ render(controller('App\\Controller\\AppController::users')) }}
             <a class="inline-block text-blue-300 no-underline hover:text-pink-500 hover:text-underline text-center h-10 p-2 md:h-auto md:p-4 transform hover:scale-125 duration-300 ease-in-out"
                href="{{ path('app_logout') }}">
                 <i class="fa-solid fa-right-from-bracket"></i>
