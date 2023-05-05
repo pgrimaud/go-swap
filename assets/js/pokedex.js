@@ -1,21 +1,64 @@
 if (document.querySelector('#search')) {
+    filter()
     document.querySelector('#search').addEventListener('keyup', (event) => filter())
     document.querySelectorAll('#filters button').forEach(el => {
         el.addEventListener('click', (event) => {
             document.querySelectorAll('#filters button').forEach(el => {
-                el.classList.remove('from-pink-400')
-                el.classList.remove('to-purple-600')
-                el.classList.remove("active-filter")
+                el.classList.remove('from-pink-400', 'to-purple-600', 'active-filter')
                 el.classList.add('bg-slate-700')
             })
 
-            event.target.classList.add('from-pink-400')
-            event.target.classList.add('to-purple-600')
-            event.target.classList.add("active-filter")
-
+            event.target.classList.add('from-pink-400', 'to-purple-600', 'active-filter')
             filter()
         })
     })
+
+    document.querySelectorAll('#pokedex .poke-card').forEach(el => {
+
+        el.addEventListener('click', (event) => {
+            const data = new FormData();
+            data.append('id', el.dataset.number);
+            data.append('pokedex', document.querySelector('.active-filter').getAttribute('id'));
+
+            if (el.classList.contains('pokemon-catched')) {
+                fetchApi(data, "/delete")
+                el.classList.add('border-gray-400', 'border-opacity-20')
+                el.classList.remove('pokemon-catched', 'border-green-600')
+            } else {
+                fetchApi(data, "/add")
+                el.classList.add('pokemon-catched', 'border-green-600')
+                el.classList.remove('border-gray-400', 'border-opacity-20')
+            }
+        })
+    })
+    document.querySelectorAll('.poke-card').forEach(el => {
+        document.querySelectorAll('#filters button').forEach(filter => {
+
+            if (el.dataset.pokedex === filter.getAttribute('id')) {
+                el.classList.remove('hidden')
+            }
+        })
+    })
+
+    // add border to pokemon catched
+    document.querySelectorAll('.poke-card').forEach(el => {
+        const pokedex = document.querySelector('#filters button.to-purple-600').getAttribute('id')
+
+        if (el.getAttribute(`data-pokedex-${pokedex}`) === '1') {
+            el.classList.add('border-green-600', 'pokemon-catched')
+            el.classList.remove('border-gray-400', 'border-opacity-20')
+        }
+    })
+
+}
+
+function fetchApi(data, url) {
+    fetch(url, {
+        method: "POST",
+        body: data,
+    })
+        .then(response => response.json())
+        .then(json => {})
 }
 
 function filter() {
@@ -68,37 +111,16 @@ function filter() {
         document.querySelector('#pokedex .no-pokemon').classList.remove('hidden')
     }
 
-    document.querySelectorAll('#pokedex .poke-card').forEach(el => {
-
-        el.addEventListener('click', (event) => {
-            const data = new FormData();
-            data.append('id', el.dataset.number);
-            data.append('pokedex', document.querySelector('.active-filter').getAttribute('id'));
-
-            if (el.classList.contains('pokemon-catched')) {
-                fetchApi(data, "/delete")
-            } else {
-                fetchApi(data, "/add")
-
-                el.classList.add('pokemon-catched')
-            }
-        })
-    })
     document.querySelectorAll('.poke-card').forEach(el => {
-        document.querySelectorAll('#filters button').forEach(filter => {
+        const pokedex = document.querySelector('#filters button.to-purple-600').getAttribute('id')
 
-            if (el.dataset.pokedex === filter.getAttribute('id')) {
-                el.classList.remove('hidden')
-            }
-        })
+        if (el.getAttribute(`data-pokedex-${pokedex}`) === '1') {
+            el.classList.add('border-green-600', 'pokemon-catched')
+            el.classList.remove('border-gray-400', 'border-opacity-20')
+        } else {
+            el.classList.remove('border-green-600', 'pokemon-catched')
+            el.classList.add('border-gray-400', 'border-opacity-20')
+
+        }
     })
-
-    function fetchApi(data, url) {
-        fetch(url, {
-            method: "POST",
-            body: data,
-        })
-            .then(response => response.json())
-            .then(json => console.log(json))
-    }
 }
