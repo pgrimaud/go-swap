@@ -53,7 +53,9 @@ class PokemonController extends AbstractController
         $id = $data['id'];
         $pokedex = $data['pokedex'];
 
-        $alreadyExist = $userPokemonRepository->findOneBy(['user' => $user, 'pokemon' => $id]);
+        $alreadyExist = $userPokemonRepository->findOneBy(
+            ['user' => $user, 'pokemon' => $id]
+        );
 
         if (!$alreadyExist) {
             $pokemon = $pokemonRepository->findOneBy(['number' => $id]);
