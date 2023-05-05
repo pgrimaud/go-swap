@@ -12,16 +12,20 @@
         </div>
 
         <div class="flex flex-row justify-center gap-10 mb-6" id="filters">
-            <button id="normal" class="bg-gradient-to-r text-white py-2 px-6 rounded border-white {% if app.request.get('type') == 'normal' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
+            <button id="normal"
+                    class="bg-gradient-to-r text-white py-2 px-6 rounded border-white {% if app.request.get('type') == 'normal' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
                 Normal
             </button>
-            <button id="shiny" class="bg-gradient-to-r text-white py-2 px-6 rounded border-white {% if app.request.get('type') == 'shiny' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
+            <button id="shiny"
+                    class="bg-gradient-to-r text-white py-2 px-6 rounded border-white {% if app.request.get('type') == 'shiny' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
                 Shiny
             </button>
-            <button id="lucky" class="bg-gradient-to-r text-white py-2 px-6 rounded border-white {% if app.request.get('type') == 'lucky' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
+            <button id="lucky"
+                    class="bg-gradient-to-r text-white py-2 px-6 rounded border-white {% if app.request.get('type') == 'lucky' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
                 Lucky
             </button>
-            <button id="threeStars" class="bg-gradient-to-r text-white py-2 px-6 rounded border-white {% if app.request.get('type') == 'threeStars' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
+            <button id="threeStars"
+                    class="bg-gradient-to-r text-white py-2 px-6 rounded border-white {% if app.request.get('type') == 'threeStars' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
                 3 Stars
             </button>
         </div>
@@ -29,11 +33,23 @@
         <div class="h-fit flex flex-row flex-wrap  gap-4 justify-center p-6" id="pokedex">
             {% for pokemon in pokemons %}
                 <div class="poke-card flex flex-col w-[200px] p-4 justify-center items-center h-full bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10"
-                data-name-fr="{{ pokemon.frenchName|lower }}" data-name-en="{{ pokemon.englishName|lower }}" data-number="{{ pokemon.number }}" data-shiny="{{ pokemon.isShiny }}">
-                    <img src="{{ asset('images/normal/' ~ pokemon.number ~ '.png') }}" alt="" class="w-fit {% if app.request.get('type') == 'shiny' %}hidden{% endif%} normal-picture" loading="lazy">
-                    <img src="{{ asset('images/shiny/' ~ pokemon.number ~ '.png') }}" alt="" class="w-fit {% if app.request.get('type') != 'shiny' %}hidden{% endif%} shiny-picture" loading="lazy">
+                     data-name-fr="{{ pokemon.frenchName|lower }}" data-name-en="{{ pokemon.englishName|lower }}"
+                     data-number="{{ pokemon.number }}" data-shiny="{{ pokemon.isShiny }}"
+
+                     data-pokedex-normal="{% if userPokemons[pokemon.number] is defined %}{{ userPokemons[pokemon.number].normal }}{% else %}0{% endif %}"
+                     data-pokedex-shiny="{% if userPokemons[pokemon.number] is defined %}{{ userPokemons[pokemon.number].shiny }}{% else %}0{% endif %}"
+                     data-pokedex-lucky="{% if userPokemons[pokemon.number] is defined %}{{ userPokemons[pokemon.number].normal }}{% else %}0{% endif %}"
+                     data-pokedex-three-stars="{% if userPokemons[pokemon.number] is defined %}{{ userPokemons[pokemon.number].normal }}{% else %}0{% endif %}"
+                >
+                    <img src="{{ asset('images/normal/' ~ pokemon.number ~ '.png') }}" alt=""
+                         class="w-fit {% if app.request.get('type') == 'shiny' %}hidden{% endif %} normal-picture"
+                         loading="lazy">
+                    <img src="{{ asset('images/shiny/' ~ pokemon.number ~ '.png') }}" alt=""
+                         class="w-fit {% if app.request.get('type') != 'shiny' %}hidden{% endif %} shiny-picture"
+                         loading="lazy">
                     <div class="flex flex-row gap-1 justify-center">
-                        <p class="whitespace-nowrap text-sm white text-white">#{{ pokemon.number }} {{ pokemon.frenchName }}</p>
+                        <p class="whitespace-nowrap text-sm white text-white">
+                            #{{ pokemon.number }} {{ pokemon.frenchName }}</p>
                     </div>
                 </div>
             {% endfor %}

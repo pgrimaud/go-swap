@@ -6,6 +6,7 @@ use App\Entity\UserPokemon;
 use App\Helper\PokedexHelper;
 use App\Repository\PokemonRepository;
 use App\Repository\UserPokemonRepository;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,10 +16,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class PokemonController extends AbstractController
 {
     #[Route('/pokedex', name: 'show_pokedex')]
-    public function show(PokemonRepository $pokemonRepository): Response
+    public function show(PokemonRepository $pokemonRepository, UserPokemonRepository $userPokemonRepository, EntityManagerInterface $entityManager): Response
     {
+        $query = $pokemonRepository->getUserPokemon($this->getUser());
+
         return $this->render('app/pokedex.html.twig', [
-            'pokemons' =>$pokemonRepository->findBy([],['number' => 'ASC']),
+            'pokemons' => $pokemonRepository->findBy([], ['number' => 'ASC']),
+            'userPokemons' => $query,
         ]);
     }
 

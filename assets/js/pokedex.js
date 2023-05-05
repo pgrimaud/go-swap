@@ -60,19 +60,30 @@ document.querySelector('#search').addEventListener('keyup', (event) => {
 document.querySelectorAll('#pokedex .poke-card').forEach(el => {
 
     el.addEventListener('click', (event) => {
-        console.log(document.querySelector('.active-filter'))
-
         const data = new FormData();
         data.append('id', el.dataset.number);
         data.append('pokedex', document.querySelector('.active-filter').getAttribute('id'));
-        fetchApi(data)
 
+        if (el.classList.contains('pokemon-catched')) {
+            fetchApi(data, "http://127.0.0.1:8000/delete")
+        } else {
+            fetchApi(data, "http://127.0.0.1:8000/add")
+
+            el.classList.add('pokemon-catched')
+        }
     })
 })
-function fetchApi(data)
-{
-    console.log(data)
-    fetch("http://127.0.0.1:8000/add", {
+document.querySelectorAll('.poke-card').forEach(el => {
+    document.querySelectorAll('#filters button').forEach(filter => {
+
+        if (el.dataset.pokedex === filter.getAttribute('id')) {
+            el.classList.remove('hidden')
+        }
+    })
+})
+
+function fetchApi(data, url) {
+    fetch(url, {
         method: "POST",
         body: data,
     })
