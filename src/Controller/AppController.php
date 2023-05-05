@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Helper\PokedexHelper;
 use App\Repository\PokemonRepository;
 use App\Repository\UserPokemonRepository;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -31,7 +32,14 @@ class AppController extends AbstractController
         }
 
         return $this->render('app/index.html.twig', [
-            'pokedexs' => $pokedexs,
+            'pokedexs' => $pokedexs
+        ]);
+    }
+
+    public function users(UserRepository $userRepository): Response
+    {
+        return $this->render('app/users.html.twig', [
+            'users' => $userRepository->findAll()
         ]);
     }
 }

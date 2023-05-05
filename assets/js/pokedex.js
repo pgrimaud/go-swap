@@ -5,11 +5,13 @@ if (document.querySelector('#search')) {
             document.querySelectorAll('#filters button').forEach(el => {
                 el.classList.remove('from-pink-400')
                 el.classList.remove('to-purple-600')
+                el.classList.remove("active-filter")
                 el.classList.add('bg-slate-700')
             })
 
             event.target.classList.add('from-pink-400')
             event.target.classList.add('to-purple-600')
+            event.target.classList.add("active-filter")
 
             filter()
         })
@@ -64,5 +66,39 @@ function filter() {
     // if no pokemon found
     if (document.querySelectorAll('#pokedex .poke-card:not(.hidden)').length === 0) {
         document.querySelector('#pokedex .no-pokemon').classList.remove('hidden')
+    }
+
+    document.querySelectorAll('#pokedex .poke-card').forEach(el => {
+
+        el.addEventListener('click', (event) => {
+            const data = new FormData();
+            data.append('id', el.dataset.number);
+            data.append('pokedex', document.querySelector('.active-filter').getAttribute('id'));
+
+            if (el.classList.contains('pokemon-catched')) {
+                fetchApi(data, "/delete")
+            } else {
+                fetchApi(data, "/add")
+
+                el.classList.add('pokemon-catched')
+            }
+        })
+    })
+    document.querySelectorAll('.poke-card').forEach(el => {
+        document.querySelectorAll('#filters button').forEach(filter => {
+
+            if (el.dataset.pokedex === filter.getAttribute('id')) {
+                el.classList.remove('hidden')
+            }
+        })
+    })
+
+    function fetchApi(data, url) {
+        fetch(url, {
+            method: "POST",
+            body: data,
+        })
+            .then(response => response.json())
+            .then(json => console.log(json))
     }
 }
