@@ -31,8 +31,8 @@ class PokemonController extends AbstractController
     ): Response
     {
         $user = $this->getUser();
-
         $data = $request->request->all();
+
         $id = $data['id'];
         $pokedex = $data['pokedex'];
 
