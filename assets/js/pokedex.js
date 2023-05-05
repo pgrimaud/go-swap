@@ -9,6 +9,7 @@ if (document.querySelector('#search')) {
             })
 
             event.target.classList.add('from-pink-400', 'to-purple-600', 'active-filter')
+            window.history.replaceState({}, '', `?type=${event.target.getAttribute('id')}`)
             filter()
         })
     })
