@@ -7,10 +7,11 @@ if (document.querySelector('#search')) {
                 el.classList.remove('from-pink-400', 'to-purple-600', 'active-filter')
                 el.classList.add('bg-slate-700')
             })
-
             event.target.classList.add('from-pink-400', 'to-purple-600', 'active-filter')
             window.history.replaceState({}, '', `?type=${event.target.getAttribute('id')}`)
             filter()
+            hidePokemon()
+
         })
     })
 
@@ -61,10 +62,12 @@ function fetchApi(data, url) {
         body: data,
     })
         .then(response => response.json())
-        .then(json => {})
+        .then(json => {
+        })
 }
 
 function filter() {
+
     // reset no pokemon found
     document.querySelector('#pokedex .no-pokemon').classList.add('hidden')
 
@@ -74,18 +77,23 @@ function filter() {
     if (/^\d+$/.test(search) === true) {
         document.querySelectorAll('#pokedex .poke-card').forEach(el => el.classList.add('hidden'))
         document.querySelector(`#pokedex .poke-card[data-number="${search}"]`).classList.remove('hidden')
+
     } else if (search === '') {
         // reset to display all
         document.querySelectorAll('#pokedex .poke-card').forEach(el => el.classList.remove('hidden'))
+
     } else {
+
         document.querySelectorAll('#pokedex .poke-card').forEach(el => el.classList.add('hidden'))
         document.querySelectorAll(`#pokedex .poke-card`).forEach(el => {
             if (el.dataset.nameFr.includes(search) === true || el.dataset.nameEn.includes(search) === true) {
                 el.classList.remove('hidden')
             }
         })
-    }
 
+
+    }
+    hidePokemon()
     // find pokedex selected
     const pokedex = document.querySelector('#filters button.to-purple-600').getAttribute('id')
 
@@ -129,3 +137,40 @@ function filter() {
 
 
 }
+
+document.querySelector('#toggleCatchPokemons').addEventListener('click', hidePokemon)
+
+function hidePokemon() {
+    let catchedPokemon = document.querySelectorAll(".pokemon-catched")
+    const pokedex = document.querySelector('#filters button.to-purple-600').getAttribute('id')
+
+    if (document.querySelector('#toggleCatchPokemons').checked) {
+        catchedPokemon.forEach(el => {
+
+            if (el.getAttribute(`data-pokedex-${pokedex}`) === '1') {
+                el.classList.add('hidden')
+            }
+        })
+    } else {
+
+        catchedPokemon.forEach(el => {
+
+            if (el.getAttribute(`data-pokedex-${pokedex}`) === '1') {
+                let search = document.querySelector('#search').value
+
+                if (search !== "") {
+
+                    if (el.dataset.nameFr.includes(search.toLowerCase()) || el.dataset.number.includes(search)) {
+                        el.classList.remove('hidden')
+                        document.querySelector(".no-pokemon").classList.add('hidden')
+                    } else {
+                        el.classList.add('hidden')
+                    }
+                } else {
+                    el.classList.remove('hidden')
+                }
+            }
+        })
+    }
+}
+
