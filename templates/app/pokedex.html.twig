@@ -4,19 +4,19 @@
     <div class="h-full p-6">
         {% include 'partials/header.html.twig' %}
 
-        <div class="w-1/2 flex flex-col m-auto mb-4 mt-12">
+        <div class="w-1/2 flex flex-col m-auto mb-4 mt-12 max-lg:w-full ">
             {% if app.request.get('id') %}
                 <h1 class="text-center text-white text-3xl mb-10"> {{ pokedexUsername.username }}'s Pokédex</h1>
             {% else %}
                 <h1 class="text-center text-white text-3xl mb-10">Your Pokédex</h1>
             {% endif %}
             <input placeholder="Search for a pokemon..." type="text" autofocus autocomplete="off" spellcheck="false"
-                   class="w-full shadow appearance-none border rounded p-3 text-gray-700 leading-tight mb-4"
+                   class="w-full shadow appearance-none border rounded p-3 text-gray-700 leading-tight mb-4 "
                    id="search"
             >
         </div>
 
-        <div class="flex flex-row justify-center gap-10 mb-6" id="filters">
+        <div class="flex flex-row justify-center gap-10 mb-6 max-lg:flex-col max-lg:w-1/3 max-lg:gap-4 max-lg:m-auto" id="filters">
             <button id="normal"
                     class="bg-gradient-to-r text-white py-2 px-6 rounded border-white {% if app.request.get('type') == 'normal' or app.request.get('type') == '' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
                 Normal
@@ -45,11 +45,11 @@
                      data-pokedex-lucky="{% if userPokemons[pokemon.number] is defined %}{{ userPokemons[pokemon.number].lucky }}{% else %}0{% endif %}"
                      data-pokedex-threeStars="{% if userPokemons[pokemon.number] is defined %}{{ userPokemons[pokemon.number].threeStars }}{% else %}0{% endif %}"
                 >
-                    <div class="background w-full h-full absolute z-0 opacity-30 rounded-md background-lucky {% if app.request.get('type') != 'lucky' %}hidden{% endif %}"
+                    <div class="background w-[194px] h-[194px] absolute z-0 opacity-30 rounded-md background-lucky {% if app.request.get('type') != 'lucky' %}hidden{% endif %}"
                          style="background-image: url('{{ asset('images/lucky.jpg') }}');"></div>
 
                     <img src="{{ asset('images/shiny-icon.png') }}"
-                         class="shiny-icon absolute w-[30px] z-20 right-5 top-5 {% if app.request.get('type') != 'shiny' %}hidden{% endif %}">
+                         class="shiny-icon absolute w-[30px] z-20 ml-32 mb-32 {% if app.request.get('type') != 'shiny' %}hidden{% endif %}">
 
                     <img src="{{ asset('images/normal/' ~ pokemon.number ~ '.png') }}" alt=""
                          class="z-10 w-fit {% if app.request.get('type') == 'shiny' %}hidden{% endif %} normal-picture"
