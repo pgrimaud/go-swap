@@ -139,7 +139,7 @@ function filter() {
 
 }
 
-if (window.location.href.includes('pokedex')) {
+if (document.querySelector('#toggleCatchPokemons')) {
     document.querySelector('#toggleCatchPokemons').addEventListener('click', hidePokemon)
 }
 

@@ -2,8 +2,8 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{% block title %}Go Swap{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, user-scalable=no">
+        <title>{% block title %}GO Trade{% endblock %}</title>
         <link rel="icon" href="{{ asset('images/icon.png') }}">
         <link rel="apple-touch-icon" href="{{ asset('images/icon.png') }}">
 
@@ -22,7 +22,7 @@
             }
         </style>
     </head>
-    <body class="leading-normal tracking-normal text-indigo-400 h-screen bg-cover bg-fixed" style="background-image: url('{{ asset('images/header.png') }}');">
+    <body class="leading-normal tracking-normal text-indigo-400 h-screen bg-cover bg-fixed bg-[#141414]" style="background-image: url('{{ asset('images/header.png') }}');">
         {% block body %}{% endblock %}
         <script src="https://kit.fontawesome.com/084159f03b.js" crossorigin="anonymous" rel="preload"></script>
     </body>
