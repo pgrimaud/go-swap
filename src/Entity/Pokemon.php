@@ -33,6 +33,12 @@ class Pokemon
     #[ORM\OneToMany(mappedBy: 'pokemon', targetEntity: UserPokemon::class, orphanRemoval: true)]
     private Collection $userPokemon;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $normalPicture = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $shinyPicture = null;
+
     public function __construct()
     {
         $this->userPokemon = new ArrayCollection();
@@ -138,5 +144,29 @@ class Pokemon
     public function __toString(): string
     {
         return (string)$this->frenchName;
+    }
+
+    public function getNormalPicture(): ?string
+    {
+        return $this->normalPicture;
+    }
+
+    public function setNormalPicture(?string $normalPicture): self
+    {
+        $this->normalPicture = $normalPicture;
+
+        return $this;
+    }
+
+    public function getShinyPicture(): ?string
+    {
+        return $this->shinyPicture;
+    }
+
+    public function setShinyPicture(?string $shinyPicture): self
+    {
+        $this->shinyPicture = $shinyPicture;
+
+        return $this;
     }
 }
