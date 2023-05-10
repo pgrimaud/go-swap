@@ -47,4 +47,3 @@ jobs:
       - name: "Install JS dependencies & build front"
         run: npm install && npm run build
 
-
