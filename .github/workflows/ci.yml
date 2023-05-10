@@ -1,4 +1,4 @@
-name: Continuous integration
+name: Continuous delivery
 
 on:
   push:
@@ -24,6 +24,27 @@ jobs:
       - name: "Install dependencies"
         run: composer install
 
+      - name: "Audit dependencies"
+        run: composer audit
+
       - name: "Run PHPStan"
         run: composer phpstan
+  cd:
+    name: Deploy to production
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Init repository"
+        uses: actions/checkout@v3
+
+      - name: "Install node"
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: "Install JS dependencies & build front"
+        run: npm install && npm run build
+
 
