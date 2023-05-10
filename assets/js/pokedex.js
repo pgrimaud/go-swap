@@ -32,6 +32,7 @@ if (document.querySelector('#search')) {
                 fetchApi(data, "/add")
                 el.classList.add('pokemon-catched', 'border-green-600')
                 el.classList.remove('border-gray-400', 'border-opacity-20')
+                hidePokemon()
             }
         })
     })
@@ -138,7 +139,9 @@ function filter() {
 
 }
 
-document.querySelector('#toggleCatchPokemons').addEventListener('click', hidePokemon)
+if (window.location.href.includes('pokedex')) {
+    document.querySelector('#toggleCatchPokemons').addEventListener('click', hidePokemon)
+}
 
 function hidePokemon() {
     let catchedPokemon = document.querySelectorAll(".pokemon-catched")
