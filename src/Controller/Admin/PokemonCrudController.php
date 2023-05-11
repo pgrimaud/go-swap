@@ -22,7 +22,6 @@ class PokemonCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id'),
             IntegerField::new('number'),
             TextField::new('generation'),
             TextField::new('frenchName'),
@@ -31,7 +30,7 @@ class PokemonCrudController extends AbstractCrudController
             ImageField::new('normalPicture')
                 ->setUploadDir('public/images/normal')
                 ->setBasePath('images/normal')
-                ->setUploadedFileNamePattern('[slug]-[randomhash].[extension]')
+                ->setUploadedFileNamePattern('[slug].[extension]')
                 ->setFormTypeOptions([
                     'attr'=>[
                         'accept'=>'image/*'
