@@ -60,14 +60,17 @@
                          style="background-image: url('{{ asset('images/lucky.jpg') }}');"></div>
 
                     <img src="{{ asset('images/shiny-icon.png') }}"
-                         class="shiny-icon absolute w-[30px] z-20 ml-32 mb-32 {% if app.request.get('type') != 'shiny' %}hidden{% endif %}">
+                         class="shiny-icon absolute w-[30px] z-20 ml-32 mb-32 {% if app.request.get('type') != 'shiny' %}hidden{% endif %}"
+                         alt="Icon shiny">
 
-                    <img src="{{ asset('images/normal/' ~ pokemon.normalPicture) }}" alt=""
+                    <img src="{{ asset('images/normal/' ~ pokemon.normalPicture) }}"
                          class="z-10 w-fit {% if app.request.get('type') == 'shiny' %}hidden{% endif %} normal-picture"
-                         loading="lazy">
-                    <img src="{{ asset('images/shiny/' ~ pokemon.shinyPicture) }}" alt=""
+                         loading="lazy"
+                         alt="Normal pictures for pokemons">
+                    <img src="{{ asset('images/shiny/' ~ pokemon.shinyPicture) }}"
                          class="z-10 w-fit {% if app.request.get('type') != 'shiny' %}hidden{% endif %} shiny-picture"
-                         loading="lazy">
+                         loading="lazy"
+                         alt="Shiny pictures for pokemons">
                     <div class="flex flex-col gap-1 justify-center z-10">
                         <p class="whitespace-nowrap text-sm text-white">
                             #{{ pokemon.number }} {{ pokemon.frenchName }}
