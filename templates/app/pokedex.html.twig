@@ -62,10 +62,10 @@
                     <img src="{{ asset('images/shiny-icon.png') }}"
                          class="shiny-icon absolute w-[30px] z-20 ml-32 mb-32 {% if app.request.get('type') != 'shiny' %}hidden{% endif %}">
 
-                    <img src="{{ asset('images/normal/' ~ pokemon.number ~ '.png') }}" alt=""
+                    <img src="{{ asset('images/normal/' ~ pokemon.normalPicture) }}" alt=""
                          class="z-10 w-fit {% if app.request.get('type') == 'shiny' %}hidden{% endif %} normal-picture"
                          loading="lazy">
-                    <img src="{{ asset('images/shiny/' ~ pokemon.number ~ '.png') }}" alt=""
+                    <img src="{{ asset('images/shiny/' ~ pokemon.shinyPicture) }}" alt=""
                          class="z-10 w-fit {% if app.request.get('type') != 'shiny' %}hidden{% endif %} shiny-picture"
                          loading="lazy">
                     <div class="flex flex-col gap-1 justify-center z-10">
