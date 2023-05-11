@@ -32,8 +32,8 @@ class PokemonCrudController extends AbstractCrudController
                 ->setBasePath('images/normal')
                 ->setUploadedFileNamePattern('[slug].[extension]')
                 ->setFormTypeOptions([
-                    'attr'=>[
-                        'accept'=>'image/*'
+                    'attr' => [
+                        'accept' => 'image/*'
                     ]
                 ]),
             ImageField::new('shinyPicture')
@@ -41,8 +41,8 @@ class PokemonCrudController extends AbstractCrudController
                 ->setBasePath('images/shiny')
                 ->setUploadedFileNamePattern('[slug]-[randomhash].[extension]')
                 ->setFormTypeOptions([
-                    'attr'=>[
-                        'accept'=>'image/*'
+                    'attr' => [
+                        'accept' => 'image/*'
                     ]
                 ]),
         ];
