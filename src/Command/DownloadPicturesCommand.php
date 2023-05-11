@@ -56,6 +56,9 @@ class DownloadPicturesCommand extends Command
                 fwrite($fp, $image);
                 fclose($fp);
             }
+            $pokemon->setNormalPicture($pokemon->getNumber() . '.png');
+            $this->entityManager->persist($pokemon);
+            $this->entityManager->flush();
         }
         $progressBar->finish();
     }
@@ -87,6 +90,9 @@ class DownloadPicturesCommand extends Command
                 fwrite($fp, $image);
                 fclose($fp);
             }
+            $pokemon->setShinyPicture($pokemon->getNumber() . '.png');
+            $this->entityManager->persist($pokemon);
+            $this->entityManager->flush();
         }
         $progressBar->finish();
     }
