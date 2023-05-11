@@ -33,6 +33,10 @@ if (document.querySelector('#search')) {
                 el.classList.add('pokemon-catched', 'border-green-600')
                 el.classList.remove('border-gray-400', 'border-opacity-20')
                 hidePokemon()
+                // if no pokemon found
+                if (document.querySelectorAll('#pokedex .poke-card:not(.hidden)').length === 0) {
+                    document.querySelector('#pokedex .no-pokemon').classList.remove('hidden')
+                }
             }
         })
     })
@@ -140,7 +144,13 @@ function filter() {
 }
 
 if (document.querySelector('#toggleCatchPokemons')) {
-    document.querySelector('#toggleCatchPokemons').addEventListener('click', hidePokemon)
+    document.querySelector('#toggleCatchPokemons').addEventListener('click', () => {
+        hidePokemon()
+        // if no pokemon found
+        if (document.querySelectorAll('#pokedex .poke-card:not(.hidden)').length === 0) {
+            document.querySelector('#pokedex .no-pokemon').classList.remove('hidden')
+        }
+    })
 }
 
 function hidePokemon() {

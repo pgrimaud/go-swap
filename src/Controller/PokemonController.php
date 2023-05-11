@@ -58,7 +58,7 @@ class PokemonController extends AbstractController
         );
 
         if (!$alreadyExist) {
-            $pokemon = $pokemonRepository->findOneBy(['number' => $id]);
+            $pokemon = $pokemonRepository->findOneBy(['id' => $id]);
 
             $userPokemon = new UserPokemon();
             $userPokemon->setUser($user);
