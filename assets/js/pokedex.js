@@ -1,189 +1,150 @@
 if (document.querySelector('#search')) {
+    let parameters = {
+        'search': document.querySelector('#search').value,
+        'pokedex': document.querySelector('#filters .active-filter').getAttribute('id'),
+        'hideCaught': document.querySelector('#hide-caught').checked
+    }
+
     filter()
-    document.querySelector('#search').addEventListener('keyup', (event) => filter())
+
+    /**
+     * EVENTS
+     */
+
+    // input search
+    document.querySelector('#search').addEventListener('keyup', (e) => {
+        parameters.search = e.currentTarget.value
+        filter()
+    })
+
+    // pokédex type filters
     document.querySelectorAll('#filters button').forEach(el => {
-        el.addEventListener('click', (event) => {
+        el.addEventListener('click', (e) => {
+            // reset all buttons style
             document.querySelectorAll('#filters button').forEach(el => {
                 el.classList.remove('from-pink-400', 'to-purple-600', 'active-filter')
                 el.classList.add('bg-slate-700')
             })
-            event.target.classList.add('from-pink-400', 'to-purple-600', 'active-filter')
-            window.history.replaceState({}, '', `?type=${event.target.getAttribute('id')}`)
-            filter()
-            hidePokemon()
 
+            e.target.classList.add('from-pink-400', 'to-purple-600', 'active-filter')
+            window.history.replaceState({}, '', `?type=${e.target.getAttribute('id')}`)
+            parameters.pokedex = el.getAttribute('id')
+
+            filter()
         })
     })
 
-    document.querySelectorAll('#pokedex .poke-card-user').forEach(el => {
+    // hide caught pokémon
+    document.querySelector('#hide-caught').addEventListener('change', (e) => {
+        parameters.hideCaught = e.currentTarget.checked
+        filter()
+    })
 
+    // add or remove pokémon to a pokédex
+    document.querySelectorAll('#pokedex .poke-card-user').forEach(el => {
         el.addEventListener('click', (event) => {
             const data = new FormData();
             data.append('id', el.dataset.internalId);
-            data.append('pokedex', document.querySelector('.active-filter').getAttribute('id'));
+            data.append('pokedex', parameters.pokedex);
 
-            if (el.classList.contains('pokemon-catched')) {
-                el.setAttribute(`data-pokedex-${document.querySelector('.active-filter').getAttribute('id')}`, 0)
+            if (el.classList.contains('pokemon-caught')) {
+                el.setAttribute(`data-pokedex-${parameters.pokedex}`, 0)
                 fetchApi(data, "/delete")
-                el.classList.add('border-gray-400', 'border-opacity-20')
-                el.classList.remove('pokemon-catched', 'border-green-600')
+
+                displayCardAsCaught(el, false)
             } else {
-                el.setAttribute(`data-pokedex-${document.querySelector('.active-filter').getAttribute('id')}`, 1)
+                el.setAttribute(`data-pokedex-${parameters.pokedex}`, 1)
                 fetchApi(data, "/add")
-                el.classList.add('pokemon-catched', 'border-green-600')
-                el.classList.remove('border-gray-400', 'border-opacity-20')
-                hidePokemon()
-                // if no pokemon found
-                if (document.querySelectorAll('#pokedex .poke-card:not(.hidden)').length === 0) {
-                    document.querySelector('#pokedex .no-pokemon').classList.remove('hidden')
-                }
-            }
-        })
-    })
-    document.querySelectorAll('.poke-card').forEach(el => {
-        document.querySelectorAll('#filters button').forEach(filter => {
 
-            if (el.dataset.pokedex === filter.getAttribute('id')) {
-                el.classList.remove('hidden')
+                displayCardAsCaught(el, true)
+                displayNoPokemonFound(document.querySelectorAll('#pokedex .poke-card:not(.hidden)').length === 0)
+                filter()
             }
         })
     })
 
-    // add border to pokemon catched
-    document.querySelectorAll('.poke-card-user').forEach(el => {
-        const pokedex = document.querySelector('#filters button.to-purple-600').getAttribute('id')
+    /**
+     * METHODS
+     */
 
-        if (el.getAttribute(`data-pokedex-${pokedex}`) === '1') {
-            el.classList.add('border-green-600', 'pokemon-catched')
-            el.classList.remove('border-gray-400', 'border-opacity-20')
-        }
-    })
+    function filter() {
+        // reset cards
+        displayNoPokemonFound(false)
+        displayAllPokemonCards(true)
+        displayPokedexCardType(parameters.pokedex)
 
-}
-
-function fetchApi(data, url) {
-    fetch(url, {
-        method: "POST",
-        body: data,
-    })
-        .then(response => response.json())
-        .then(json => {
-        })
-}
-
-function filter() {
-
-    // reset no pokemon found
-    document.querySelector('#pokedex .no-pokemon').classList.add('hidden')
-
-    const search = document.querySelector('#search').value.toLowerCase()
-
-    // filter only on numbers
-    if (/^\d+$/.test(search) === true) {
-        document.querySelectorAll('#pokedex .poke-card').forEach(el => el.classList.add('hidden'))
-        document.querySelector(`#pokedex .poke-card[data-number="${search}"]`).classList.remove('hidden')
-
-    } else if (search === '') {
-        // reset to display all
-        document.querySelectorAll('#pokedex .poke-card').forEach(el => el.classList.remove('hidden'))
-
-    } else {
-
-        document.querySelectorAll('#pokedex .poke-card').forEach(el => el.classList.add('hidden'))
-        document.querySelectorAll(`#pokedex .poke-card`).forEach(el => {
-            if (el.dataset.nameFr.includes(search) === true || el.dataset.nameEn.includes(search) === true) {
-                el.classList.remove('hidden')
-            }
+        // display pokémon as caught
+        document.querySelectorAll('.poke-card-user').forEach(el => {
+            displayCardAsCaught(el, el.getAttribute(`data-pokedex-${parameters.pokedex}`) === '1')
         })
 
-
-    }
-    hidePokemon()
-    // find pokedex selected
-    const pokedex = document.querySelector('#filters button.to-purple-600').getAttribute('id')
-
-    // reset pokedex
-    document.querySelectorAll('.background-lucky').forEach(el => el.classList.add('hidden'))
-    document.querySelectorAll('.shiny-picture').forEach(el => el.classList.add('hidden'))
-    document.querySelectorAll('.normal-picture').forEach(el => el.classList.remove('hidden'))
-    document.querySelectorAll('.shiny-icon').forEach(el => el.classList.add('hidden'))
-
-    if (pokedex === 'shiny') {
-        document.querySelectorAll('.shiny-picture').forEach(el => el.classList.remove('hidden'))
-        document.querySelectorAll('.normal-picture').forEach(el => el.classList.add('hidden'))
-        document.querySelectorAll('.shiny-icon').forEach(el => el.classList.remove('hidden'))
-
-        document.querySelectorAll('.poke-card').forEach(el => {
-            if (el.dataset.shiny !== '1') {
-                el.classList.add('hidden')
-            }
-        })
-    } else if (pokedex === 'lucky') {
-        document.querySelectorAll('.background-lucky').forEach(el => el.classList.remove('hidden'))
-    }
-
-    // if no pokemon found
-    if (document.querySelectorAll('#pokedex .poke-card:not(.hidden)').length === 0) {
-        document.querySelector('#pokedex .no-pokemon').classList.remove('hidden')
-    }
-
-    document.querySelectorAll('.poke-card').forEach(el => {
-        const pokedex = document.querySelector('#filters button.to-purple-600').getAttribute('id')
-
-        if (el.getAttribute(`data-pokedex-${pokedex}`) === '1') {
-            el.classList.add('border-green-600', 'pokemon-catched')
-            el.classList.remove('border-gray-400', 'border-opacity-20')
+        // filter search
+        if (/^\d+$/.test(parameters.search) === true) {
+            displayAllPokemonCards(false)
+            displayPokemonCards(`#pokedex .poke-card[data-number="${parameters.search}"]`, true)
+        } else if (parameters.search === '') {
+            // nothing to do
         } else {
-            el.classList.remove('border-green-600', 'pokemon-catched')
-            el.classList.add('border-gray-400', 'border-opacity-20')
-
-        }
-    })
-
-
-}
-
-if (document.querySelector('#toggleCatchPokemons')) {
-    document.querySelector('#toggleCatchPokemons').addEventListener('click', () => {
-        hidePokemon()
-        // if no pokemon found
-        if (document.querySelectorAll('#pokedex .poke-card:not(.hidden)').length === 0) {
-            document.querySelector('#pokedex .no-pokemon').classList.remove('hidden')
-        }
-    })
-}
-
-function hidePokemon() {
-    let catchedPokemon = document.querySelectorAll(".pokemon-catched")
-    const pokedex = document.querySelector('#filters button.to-purple-600').getAttribute('id')
-
-    if (document.querySelector('#toggleCatchPokemons').checked) {
-        catchedPokemon.forEach(el => {
-
-            if (el.getAttribute(`data-pokedex-${pokedex}`) === '1') {
-                el.classList.add('hidden')
-            }
-        })
-    } else {
-
-        catchedPokemon.forEach(el => {
-
-            if (el.getAttribute(`data-pokedex-${pokedex}`) === '1') {
-                let search = document.querySelector('#search').value
-
-                if (search !== "") {
-
-                    if (el.dataset.nameFr.includes(search.toLowerCase()) || el.dataset.number.includes(search)) {
-                        el.classList.remove('hidden')
-                        document.querySelector(".no-pokemon").classList.add('hidden')
-                    } else {
-                        el.classList.add('hidden')
-                    }
-                } else {
+            displayAllPokemonCards(false)
+            document.querySelectorAll(`#pokedex .poke-card`).forEach(el => {
+                if (
+                    el.dataset.nameFr.includes(parameters.search) === true ||
+                    el.dataset.nameEn.includes(parameters.search) === true
+                ) {
                     el.classList.remove('hidden')
                 }
-            }
+            })
+        }
+
+        // hide or display "caught" pokémon => input checkbox
+        if (parameters.hideCaught === true) {
+            displayPokemonCards(`#pokedex .poke-card.pokemon-caught`, false)
+        }
+
+        displayNoPokemonFound(document.querySelectorAll('#pokedex .poke-card:not(.hidden)').length === 0)
+    }
+
+    function displayPokemonCards(selector, reset) {
+        document.querySelectorAll(selector).forEach(el => el.classList.toggle('hidden', !reset))
+    }
+
+    function displayAllPokemonCards(reset) {
+        document.querySelectorAll('#pokedex .poke-card').forEach(el => el.classList.toggle('hidden', !reset))
+    }
+
+    function displayNoPokemonFound(reset) {
+        document.querySelector('#pokedex .no-pokemon').classList.toggle('hidden', !reset);
+    }
+
+    function displayCardAsCaught(el, reset) {
+        el.classList.toggle('pokemon-caught', reset)
+        el.classList.toggle('border-green-600', reset)
+        el.classList.toggle('border-gray-400', !reset)
+        el.classList.toggle('border-opacity-20', !reset)
+    }
+
+    function displayPokedexCardType(type) {
+        // reset cards
+        document.querySelectorAll('.background-lucky, .shiny-picture, .shiny-icon').forEach(el => el.classList.add('hidden'))
+        document.querySelectorAll('.normal-picture').forEach(el => el.classList.remove('hidden'))
+
+        if (type === 'shiny') {
+            document.querySelectorAll('.shiny-picture, .shiny-icon').forEach(el => el.classList.remove('hidden'))
+            document.querySelectorAll('.normal-picture').forEach(el => el.classList.add('hidden'))
+
+            document.querySelectorAll('.poke-card [data-shiny="1"]').forEach(el => el.classList.add('hidden'))
+        } else if (type === 'lucky') {
+            document.querySelectorAll('.background-lucky').forEach(el => el.classList.remove('hidden'))
+        }
+    }
+
+    function fetchApi(data, url) {
+        fetch(url, {
+            method: "POST",
+            body: data,
         })
+            .then(response => response.json())
+            .then(json => {
+            })
     }
 }
-
