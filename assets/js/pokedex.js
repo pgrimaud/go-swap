@@ -62,6 +62,15 @@ if (document.querySelector('#search')) {
             }
         })
     })
+    //Scroll to the right generation
+    document.querySelector("#selectGeneration").addEventListener("change", (e) => {
+        goToGeneration(document.querySelector("#selectGeneration").value);
+    })
+
+    //Scroll back to the top
+    document.querySelector("#scrollToTop").addEventListener("click", (e) => {
+        goToGeneration("page-top")
+    })
 
     /**
      * METHODS
@@ -69,9 +78,11 @@ if (document.querySelector('#search')) {
 
     function filter() {
         // reset cards
+        displayAllGeneration()
         displayNoPokemonFound(false)
         displayAllPokemonCards(true)
         displayPokedexCardType(parameters.pokedex)
+
 
         // display pokémon as caught
         document.querySelectorAll('.poke-card-user').forEach(el => {
@@ -102,6 +113,8 @@ if (document.querySelector('#search')) {
         }
 
         displayNoPokemonFound(document.querySelectorAll('#pokedex .poke-card:not(.hidden)').length === 0)
+
+        hideGenerations()
     }
 
     function displayPokemonCards(selector, reset) {
@@ -146,5 +159,23 @@ if (document.querySelector('#search')) {
             .then(response => response.json())
             .then(json => {
             })
+    }
+
+    function goToGeneration(gen) {
+        document.getElementById(gen).scrollIntoView({behavior: 'smooth', block: 'start'});
+    }
+
+    function displayAllGeneration() {
+        document.querySelectorAll('.generation').forEach(el => el.classList.remove('hidden'))
+    }
+
+    function hideGenerations(){
+        for (let i = 1; i <= 10; i++) {
+            if (document.querySelectorAll(`#pokedex .poke-card[data-generation="${i}G"]:not(.hidden)`).length === 0) {
+                if(document.getElementById(`${i}G`)){
+                    document.getElementById(`${i}G`).classList.add('hidden')
+                }
+            }
+        }
     }
 }

@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="h-full p-6 max-sm:pt-2 max-lg:h-fit">
+    <div class="h-full p-6 max-sm:pt-2 max-lg:h-fit" id="page-top">
         {% include 'partials/header.html.twig' %}
         <div class="w-1/2 flex flex-col m-auto max-sm:mb-2 mb-4 max-lg:w-full ">
             {% if app.request.get('id') %}
@@ -45,7 +45,7 @@
                 Hide captured
             </label>
             <label for="selectGeneration">
-                <select name="selectGeneration" >
+                <select name="selectGeneration" id="selectGeneration">
                     {% for generation in generations %}
                         <option value="{{ generation.type }}">{{ generation.name }}</option>
                     {% endfor %}
@@ -58,11 +58,11 @@
             {% for pokemon in pokemons %}
 
                 {% if loop.index == 1 %}
-                    <div class="w-full text-center text-3xl text-white p-6">{{ generations[loop.index-1].name }}</div>
+                    <div id="{{ generations[loop.index-1].type }}" class="w-full text-center text-3xl text-white p-6 generation" >{{ generations[loop.index-1].name }}</div>
                 {% elseif pokemon.generation != pokemons[loop.index0-1].generation %}
                     {% for generation in generations %}
                         {% if generation.type == pokemon.generation %}
-                            <div class="w-full text-center text-3xl text-white p-6" id="{{ generation.name }}">{{ generation.name }}</div>
+                            <div class="w-full text-center text-3xl text-white p-6 generation" id="{{ generation.type }}">{{ generation.name }}</div>
                         {% endif %}
                     {% endfor %}
 
@@ -75,6 +75,7 @@
                      data-pokedex-shiny="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].shiny }}{% else %}0{% endif %}"
                      data-pokedex-lucky="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].lucky }}{% else %}0{% endif %}"
                      data-pokedex-threeStars="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].threeStars }}{% else %}0{% endif %}"
+                     data-generation="{{ pokemon.generation }}"
                 >
                     <div class="background max-sm:w-[160px] w-[194px] h-[194px] absolute z-0 opacity-30 rounded-md background-lucky {% if app.request.get('type') != 'lucky' %}hidden{% endif %}"
                          style="background-image: url('{{ asset('images/lucky.jpg') }}');"></div>
@@ -107,7 +108,7 @@
 
         </div>
     </div>
-    <div class="fixed bottom-4 right-4 bg-white rounded-full px-4 py-2 z-20 flex justify-center gap-2 items-center max-lg:px-2">
+    <div class="fixed bottom-4 right-4 bg-white rounded-full px-4 py-2 z-20 flex justify-center gap-2 items-center max-lg:px-2" id="scrollToTop">
         <span class="max-lg:hidden">Back to top</span>
         <i class="fa-solid fa-chevron-up"></i>
     </div>
