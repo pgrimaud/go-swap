@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\UserPokemon;
+use App\Helper\GenerationHelper;
 use App\Helper\PokedexHelper;
 use App\Repository\PokemonRepository;
 use App\Repository\UserPokemonRepository;
@@ -21,21 +22,32 @@ class PokemonController extends AbstractController
     {
         $query = $pokemonRepository->getUserPokemon($this->getUser());
 
+        $generations = [];
+
+        foreach (GenerationHelper::GENERATION as $type => $name) {
+            $generations[] = [
+                'type' => $type,
+                'name' => $name,
+                'count' => $pokemonRepository->getCountByGeneration($type)
+            ];
+        }
+
         return $this->render('app/pokedex.html.twig', [
             'pokemons' => $pokemonRepository->findBy([], ['number' => 'ASC']),
             'userPokemons' => $query,
+            'generations' => $generations,
         ]);
     }
 
     #[Route('/pokedex-friend/{id}', name: 'showFriends_pokedex')]
-    public function showFriends(int $id,UserRepository $userRepository,PokemonRepository $pokemonRepository, UserPokemonRepository $userPokemonRepository, EntityManagerInterface $entityManager): Response
+    public function showFriends(int $id, UserRepository $userRepository, PokemonRepository $pokemonRepository, UserPokemonRepository $userPokemonRepository, EntityManagerInterface $entityManager): Response
     {
-        $query = $pokemonRepository->getUserPokemon($userRepository->findOneBy(["id"=>$id]));
+        $query = $pokemonRepository->getUserPokemon($userRepository->findOneBy(['id' => $id]));
 
         return $this->render('app/pokedex.html.twig', [
             'pokemons' => $pokemonRepository->findBy([], ['number' => 'ASC']),
             'userPokemons' => $query,
-            'pokedexUsername' => $userRepository->findOneBy(["id"=>$id]),
+            'pokedexUsername' => $userRepository->findOneBy(['id' => $id]),
         ]);
     }
 

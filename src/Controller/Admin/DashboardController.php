@@ -9,9 +9,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class DashboardController extends AbstractDashboardController
 {
+    public function __construct(private UrlGeneratorInterface $urlGenerator)
+    {
+    }
+
     #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
@@ -24,10 +29,15 @@ class DashboardController extends AbstractDashboardController
     {
         return Dashboard::new()
             ->setTitle('Go Swap');
+
     }
 
     public function configureMenuItems(): iterable
     {
+        $websiteUrl = $this->urlGenerator->generate('app_index');
+        yield MenuItem::linkToUrl('Back to website', 'fa fa-home', $websiteUrl);
+        yield MenuItem::section('Admin');
         yield MenuItem::linkToCrud('Pokemons', 'fas fa-list', Pokemon::class);
+
     }
 }

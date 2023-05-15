@@ -1,9 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="h-full p-6 max-sm:pt-2 max-lg:h-fit ">
+    <div class="h-full p-6 max-sm:pt-2 max-lg:h-fit">
         {% include 'partials/header.html.twig' %}
-
         <div class="w-1/2 flex flex-col m-auto max-sm:mb-2 mb-4 max-lg:w-full ">
             {% if app.request.get('id') %}
                 <h1 class="my-4 text-3xl md:text-5xl text-white opacity-75 font-bold leading-tight text-center">
@@ -11,7 +10,7 @@
                 </h1>
             {% else %}
                 <h1 class="my-4 text-3xl md:text-5xl text-white opacity-75 font-bold leading-tight text-center">
-                   Your Pokédex
+                    Your Pokédex
                 </h1>
             {% endif %}
             <input placeholder="Search for a pokemon..." type="text" autofocus autocomplete="off" spellcheck="false"
@@ -20,7 +19,8 @@
             >
         </div>
 
-        <div class="flex flex-row justify-center items-center gap-10 mb-6 max-sm:mb-4 max-lg:gap-4 max-lg:mx-auto max-lg:items-stretch" id="filters">
+        <div class="flex flex-row justify-center items-center gap-10 mb-6 max-sm:mb-4 max-lg:gap-4 max-lg:mx-auto max-lg:items-stretch"
+             id="filters">
             <button id="normal"
                     class="bg-gradient-to-r text-white py-2 max-sm:py-2 px-6 max-sm:px-2 rounded border-white {% if app.request.get('type') == 'normal' or app.request.get('type') == '' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
                 Normal
@@ -39,15 +39,35 @@
             </button>
         </div>
 
-        <div class="flex justify-center items-center" id="filters">
+        <div class="flex justify-center gap-10 items-center" id="filters">
             <label for="hide-caught" class="text-white">
                 <input type="checkbox" id="hide-caught">
-                Hide caught Pokemons
+                Hide captured
             </label>
-        </div>
+            <label for="selectGeneration">
+                <select name="selectGeneration" >
+                    {% for generation in generations %}
+                        <option value="{{ generation.type }}">{{ generation.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
 
-        <div class="h-fit flex flex-row flex-wrap gap-4 pt-4 justify-center" id="pokedex">
+        </div>
+        <div class="h-fit flex flex-row flex-wrap gap-4 pt-4 justify-center pb-10" id="pokedex">
+
             {% for pokemon in pokemons %}
+
+                {% if loop.index == 1 %}
+                    <div class="w-full text-center text-3xl text-white p-6">{{ generations[loop.index-1].name }}</div>
+                {% elseif pokemon.generation != pokemons[loop.index0-1].generation %}
+                    {% for generation in generations %}
+                        {% if generation.type == pokemon.generation %}
+                            <div class="w-full text-center text-3xl text-white p-6" id="{{ generation.name }}">{{ generation.name }}</div>
+                        {% endif %}
+                    {% endfor %}
+
+                {% endif %}
+
                 <div class="border-4 border-gray-400 border-opacity-20 cursor-pointer poke-card flex flex-col max-sm:w-[160px] w-[200px] p-4 justify-center items-center h-full bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 {% if app.request.get('id') == false %}poke-card-user{% endif %}"
                      data-name-fr="{{ pokemon.frenchName|lower }}" data-name-en="{{ pokemon.englishName|lower }}"
                      data-number="{{ pokemon.number }}" data-internal-id="{{ pokemon.id }}" data-shiny="{{ pokemon.isShiny }}"
@@ -84,7 +104,12 @@
             <div class="hidden no-pokemon text-white text-xl flex flex-col items-center mt-24">
                 No results found
             </div>
+
         </div>
+    </div>
+    <div class="fixed bottom-4 right-4 bg-white rounded-full px-4 py-2 z-20 flex justify-center gap-2 items-center max-lg:px-2">
+        <span class="max-lg:hidden">Back to top</span>
+        <i class="fa-solid fa-chevron-up"></i>
     </div>
 
 {% endblock %}

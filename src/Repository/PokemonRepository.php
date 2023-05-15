@@ -52,4 +52,17 @@ class PokemonRepository extends ServiceEntityRepository
             ->getQuery()
             ->getArrayResult();
     }
+
+    public function getCountByGeneration(string $generation): int
+    {
+        /** @var int $result */
+        $result = $this->createQueryBuilder('p')
+            ->select('count(p.id)')
+            ->where('p.generation = :generation')
+            ->setParameter('generation', $generation)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $result;
+    }
 }
