@@ -69,6 +69,9 @@ class ImportPokemonsCommand extends Command
                     if ($node->text() === "#132 MétamorphPossède l'apparence d'un autre Pokémon") {
                         $tdValue = str_replace($node->filter("em")->text(), "", $node->text());;
                     }
+                    if(str_contains($node->text(),"Flamoutan")){
+                        $tdValue = str_replace($node->filter("span")->text(), "", "#514 Flamoutan");
+                    }
 
                     preg_match('#([0-9]{3,4}) (.*)#', $tdValue, $matches);
                     $pokemon = $this->entityManager->getRepository(Pokemon::class)->findOneBy(['number' => $matches[1]]);
