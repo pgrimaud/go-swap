@@ -28,12 +28,7 @@ class PokemonController extends AbstractController
             $generations[] = [
                 'type' => $type,
                 'name' => $name,
-                'count' => $pokemonRepository->createQueryBuilder('p')
-                    ->select('count(p.id)')
-                    ->where('p.generation = :generation')
-                    ->setParameter('generation', $type)
-                    ->getQuery()
-                    ->getSingleScalarResult(),
+                'count' => $pokemonRepository->getCountByGeneration($type)
             ];
         }
 
@@ -47,12 +42,12 @@ class PokemonController extends AbstractController
     #[Route('/pokedex-friend/{id}', name: 'showFriends_pokedex')]
     public function showFriends(int $id, UserRepository $userRepository, PokemonRepository $pokemonRepository, UserPokemonRepository $userPokemonRepository, EntityManagerInterface $entityManager): Response
     {
-        $query = $pokemonRepository->getUserPokemon($userRepository->findOneBy(["id" => $id]));
+        $query = $pokemonRepository->getUserPokemon($userRepository->findOneBy(['id' => $id]));
 
         return $this->render('app/pokedex.html.twig', [
             'pokemons' => $pokemonRepository->findBy([], ['number' => 'ASC']),
             'userPokemons' => $query,
-            'pokedexUsername' => $userRepository->findOneBy(["id" => $id]),
+            'pokedexUsername' => $userRepository->findOneBy(['id' => $id]),
         ]);
     }
 
