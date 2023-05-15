@@ -44,13 +44,12 @@
                 <input type="checkbox" id="hide-caught">
                 Hide captured
             </label>
-            <label for="selectGeneration">
-                <select name="selectGeneration" id="selectGeneration">
-                    {% for generation in generations %}
-                        <option value="{{ generation.type }}">{{ generation.name }}</option>
-                    {% endfor %}
-                </select>
-            </label>
+
+            <select name="selectGeneration" id="selectGeneration" class="flex bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 h-9 block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                {% for generation in generations %}
+                    <option value="{{ generation.type }}">{{ generation.name }}</option>
+                {% endfor %}
+            </select>
 
         </div>
         <div class="h-fit flex flex-row flex-wrap gap-4 pt-4 justify-center pb-10" id="pokedex">
@@ -108,7 +107,8 @@
 
         </div>
     </div>
-    <div class="fixed bottom-4 right-4 bg-white rounded-full px-4 py-2 z-20 flex justify-center gap-2 items-center max-lg:px-2" id="scrollToTop">
+
+    <div class="fixed bottom-4 right-4 bg-white rounded-full px-4 py-2 z-20 flex justify-center gap-2 items-center max-lg:px-2 cursor-pointer" id="scrollToTop">
         <span class="max-lg:hidden">Back to top</span>
         <i class="fa-solid fa-chevron-up"></i>
     </div>
