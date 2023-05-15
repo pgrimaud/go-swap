@@ -42,12 +42,15 @@ class UserPokemonRepository extends ServiceEntityRepository
 
     public function countByPokedex(?UserInterface $user, string $type): int
     {
-        return intval($this->createQueryBuilder('up')
+        /** @var int $result */
+        $result = $this->createQueryBuilder('up')
             ->select('COUNT(up.id)')
             ->where('up.user = :user')
             ->andWhere('up.' . $type . ' = true')
             ->setParameter('user', $user)
             ->getQuery()
-            ->getSingleScalarResult());
+            ->getSingleScalarResult();
+
+        return $result;
     }
 }
