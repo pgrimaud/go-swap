@@ -51,10 +51,10 @@
                 <div class="border-4 border-gray-400 border-opacity-20 cursor-pointer poke-card flex flex-col max-sm:w-[160px] w-[200px] p-4 justify-center items-center h-full bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 {% if app.request.get('id') == false %}poke-card-user{% endif %}"
                      data-name-fr="{{ pokemon.frenchName|lower }}" data-name-en="{{ pokemon.englishName|lower }}"
                      data-number="{{ pokemon.number }}" data-internal-id="{{ pokemon.id }}" data-shiny="{{ pokemon.isShiny }}"
-                     data-pokedex-normal="{% if userPokemons[pokemon.number] is defined %}{{ userPokemons[pokemon.number].normal }}{% else %}0{% endif %}"
-                     data-pokedex-shiny="{% if userPokemons[pokemon.number] is defined %}{{ userPokemons[pokemon.number].shiny }}{% else %}0{% endif %}"
-                     data-pokedex-lucky="{% if userPokemons[pokemon.number] is defined %}{{ userPokemons[pokemon.number].lucky }}{% else %}0{% endif %}"
-                     data-pokedex-threeStars="{% if userPokemons[pokemon.number] is defined %}{{ userPokemons[pokemon.number].threeStars }}{% else %}0{% endif %}"
+                     data-pokedex-normal="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].normal }}{% else %}0{% endif %}"
+                     data-pokedex-shiny="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].shiny }}{% else %}0{% endif %}"
+                     data-pokedex-lucky="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].lucky }}{% else %}0{% endif %}"
+                     data-pokedex-threeStars="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].threeStars }}{% else %}0{% endif %}"
                 >
                     <div class="background max-sm:w-[160px] w-[194px] h-[194px] absolute z-0 opacity-30 rounded-md background-lucky {% if app.request.get('type') != 'lucky' %}hidden{% endif %}"
                          style="background-image: url('{{ asset('images/lucky.jpg') }}');"></div>
