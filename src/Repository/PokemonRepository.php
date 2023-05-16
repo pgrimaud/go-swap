@@ -57,10 +57,26 @@ class PokemonRepository extends ServiceEntityRepository
     {
         /** @var int $result */
         $result = $this->createQueryBuilder('p')
-            ->select('count(p.id)')
+            ->select('COUNT(DISTINCT(p.number))')
             ->where('p.generation = :generation')
             ->setParameter('generation', $generation)
             ->getQuery()
+            ->getSingleScalarResult();
+
+        return $result;
+    }
+
+    public function countUnique(bool $shinyPokedex = false): int
+    {
+        $query = $this->createQueryBuilder('p')
+            ->select('COUNT(DISTINCT(p.number))');
+
+        if ($shinyPokedex) {
+            $query->andWhere('p.isShiny = true');
+        }
+
+        /** @var int $result */
+        $result = $query->getQuery()
             ->getSingleScalarResult();
 
         return $result;

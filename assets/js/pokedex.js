@@ -1,6 +1,6 @@
 if (document.querySelector('#search')) {
     let parameters = {
-        'search': document.querySelector('#search').value,
+        'search': document.querySelector('#search').value.toLowerCase(),
         'pokedex': document.querySelector('#filters .active-filter').getAttribute('id'),
         'hideCaught': document.querySelector('#hide-caught').checked
     }
@@ -13,7 +13,7 @@ if (document.querySelector('#search')) {
 
     // input search
     document.querySelector('#search').addEventListener('keyup', (e) => {
-        parameters.search = e.currentTarget.value
+        parameters.search = e.currentTarget.value.toLowerCase()
         filter()
     })
 
@@ -81,8 +81,6 @@ if (document.querySelector('#search')) {
         displayAllGeneration()
         displayNoPokemonFound(false)
         displayAllPokemonCards(true)
-        displayPokedexCardType(parameters.pokedex)
-
 
         // display pokémon as caught
         document.querySelectorAll('.poke-card-user').forEach(el => {
@@ -111,6 +109,8 @@ if (document.querySelector('#search')) {
         if (parameters.hideCaught === true) {
             displayPokemonCards(`#pokedex .poke-card.pokemon-caught`, false)
         }
+
+        displayPokedexCardType(parameters.pokedex)
 
         displayNoPokemonFound(document.querySelectorAll('#pokedex .poke-card:not(.hidden)').length === 0)
 
@@ -145,7 +145,7 @@ if (document.querySelector('#search')) {
             document.querySelectorAll('.shiny-picture, .shiny-icon').forEach(el => el.classList.remove('hidden'))
             document.querySelectorAll('.normal-picture').forEach(el => el.classList.add('hidden'))
 
-            document.querySelectorAll('.poke-card [data-shiny="1"]').forEach(el => el.classList.add('hidden'))
+            document.querySelectorAll('.poke-card[data-shiny=""]').forEach(el => el.classList.add('hidden'))
         } else if (type === 'lucky') {
             document.querySelectorAll('.background-lucky').forEach(el => el.classList.remove('hidden'))
         }

@@ -33,7 +33,10 @@ class PokemonController extends AbstractController
         }
 
         return $this->render('app/pokedex.html.twig', [
-            'pokemons' => $pokemonRepository->findBy([], ['number' => 'ASC']),
+            'pokemons' => $pokemonRepository->findBy([], [
+                'number' => 'ASC',
+                'id' => 'ASC',
+            ]),
             'userPokemons' => $query,
             'generations' => $generations,
         ]);
