@@ -44,7 +44,8 @@ class UserPokemonRepository extends ServiceEntityRepository
     {
         /** @var int $result */
         $result = $this->createQueryBuilder('up')
-            ->select('COUNT(up.id)')
+            ->select('COUNT(DISTINCT(p.number))')
+            ->join('up.pokemon', 'p')
             ->where('up.user = :user')
             ->andWhere('up.' . $type . ' = true')
             ->setParameter('user', $user)

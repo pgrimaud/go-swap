@@ -44,8 +44,6 @@ class Pokemon
         $this->userPokemon = new ArrayCollection();
     }
 
-
-
     public function getId(): ?int
     {
         return $this->id;
