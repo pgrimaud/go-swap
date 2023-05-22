@@ -33,7 +33,7 @@ class DownloadPicturesCommand extends Command
         $this->getPicturesShiny();
         $this->getPicturesNormal();
 
-        $this->io->success('Done ! - ' . date('Y-m-d h:i:s'));
+        $this->io->success('Done ! - ' . date('Y-m-d H:i:s'));
 
         return Command::SUCCESS;
     }

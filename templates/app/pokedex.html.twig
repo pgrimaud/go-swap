@@ -95,7 +95,7 @@
                         <p class="whitespace-nowrap text-sm text-white text-center">
                             <span class="text-xs">#{{ pokemon.number }}</span>
                         </p>
-                        <p class="whitespace-nowrap text-sm text-white text-center">
+                        <p class="whitespace-nowrap text-sm  text-center{% if pokemon.isActual %} text-bg-primary {% else %} text-white {% endif %}">
                             {{ pokemon.frenchName }}
                         </p>
                         <p class="whitespace-nowrap text-xs text-center text-slate-300">

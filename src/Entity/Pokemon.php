@@ -39,6 +39,9 @@ class Pokemon
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $shinyPicture = null;
 
+    #[ORM\Column]
+    private ?bool $isActual = null;
+
     public function __construct()
     {
         $this->userPokemon = new ArrayCollection();
@@ -164,6 +167,18 @@ class Pokemon
     public function setShinyPicture(?string $shinyPicture): self
     {
         $this->shinyPicture = $shinyPicture;
+
+        return $this;
+    }
+
+    public function isIsActual(): ?bool
+    {
+        return $this->isActual;
+    }
+
+    public function setIsActual(bool $isActual): self
+    {
+        $this->isActual = $isActual;
 
         return $this;
     }
