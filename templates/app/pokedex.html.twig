@@ -67,7 +67,7 @@
 
                 {% endif %}
 
-                <div class="border-4 border-gray-400 border-opacity-20 cursor-pointer poke-card flex flex-col max-sm:w-[160px] w-[200px] p-2 justify-center items-center h-full bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 {% if app.request.get('id') == false %}poke-card-user{% endif %}"
+                <div class="border-4 border-gray-400 border-opacity-20 cursor-pointer poke-card flex flex-col max-sm:w-[160px] w-[200px] p-2 justify-center items-center h-full bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 poke-card-user"
                      data-name-fr="{{ pokemon.frenchName|lower }}" data-name-en="{{ pokemon.englishName|lower }}"
                      data-number="{{ pokemon.number }}" data-internal-id="{{ pokemon.id }}" data-shiny="{{ pokemon.isShiny }}"
                      data-pokedex-normal="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].normal }}{% else %}0{% endif %}"
@@ -95,7 +95,7 @@
                         <p class="whitespace-nowrap text-sm text-white text-center">
                             <span class="text-xs">#{{ pokemon.number }}</span>
                         </p>
-                        <p class="whitespace-nowrap text-sm text-white text-center">
+                        <p class="whitespace-nowrap text-sm  text-center{% if pokemon.isActual %} text-bg-primary {% else %} text-white {% endif %}">
                             {{ pokemon.frenchName }}
                         </p>
                         <p class="whitespace-nowrap text-xs text-center text-slate-300">

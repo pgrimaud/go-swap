@@ -4,6 +4,8 @@ namespace App\Command;
 
 use App\Entity\Pokemon;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -11,7 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\HttpClient\HttpClient;
+
 
 #[AsCommand(
     name: 'app:import-pokemons',
@@ -19,21 +21,24 @@ use Symfony\Component\HttpClient\HttpClient;
 )]
 class ImportPokemonsCommand extends Command
 {
+
     public function __construct(private readonly EntityManagerInterface $entityManager)
     {
         parent::__construct();
     }
 
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        date_default_timezone_set('Europe/Paris');
+
         $io = new SymfonyStyle($input, $output);
 
         $this->importPokemons();
         $this->importShiny();
         $this->importEnglishName();
+        $this->importCurrentPokemons();
 
-        $io->success('Done !');
+        $io->success('Done ! - ' . date('Y-m-d H:i:s'));
 
         return Command::SUCCESS;
     }
@@ -147,5 +152,55 @@ class ImportPokemonsCommand extends Command
 
         }
 
+    }
+
+    private function importCurrentPokemons(): void
+    {
+        $isActualPokemons = $this->entityManager->getRepository(Pokemon::class)->findBy(['isActual' => true]);
+        foreach ($isActualPokemons as $pokemon) {
+            $pokemon->setIsActual(false);
+
+            $this->entityManager->persist($pokemon);
+            $this->entityManager->flush();
+        }
+
+        date_default_timezone_set('Europe/Paris');
+
+        $client = HttpClient::create();
+
+        $response = $client->request(
+            'GET',
+            'https://api.gofieldguide.app/events/get-events'
+        );
+
+        $content = $response->toArray();
+
+        foreach ($content['data'] as $event) {
+
+            if ($event['startAt'] <= date('M d Y H:i:s') && $event['endsAt'] > date('M d Y H:i:s')) {
+
+                foreach ($event['features'] as $pokemon) {
+
+                    foreach ($pokemon['pokemon'] as $p) {
+
+                        $englishName = ucfirst(strtolower($p['pokemon_id']));
+
+                        if (str_contains($englishName, '_')) {
+                            $englishName = str_replace('_', '-', $englishName);
+                        }
+
+                        $pokemon = $this->entityManager->getRepository(Pokemon::class)->findOneBy(['englishName' => $englishName]);
+
+                        if ($pokemon) {
+                            $pokemon->setIsActual(true);
+
+                            $this->entityManager->persist($pokemon);
+                            $this->entityManager->flush();
+                        }
+                    }
+                }
+            }
+
+        }
     }
 }

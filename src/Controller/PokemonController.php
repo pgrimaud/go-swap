@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class PokemonController extends AbstractController
 {
     #[Route('/pokedex', name: 'show_pokedex')]
-    public function show(PokemonRepository $pokemonRepository, UserPokemonRepository $userPokemonRepository, EntityManagerInterface $entityManager): Response
+    public function show(PokemonRepository $pokemonRepository): Response
     {
         $query = $pokemonRepository->getUserPokemon($this->getUser());
 
@@ -43,14 +43,25 @@ class PokemonController extends AbstractController
     }
 
     #[Route('/pokedex-friend/{id}', name: 'showFriends_pokedex')]
-    public function showFriends(int $id, UserRepository $userRepository, PokemonRepository $pokemonRepository, UserPokemonRepository $userPokemonRepository, EntityManagerInterface $entityManager): Response
+    public function showFriends(int $id, UserRepository $userRepository, PokemonRepository $pokemonRepository): Response
     {
         $query = $pokemonRepository->getUserPokemon($userRepository->findOneBy(['id' => $id]));
 
+        $generations = [];
+
+        foreach (GenerationHelper::GENERATION as $type => $name) {
+            $generations[] = [
+                'type' => $type,
+                'name' => $name,
+                'count' => $pokemonRepository->getCountByGeneration($type)
+            ];
+        }
+
         return $this->render('app/pokedex.html.twig', [
-            'pokemons' => $pokemonRepository->findBy([], ['number' => 'ASC']),
+            'pokemons' => $pokemonRepository->findBy([], ['number' => 'ASC', 'id' => 'ASC']),
             'userPokemons' => $query,
             'pokedexUsername' => $userRepository->findOneBy(['id' => $id]),
+            'generations' => $generations,
         ]);
     }
 
