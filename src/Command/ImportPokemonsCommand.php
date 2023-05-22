@@ -27,13 +27,15 @@ class ImportPokemonsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        date_default_timezone_set('Europe/Paris');
+
         $io = new SymfonyStyle($input, $output);
 
         $this->importPokemons();
         $this->importShiny();
         $this->importEnglishName();
 
-        $io->success('Done !');
+        $io->success('Done ! - ' . date('Y-m-d h:i:s'));
 
         return Command::SUCCESS;
     }

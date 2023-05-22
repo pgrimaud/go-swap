@@ -42,25 +42,27 @@ if (document.querySelector('#search')) {
 
     // add or remove pokémon to a pokédex
     document.querySelectorAll('#pokedex .poke-card-user').forEach(el => {
-        el.addEventListener('click', (event) => {
-            const data = new FormData();
-            data.append('id', el.dataset.internalId);
-            data.append('pokedex', parameters.pokedex);
+        if (!window.location.pathname.includes("/pokedex-friend")) {
+            el.addEventListener('click', (event) => {
+                const data = new FormData();
+                data.append('id', el.dataset.internalId);
+                data.append('pokedex', parameters.pokedex);
 
-            if (el.classList.contains('pokemon-caught')) {
-                el.setAttribute(`data-pokedex-${parameters.pokedex}`, 0)
-                fetchApi(data, "/delete")
+                if (el.classList.contains('pokemon-caught')) {
+                    el.setAttribute(`data-pokedex-${parameters.pokedex}`, 0)
+                    fetchApi(data, "/delete")
 
-                displayCardAsCaught(el, false)
-            } else {
-                el.setAttribute(`data-pokedex-${parameters.pokedex}`, 1)
-                fetchApi(data, "/add")
+                    displayCardAsCaught(el, false)
+                } else {
+                    el.setAttribute(`data-pokedex-${parameters.pokedex}`, 1)
+                    fetchApi(data, "/add")
 
-                displayCardAsCaught(el, true)
-                displayNoPokemonFound(document.querySelectorAll('#pokedex .poke-card:not(.hidden)').length === 0)
-                filter()
-            }
-        })
+                    displayCardAsCaught(el, true)
+                    displayNoPokemonFound(document.querySelectorAll('#pokedex .poke-card:not(.hidden)').length === 0)
+                    filter()
+                }
+            })
+        }
     })
     //Scroll to the right generation
     document.querySelector("#selectGeneration").addEventListener("change", (e) => {
@@ -169,10 +171,10 @@ if (document.querySelector('#search')) {
         document.querySelectorAll('.generation').forEach(el => el.classList.remove('hidden'))
     }
 
-    function hideGenerations(){
+    function hideGenerations() {
         for (let i = 1; i <= 10; i++) {
             if (document.querySelectorAll(`#pokedex .poke-card[data-generation="${i}G"]:not(.hidden)`).length === 0) {
-                if(document.getElementById(`${i}G`)){
+                if (document.getElementById(`${i}G`)) {
                     document.getElementById(`${i}G`).classList.add('hidden')
                 }
             }
