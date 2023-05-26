@@ -26,8 +26,6 @@ class DownloadPicturesCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        date_default_timezone_set('Europe/Paris');
-
         $this->io = new SymfonyStyle($input, $output);
 
         $this->getPicturesShiny();
@@ -47,13 +45,15 @@ class DownloadPicturesCommand extends Command
         foreach ($pokemonRepository as $pokemon) {
             $progressBar->advance();
 
-            if (file_exists(__DIR__ . '/public/images/normal/' . $pokemon->getNumber() . '.png')) {
+            if (file_exists(__DIR__ . '/../../public/images/normal/' . $pokemon->getNumber() . '.png')
+                || $pokemon->getNormalPicture() !== null
+            ) {
                 continue;
             }
 
             $url = 'https://www.pokebip.com/pages/icones/poke/GO/' . $pokemon->getNumber() . '.png';
             $image = file_get_contents($url);
-            $fp = fopen(__DIR__ . '/public/images/normal/' . $pokemon->getNumber() . '.png', 'w');
+            $fp = fopen(__DIR__ . '/../../public/images/normal/' . $pokemon->getNumber() . '.png', 'w');
             if ($fp && $image) {
                 fwrite($fp, $image);
                 fclose($fp);
@@ -74,7 +74,8 @@ class DownloadPicturesCommand extends Command
         foreach ($pokemonRepository as $pokemon) {
             $progressBar->advance();
 
-            if (file_exists(__DIR__ . '/public/images/shiny/' . $pokemon->getNumber() . '.png')) {
+            if (file_exists(__DIR__ . '/../../public/images/shiny/' . $pokemon->getNumber() . '.png')
+                || $pokemon->getShinyPicture() !== null) {
                 continue;
             }
 
@@ -87,7 +88,7 @@ class DownloadPicturesCommand extends Command
             $url = 'https://www.pokebip.com/pages/icones/pokechroma/GO/' . $pokemon->getNumber() . $endUrl;
 
             $image = file_get_contents($url);
-            $fp = fopen(__DIR__ . '/public/images/shiny/' . $pokemon->getNumber() . ".png", "w");
+            $fp = fopen(__DIR__ . '/../../public/images/shiny/' . $pokemon->getNumber() . ".png", "w");
             if ($fp && $image) {
                 fwrite($fp, $image);
                 fclose($fp);

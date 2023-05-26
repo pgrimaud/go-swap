@@ -29,8 +29,6 @@ class ImportPokemonsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        date_default_timezone_set('Europe/Paris');
-
         $io = new SymfonyStyle($input, $output);
 
         $this->importPokemons();
@@ -164,8 +162,6 @@ class ImportPokemonsCommand extends Command
             $this->entityManager->flush();
         }
 
-        date_default_timezone_set('Europe/Paris');
-
         $client = HttpClient::create();
 
         $response = $client->request(
@@ -177,7 +173,10 @@ class ImportPokemonsCommand extends Command
 
         foreach ($content['data'] as $event) {
 
-            if ($event['startAt'] <= date('M d Y H:i:s') && $event['endsAt'] > date('M d Y H:i:s')) {
+            $dateParis = new \DateTime('Europe/Paris');
+
+            if ($event['startAt'] <= $dateParis->format('M d Y H:i:s') &&
+                $event['endsAt'] > $dateParis->format('M d Y H:i:s')) {
 
                 foreach ($event['features'] as $pokemon) {
 
