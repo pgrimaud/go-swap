@@ -30,7 +30,7 @@ class PokemonCrudController extends AbstractCrudController
             ImageField::new('normalPicture')
                 ->setUploadDir('public/images/normal')
                 ->setBasePath('images/normal')
-                ->setUploadedFileNamePattern('[slug].[extension]')
+                ->setUploadedFileNamePattern('[slug]-[randomhash].[extension]')
                 ->setFormTypeOptions([
                     'attr' => [
                         'accept' => 'image/*'
