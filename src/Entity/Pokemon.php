@@ -40,7 +40,7 @@ class Pokemon
     private ?string $shinyPicture = null;
 
     #[ORM\Column]
-    private ?bool $isActual = null;
+    private ?bool $isActual = false;
 
     public function __construct()
     {
