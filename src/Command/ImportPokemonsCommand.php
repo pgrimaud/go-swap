@@ -141,7 +141,7 @@ class ImportPokemonsCommand extends Command
             $id = explode('/', $englishPokemon['url'])[6];
             $pokemon = $this->entityManager->getRepository(Pokemon::class)->findOneBy(['number' => $id]);
 
-            if ($pokemon) {
+            if ($pokemon && ($pokemon->getEnglishName() === null || $pokemon->getEnglishName() === '')) {
                 $pokemon->setEnglishName(ucfirst($englishPokemon['name']));
 
                 $this->entityManager->persist($pokemon);
