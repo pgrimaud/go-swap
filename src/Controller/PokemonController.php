@@ -146,4 +146,32 @@ class PokemonController extends AbstractController
             'message' => 'Pokemon deleted',
         ]);
     }
+
+    #[Route('/shiny', name: 'shiny_pokemon')]
+    public function addShiny
+    (
+        Request                $request,
+        EntityManagerInterface $entityManager,
+        UserPokemonRepository  $userPokemonRepository,
+    ): Response
+    {
+        $data = $request->request->all();
+
+        $id = $data['id'];
+        $value = $data['value'];
+
+        $userPokemon = $userPokemonRepository->findOneBy(['user' => $this->getUser(), 'pokemon' => $id]);
+
+        if ($userPokemon) {
+            $userPokemon->setNumberShiny($value);
+
+            $entityManager->persist($userPokemon);
+            $entityManager->flush();
+        }
+
+
+        return $this->json([
+            'message' => 'Pokemon added',
+        ]);
+    }
 }

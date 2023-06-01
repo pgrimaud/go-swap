@@ -208,4 +208,5 @@ if (document.querySelector('#search')) {
             }
         }
     }
+
 }
