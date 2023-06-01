@@ -42,7 +42,7 @@ if (document.querySelector('#search')) {
 
     // add or remove pokémon to a pokédex
     document.querySelectorAll('#pokedex .poke-card-user').forEach(el => {
-        if (!window.location.pathname.includes("/pokedex-friend")) {
+        if (!window.location.pathname.includes('/pokedex-friend')) {
             el.addEventListener('click', (event) => {
                 const data = new FormData();
                 data.append('id', el.dataset.internalId);
@@ -50,12 +50,12 @@ if (document.querySelector('#search')) {
 
                 if (el.classList.contains('pokemon-caught')) {
                     el.setAttribute(`data-pokedex-${parameters.pokedex}`, 0)
-                    fetchApi(data, "/delete")
+                    fetchApi(data, '/delete')
 
                     displayCardAsCaught(el, false)
                 } else {
                     el.setAttribute(`data-pokedex-${parameters.pokedex}`, 1)
-                    fetchApi(data, "/add")
+                    fetchApi(data, '/add')
 
                     displayCardAsCaught(el, true)
                     displayNoPokemonFound(document.querySelectorAll('#pokedex .poke-card:not(.hidden)').length === 0)
@@ -65,18 +65,36 @@ if (document.querySelector('#search')) {
         }
     })
     //Scroll to the right generation
-    document.querySelector("#selectGeneration").addEventListener("change", (e) => {
-        goToGeneration(document.querySelector("#selectGeneration").value);
+    document.querySelector('#selectGeneration').addEventListener('change', (e) => {
+        goToGeneration(document.querySelector('#selectGeneration').value);
     })
 
     //Scroll back to the top
-    document.querySelector("#scrollToTop").addEventListener("click", (e) => {
-        goToGeneration("page-top")
+    document.querySelector('#scrollToTop').addEventListener('click', (e) => {
+        goToGeneration('page-top')
     })
+
+    // counters
+    document.querySelectorAll('.custom-number-input button').forEach(btn => {
+        btn.addEventListener('click', (event => {
+            event.stopPropagation()
+            changeCounter(btn)
+        }));
+    });
 
     /**
      * METHODS
      */
+
+    function changeCounter(btn) {
+        if (btn.dataset.action === 'increment') {
+            btn.previousElementSibling.value = parseInt(btn.previousElementSibling.value) + 1
+        } else {
+            if (parseInt(btn.nextElementSibling.value) > 0) {
+                btn.nextElementSibling.value = parseInt(btn.nextElementSibling.value) - 1
+            }
+        }
+    }
 
     function filter() {
         // reset cards
@@ -92,7 +110,7 @@ if (document.querySelector('#search')) {
         // filter search
         if (/^\d+$/.test(parameters.search) === true) {
             displayAllPokemonCards(false)
-            displayPokemonCards(`#pokedex .poke-card[data-number="${parameters.search}"]`, true)
+            displayPokemonCards(`#pokedex .poke-card[data-number='${parameters.search}']`, true)
         } else if (parameters.search === '') {
             // nothing to do
         } else {
@@ -107,16 +125,26 @@ if (document.querySelector('#search')) {
             })
         }
 
-        // hide or display "caught" pokémon => input checkbox
+        // hide or display 'caught' pokémon => input checkbox
         if (parameters.hideCaught === true) {
             displayPokemonCards(`#pokedex .poke-card.pokemon-caught`, false)
         }
+
+
+        // manage shiny counter
+        displayShinyCounter(parameters.pokedex)
 
         displayPokedexCardType(parameters.pokedex)
 
         displayNoPokemonFound(document.querySelectorAll('#pokedex .poke-card:not(.hidden)').length === 0)
 
         hideGenerations()
+    }
+
+    function displayShinyCounter(pokedex) {
+        document.querySelectorAll('.custom-number-input').forEach(el => {
+            el.classList.toggle('hidden', pokedex !== 'shiny')
+        })
     }
 
     function displayPokemonCards(selector, reset) {
@@ -155,7 +183,7 @@ if (document.querySelector('#search')) {
 
     function fetchApi(data, url) {
         fetch(url, {
-            method: "POST",
+            method: 'POST',
             body: data,
         })
             .then(response => response.json())
@@ -173,7 +201,7 @@ if (document.querySelector('#search')) {
 
     function hideGenerations() {
         for (let i = 1; i <= 10; i++) {
-            if (document.querySelectorAll(`#pokedex .poke-card[data-generation="${i}G"]:not(.hidden)`).length === 0) {
+            if (document.querySelectorAll(`#pokedex .poke-card[data-generation='${i}G']:not(.hidden)`).length === 0) {
                 if (document.getElementById(`${i}G`)) {
                     document.getElementById(`${i}G`).classList.add('hidden')
                 }
