@@ -36,9 +36,19 @@ class AppController extends AbstractController
         ]);
     }
 
+
     public function users(UserRepository $userRepository): Response
     {
         return $this->render('app/users.html.twig', [
+            'users' => $userRepository->findAll()
+        ]);
+    }
+
+    #[Route('/trade', name: 'app_trade')]
+    public function trade(UserRepository $userRepository): Response
+    {
+        ;
+        return $this->render('app/trade.html.twig',[
             'users' => $userRepository->findAll()
         ]);
     }

@@ -180,4 +180,5 @@ if (document.querySelector('#search')) {
             }
         }
     }
+
 }

@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="h-full p-6 max-sm:pt-2 max-lg:h-fit" id="page-top">
+        {% include 'partials/header.html.twig' %}
+
+        <p>Choose a Friend to trade with</p>
+        {% for user in users %}
+            {% if user.username != app.user.username %}
+                <p class="trade-friends">{{ user.username }}</p>
+            {% endif %}
+        {% endfor%}
+
+    </div>
+
+{% endblock %}

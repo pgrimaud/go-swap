@@ -34,6 +34,9 @@ class UserPokemon
     #[ORM\Column]
     private ?bool $threeStars = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $NumberShiny = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -107,6 +110,18 @@ class UserPokemon
     public function setThreeStars(bool $threeStars): self
     {
         $this->threeStars = $threeStars;
+
+        return $this;
+    }
+
+    public function getNumberShiny(): ?int
+    {
+        return $this->NumberShiny;
+    }
+
+    public function setNumberShiny(?int $NumberShiny): self
+    {
+        $this->NumberShiny = $NumberShiny;
 
         return $this;
     }
