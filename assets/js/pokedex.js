@@ -110,7 +110,9 @@ if (document.querySelector('#search')) {
                 data.append('id', btn.closest('.poke-card-user').dataset.internalId);
                 data.append('value', btn.nextElementSibling.value);
 
-                btn.closest('.poke-card-user').setAttribute(`data-pokedex-shiny`, 0)
+                if(btn.nextElementSibling.value === '0') {
+                    btn.closest('.poke-card-user').setAttribute(`data-pokedex-shiny`, 0)
+                }
 
                 fetchApi(data, '/shiny')
             }
