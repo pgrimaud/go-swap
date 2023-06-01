@@ -35,7 +35,7 @@ class UserPokemon
     private ?bool $threeStars = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $NumberShiny = null;
+    private ?int $numberShiny = null;
 
     public function getId(): ?int
     {
@@ -116,12 +116,12 @@ class UserPokemon
 
     public function getNumberShiny(): ?int
     {
-        return $this->NumberShiny;
+        return $this->numberShiny;
     }
 
-    public function setNumberShiny(?int $NumberShiny): self
+    public function setNumberShiny(?int $numberShiny): self
     {
-        $this->NumberShiny = $NumberShiny;
+        $this->numberShiny = $numberShiny;
 
         return $this;
     }

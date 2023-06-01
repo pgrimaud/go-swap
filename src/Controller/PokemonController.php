@@ -8,7 +8,6 @@ use App\Helper\PokedexHelper;
 use App\Repository\PokemonRepository;
 use App\Repository\UserPokemonRepository;
 use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -67,12 +66,11 @@ class PokemonController extends AbstractController
 
     #[Route('/add', name: 'add_pokemon')]
     public function add(
-        Request                $request,
+        Request $request,
         EntityManagerInterface $entityManager,
-        PokemonRepository      $pokemonRepository,
-        UserPokemonRepository  $userPokemonRepository,
-    ): Response
-    {
+        PokemonRepository $pokemonRepository,
+        UserPokemonRepository $userPokemonRepository,
+    ): Response {
         $user = $this->getUser();
         $data = $request->request->all();
 
@@ -93,7 +91,6 @@ class PokemonController extends AbstractController
             $userPokemon->setNormal(false);
             $userPokemon->setLucky(false);
             $userPokemon->setThreeStars(false);
-
         } else {
             $userPokemon = $alreadyExist;
         }
@@ -107,6 +104,10 @@ class PokemonController extends AbstractController
         $method = 'set' . ucfirst($pokedex);
         $userPokemon->$method(true);
 
+        if ($pokedex === 'shiny') {
+            $userPokemon->setNumberShiny(1);
+        }
+
         $entityManager->persist($userPokemon);
         $entityManager->flush();
 
@@ -117,11 +118,10 @@ class PokemonController extends AbstractController
 
     #[Route('/delete', name: 'delete_pokemon')]
     public function delete(
-        Request                $request,
+        Request $request,
         EntityManagerInterface $entityManager,
-        UserPokemonRepository  $userPokemonRepository
-    ): Response
-    {
+        UserPokemonRepository $userPokemonRepository
+    ): Response {
         $data = $request->request->all();
         $id = $data['id'];
         $pokedex = $data['pokedex'];
@@ -138,6 +138,10 @@ class PokemonController extends AbstractController
             $method = 'set' . ucfirst($pokedex);
             $userPokemon->$method(false);
 
+            if ($pokedex === 'shiny') {
+                $userPokemon->setNumberShiny(0);
+            }
+
             $entityManager->persist($userPokemon);
             $entityManager->flush();
         }
@@ -150,11 +154,11 @@ class PokemonController extends AbstractController
     #[Route('/shiny', name: 'shiny_pokemon')]
     public function addShiny
     (
-        Request                $request,
+        Request $request,
         EntityManagerInterface $entityManager,
-        UserPokemonRepository  $userPokemonRepository,
-    ): Response
-    {
+        UserPokemonRepository $userPokemonRepository,
+        PokemonRepository $pokemonRepository,
+    ): Response {
         $data = $request->request->all();
 
         $id = $data['id'];
@@ -162,16 +166,23 @@ class PokemonController extends AbstractController
 
         $userPokemon = $userPokemonRepository->findOneBy(['user' => $this->getUser(), 'pokemon' => $id]);
 
-        if ($userPokemon) {
-            $userPokemon->setNumberShiny($value);
+        if (!$userPokemon) {
+            $pokemon = $pokemonRepository->findOneBy(['id' => $id]);
 
-            $entityManager->persist($userPokemon);
-            $entityManager->flush();
+            $userPokemon = new UserPokemon();
+            $userPokemon->setUser($this->getUser());
+            $userPokemon->setPokemon($pokemon);
+            $userPokemon->setNormal(false);
+            $userPokemon->setLucky(false);
+            $userPokemon->setThreeStars(false);
         }
 
+        $userPokemon->setShiny($value > 0);
+        $userPokemon->setNumberShiny($value);
 
-        return $this->json([
-            'message' => 'Pokemon added',
-        ]);
+        $entityManager->persist($userPokemon);
+        $entityManager->flush();
+
+        return $this->json(['message' => 'Shiny added',]);
     }
 }

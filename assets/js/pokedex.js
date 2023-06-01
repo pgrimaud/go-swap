@@ -51,11 +51,17 @@ if (document.querySelector('#search')) {
                 if (el.classList.contains('pokemon-caught')) {
                     el.setAttribute(`data-pokedex-${parameters.pokedex}`, 0)
                     fetchApi(data, '/delete')
+                    if (parameters.pokedex === 'shiny') {
+                        el.querySelector('.custom-input-number').value = 0
+                    }
 
                     displayCardAsCaught(el, false)
                 } else {
                     el.setAttribute(`data-pokedex-${parameters.pokedex}`, 1)
                     fetchApi(data, '/add')
+                    if (parameters.pokedex === 'shiny') {
+                        el.querySelector('.custom-input-number').value = 1
+                    }
 
                     displayCardAsCaught(el, true)
                     displayNoPokemonFound(document.querySelectorAll('#pokedex .poke-card:not(.hidden)').length === 0)
@@ -85,15 +91,31 @@ if (document.querySelector('#search')) {
     /**
      * METHODS
      */
-
     function changeCounter(btn) {
         if (btn.dataset.action === 'increment') {
             btn.previousElementSibling.value = parseInt(btn.previousElementSibling.value) + 1
+
+            const data = new FormData();
+            data.append('id', btn.closest('.poke-card-user').dataset.internalId);
+            data.append('value', btn.previousElementSibling.value);
+
+            btn.closest('.poke-card-user').setAttribute(`data-pokedex-shiny`, 1)
+
+            fetchApi(data, '/shiny')
         } else {
             if (parseInt(btn.nextElementSibling.value) > 0) {
                 btn.nextElementSibling.value = parseInt(btn.nextElementSibling.value) - 1
+
+                const data = new FormData();
+                data.append('id', btn.closest('.poke-card-user').dataset.internalId);
+                data.append('value', btn.nextElementSibling.value);
+
+                btn.closest('.poke-card-user').setAttribute(`data-pokedex-shiny`, 0)
+
+                fetchApi(data, '/shiny')
             }
         }
+        filter()
     }
 
     function filter() {
