@@ -17,9 +17,6 @@ class AppController extends AbstractController
         PokemonRepository $pokemonRepository,
         UserPokemonRepository $userPokemonRepository
     ): Response {
-
-        $totalPokemon = $pokemonRepository->count([]);
-
         $pokedexs = [];
 
         foreach (PokedexHelper::POKEDEX as $type => $name) {
@@ -48,7 +45,7 @@ class AppController extends AbstractController
     public function trade(UserRepository $userRepository): Response
     {
         ;
-        return $this->render('app/trade.html.twig',[
+        return $this->render('app/trade.html.twig', [
             'users' => $userRepository->findAll()
         ]);
     }
