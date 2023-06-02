@@ -51,7 +51,7 @@ class AppController extends AbstractController
 
         if (!$user instanceof User || !$connectedUser instanceof User) {
             throw $this->createNotFoundException('User not found');
-        };
+        }
 
         $missingPokemonsUser = $pokemonRepository->missingShinyPokemons($connectedUser, $user);
         $missingPokemonFriend = $pokemonRepository->missingShinyPokemons($user, $connectedUser);
