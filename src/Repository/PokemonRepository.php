@@ -82,11 +82,10 @@ class PokemonRepository extends ServiceEntityRepository
         return $result;
     }
 
-    public function missingShinyPokemons($userId1, $userId2): array
+    public function missingShinyPokemons(User $userId1, User $userId2): array
     {
+        $connection = $this->getEntityManager()->getConnection();
 
-        $connection = $this->getEntityManager()
-            ->getConnection();
         $sql = '
         SELECT p.*,shiny_doubles.number_shiny
         FROM (
@@ -102,14 +101,14 @@ class PokemonRepository extends ServiceEntityRepository
         INNER JOIN pokemon p ON shiny_doubles.pokemon_id = p.id
         WHERE p.is_shiny = 1 AND user2_pokemon.pokemon_id IS NULL;
         ';
+
         $stmt = $connection->prepare($sql);
         $statement = $stmt->executeQuery([
-            'userId1' => $userId1,
-            'userId2' => $userId2,
+            'userId1' => $userId1->getId(),
+            'userId2' => $userId2->getId(),
         ]);
 
         return $statement->fetchAllAssociative();
-
     }
 
 }
