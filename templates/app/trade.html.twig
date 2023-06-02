@@ -4,13 +4,69 @@
     <div class="h-full p-6 max-sm:pt-2 max-lg:h-fit" id="page-top">
         {% include 'partials/header.html.twig' %}
 
-        <p>Choose a Friend to trade with</p>
-        {% for user in users %}
-            {% if user.username != app.user.username %}
-                <p class="trade-friends">{{ user.username }}</p>
-            {% endif %}
-        {% endfor%}
 
+        <div class="flex flex-row justify-around mt-10">
+            <div id="user_pokemons">
+                <p class="text-center text-2xl">{{ app.user }}</p>
+
+                {% for pokemon in userPokemons %}
+                    <div class="border-4 m-4 border-gray-400 border-opacity-20 cursor-pointer poke-card flex flex-col max-sm:w-[160px] w-[200px] p-2 justify-center items-center h-fit bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 poke-card-user">
+
+                        <img src="{{ asset('images/shiny-icon.png') }}"
+                             class="shiny-icon absolute w-[30px] z-20 ml-32 mb-32 top-[12px]"
+                             alt="Icon shiny">
+
+                        <img src="{{ asset('images/shiny/' ~ pokemon.shiny_picture) }}"
+                             class="z-10 w-fit shiny-picture"
+                             loading="lazy"
+                             alt="Shiny pictures for pokemons">
+
+                        <div class="flex flex-col justify-center z-10">
+                            <p class="whitespace-nowrap text-sm text-white text-center">
+                                <span class="text-xs">#{{ pokemon.number }}</span>
+                            </p>
+                            <p class="whitespace-nowrap text-sm  text-center{% if pokemon.is_actual %} text-bg-primary {% else %} text-white {% endif %}">
+                                {{ pokemon.french_name }}
+                            </p>
+                            <p class="whitespace-nowrap text-xs text-center text-slate-300">
+                                {{ pokemon.english_name }}
+                            </p>
+                        </div>
+                        <p class="mt-2 items-end"> X {{ pokemon.number_shiny }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+            <div id="friend_pokemon" >
+                <p class="text-center text-2xl">{{ friend }}</p>
+
+                {% for pokemon in friendPokemons %}
+                    <div class="border-4 m-4 border-gray-400 border-opacity-20 cursor-pointer poke-card flex flex-col max-sm:w-[160px] w-[200px] p-2 justify-center items-center h-fit bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 poke-card-user">
+
+                        <img src="{{ asset('images/shiny-icon.png') }}"
+                             class="shiny-icon absolute w-[30px] z-20 ml-32 mb-32 top-[12px]"
+                             alt="Icon shiny">
+
+                        <img src="{{ asset('images/shiny/' ~ pokemon.shiny_picture) }}"
+                             class="z-10 w-fit shiny-picture"
+                             loading="lazy"
+                             alt="Shiny pictures for pokemons">
+
+                        <div class="flex flex-col justify-center z-10">
+                            <p class="whitespace-nowrap text-sm text-white text-center">
+                                <span class="text-xs">#{{ pokemon.number }}</span>
+                            </p>
+                            <p class="whitespace-nowrap text-sm  text-center{% if pokemon.is_actual %} text-bg-primary {% else %} text-white {% endif %}">
+                                {{ pokemon.french_name }}
+                            </p>
+                            <p class="whitespace-nowrap text-xs text-center text-slate-300">
+                                {{ pokemon.english_name }}
+                            </p>
+                        </div>
+                        <p class="mt-2 items-end"> X {{ pokemon.number_shiny }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 
 {% endblock %}

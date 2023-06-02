@@ -232,5 +232,4 @@ if (document.querySelector('#search')) {
             }
         }
     }
-
 }
