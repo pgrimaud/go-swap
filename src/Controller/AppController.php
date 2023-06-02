@@ -41,7 +41,7 @@ class AppController extends AbstractController
     {
         return $this->render('app/users.html.twig', [
             'users' => $userRepository->findAll(),
-            'userId' => $request->getParentRequest()->get('id')
+            'userId' => $request->getParentRequest()?->get('id')
         ]);
     }
 
