@@ -8,6 +8,7 @@ use App\Repository\PokemonRepository;
 use App\Repository\UserPokemonRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -36,10 +37,11 @@ class AppController extends AbstractController
     }
 
 
-    public function users(UserRepository $userRepository): Response
+    public function users(UserRepository $userRepository, RequestStack $request): Response
     {
         return $this->render('app/users.html.twig', [
-            'users' => $userRepository->findAll()
+            'users' => $userRepository->findAll(),
+            'userId' => $request->getParentRequest()->get('id')
         ]);
     }
 
