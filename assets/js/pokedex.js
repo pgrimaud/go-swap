@@ -202,6 +202,7 @@ if (document.querySelector('#search')) {
             document.querySelectorAll('.poke-card[data-shiny=""]').forEach(el => el.classList.add('hidden'))
         } else if (type === 'lucky') {
             document.querySelectorAll('.background-lucky').forEach(el => el.classList.remove('hidden'))
+            document.querySelectorAll('.poke-card[data-lucky=""]').forEach(el => el.classList.add('hidden'))
         }
     }
 

@@ -45,6 +45,9 @@ class Pokemon
     #[ORM\ManyToOne(inversedBy: 'pokemons')]
     private ?EvolutionChain $evolutionChain = null;
 
+    #[ORM\Column]
+    private ?bool $isLucky = true;
+
     public function __construct()
     {
         $this->userPokemon = new ArrayCollection();
@@ -194,6 +197,18 @@ class Pokemon
     public function setEvolutionChain(?EvolutionChain $evolutionChain): self
     {
         $this->evolutionChain = $evolutionChain;
+
+        return $this;
+    }
+
+    public function isIsLucky(): ?bool
+    {
+        return $this->isLucky;
+    }
+
+    public function setIsLucky(bool $isLucky): self
+    {
+        $this->isLucky = $isLucky;
 
         return $this;
     }

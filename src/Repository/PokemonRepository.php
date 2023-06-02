@@ -66,13 +66,17 @@ class PokemonRepository extends ServiceEntityRepository
         return $result;
     }
 
-    public function countUnique(bool $shinyPokedex = false): int
+    public function countUnique(bool $shinyPokedex = false, bool $luckyPokedex = false): int
     {
         $query = $this->createQueryBuilder('p')
             ->select('COUNT(DISTINCT(p.number))');
 
         if ($shinyPokedex) {
             $query->andWhere('p.isShiny = true');
+        }
+
+        if ($luckyPokedex) {
+            $query->andWhere('p.isLucky = true');
         }
 
         /** @var int $result */

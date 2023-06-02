@@ -70,7 +70,7 @@
 
                 <div class="border-4 border-gray-400 border-opacity-20 cursor-pointer poke-card flex flex-col max-sm:w-[160px] w-[200px] p-2 justify-center items-center h-full bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 poke-card-user"
                      data-name-fr="{{ pokemon.frenchName|lower }}" data-name-en="{{ pokemon.englishName|lower }}"
-                     data-number="{{ pokemon.number }}" data-internal-id="{{ pokemon.id }}" data-shiny="{{ pokemon.isShiny }}"
+                     data-number="{{ pokemon.number }}" data-internal-id="{{ pokemon.id }}" data-shiny="{{ pokemon.isShiny }}" data-lucky="{{ pokemon.isLucky }}"
                      data-pokedex-normal="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].normal }}{% else %}0{% endif %}"
                      data-pokedex-shiny="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].shiny }}{% else %}0{% endif %}"
                      data-pokedex-lucky="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].lucky }}{% else %}0{% endif %}"
@@ -88,6 +88,7 @@
                          class="z-10 w-fit {% if app.request.get('type') == 'shiny' %}hidden{% endif %} normal-picture"
                          loading="lazy"
                          alt="Normal pictures for pokemons">
+
                     <img src="{{ asset('images/shiny/' ~ pokemon.shinyPicture) }}"
                          class="z-10 w-fit {% if app.request.get('type') != 'shiny' %}hidden{% endif %} shiny-picture"
                          loading="lazy"
