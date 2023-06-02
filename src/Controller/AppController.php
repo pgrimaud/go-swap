@@ -18,9 +18,6 @@ class AppController extends AbstractController
         PokemonRepository $pokemonRepository,
         UserPokemonRepository $userPokemonRepository
     ): Response {
-
-        $totalPokemon = $pokemonRepository->count([]);
-
         $pokedexs = [];
 
         foreach (PokedexHelper::POKEDEX as $type => $name) {

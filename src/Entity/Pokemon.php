@@ -42,6 +42,9 @@ class Pokemon
     #[ORM\Column]
     private ?bool $isActual = false;
 
+    #[ORM\ManyToOne(inversedBy: 'pokemons')]
+    private ?EvolutionChain $evolutionChain = null;
+
     public function __construct()
     {
         $this->userPokemon = new ArrayCollection();
@@ -179,6 +182,18 @@ class Pokemon
     public function setIsActual(bool $isActual): self
     {
         $this->isActual = $isActual;
+
+        return $this;
+    }
+
+    public function getEvolutionChain(): ?EvolutionChain
+    {
+        return $this->evolutionChain;
+    }
+
+    public function setEvolutionChain(?EvolutionChain $evolutionChain): self
+    {
+        $this->evolutionChain = $evolutionChain;
 
         return $this;
     }
