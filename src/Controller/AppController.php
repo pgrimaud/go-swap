@@ -51,12 +51,21 @@ class AppController extends AbstractController
 
         if (!$user instanceof User || !$connectedUser instanceof User) {
             throw $this->createNotFoundException('User not found');
-        }
+        };
+
+        $missingPokemonsUser = $pokemonRepository->missingShinyPokemons($connectedUser, $user);
+        $missingPokemonFriend = $pokemonRepository->missingShinyPokemons($user, $connectedUser);
+
+        $evolutionMissingUser = $pokemonRepository->missingShinyPokemonEvolution($connectedUser, $user);
+        $evolutionMissingFriend = $pokemonRepository->missingShinyPokemonEvolution($user, $connectedUser);
+
+        $allMissingPokemonsUser = array_unique(array_merge($missingPokemonsUser, $evolutionMissingUser), SORT_REGULAR);
+        $allMissingPokemonsFriend = array_unique(array_merge($missingPokemonFriend, $evolutionMissingFriend), SORT_REGULAR);
 
         return $this->render('app/trade.html.twig', [
             'friend' => $user,
-            'userPokemons' => $pokemonRepository->missingShinyPokemons($connectedUser, $user),
-            'friendPokemons' => $pokemonRepository->missingShinyPokemons($user, $connectedUser),
+            'userPokemons' => $allMissingPokemonsUser,
+            'friendPokemons' => $allMissingPokemonsFriend,
         ]);
     }
 }
