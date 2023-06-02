@@ -81,4 +81,35 @@ class PokemonRepository extends ServiceEntityRepository
 
         return $result;
     }
+
+    public function missingShinyPokemons($userId1, $userId2): array
+    {
+
+        $connection = $this->getEntityManager()
+            ->getConnection();
+        $sql = '
+        SELECT p.*,shiny_doubles.number_shiny
+        FROM (
+            SELECT up1.pokemon_id,up1.number_shiny
+            FROM user_pokemon up1
+            WHERE up1.user_id = :userId1 AND up1.shiny = 1 AND up1.number_shiny > 1
+        ) AS shiny_doubles
+        LEFT JOIN (
+            SELECT up2.pokemon_id
+            FROM user_pokemon up2
+            WHERE up2.user_id = :userId2 AND up2.shiny = 1
+        ) AS user2_pokemon ON shiny_doubles.pokemon_id = user2_pokemon.pokemon_id
+        INNER JOIN pokemon p ON shiny_doubles.pokemon_id = p.id
+        WHERE p.is_shiny = 1 AND user2_pokemon.pokemon_id IS NULL;
+        ';
+        $stmt = $connection->prepare($sql);
+        $statement = $stmt->executeQuery([
+            'userId1' => $userId1,
+            'userId2' => $userId2,
+        ]);
+
+        return $statement->fetchAllAssociative();
+
+    }
+
 }

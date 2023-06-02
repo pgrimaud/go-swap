@@ -230,5 +230,4 @@ if (document.querySelector('#search')) {
             }
         }
     }
-
 }

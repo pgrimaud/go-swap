@@ -54,4 +54,5 @@ class UserPokemonRepository extends ServiceEntityRepository
 
         return $result;
     }
+
 }
