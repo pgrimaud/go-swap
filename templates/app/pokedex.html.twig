@@ -81,7 +81,7 @@
                          style="background-image: url('{{ asset('images/lucky.jpg') }}');"></div>
 
                     <img src="{{ asset('images/shiny-icon.png') }}"
-                         class="shiny-icon absolute w-[30px] z-20 ml-32 mb-32 top-[15px] {% if app.request.get('type') != 'shiny' %}hidden{% endif %}"
+                         class="shiny-icon absolute w-[30px] z-20 ml-[6rem] md:ml-32 mb-32 mt-[-40px] {% if app.request.get('type') != 'shiny' %}hidden{% endif %}"
                          alt="Icon shiny">
 
                     <img src="{{ asset('images/normal/' ~ pokemon.normalPicture) }}"
