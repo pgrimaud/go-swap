@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\EvolutionChain;
 use App\Entity\Pokemon;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -29,7 +30,6 @@ class DashboardController extends AbstractDashboardController
     {
         return Dashboard::new()
             ->setTitle('Go Swap');
-
     }
 
     public function configureMenuItems(): iterable
@@ -38,6 +38,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToUrl('Back to website', 'fa fa-home', $websiteUrl);
         yield MenuItem::section('Admin');
         yield MenuItem::linkToCrud('Pokemons', 'fas fa-list', Pokemon::class);
-
+        yield MenuItem::linkToCrud('Evolution chains', 'fas fa-link', EvolutionChain::class);
     }
 }

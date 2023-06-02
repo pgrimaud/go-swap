@@ -57,10 +57,15 @@ class ImportEvolutionChainsCommand extends Command
                 if ($exception->getCode() === 404) {
                     continue;
                 }
+
+                $io->error('An error occurred: ' . $exception->getMessage());
+                return Command::FAILURE;
             }
 
             // fetch evolution chain
-            $evolutionChain = $this->evolutionChainRepository->findOneBy(['apiId' => $i]);
+            $evolutionChain = $this->evolutionChainRepository->findOneBy([
+                'apiId' => $i
+            ]);
 
             // getPokemons of chain
             $pokemons = $this->getPokemons($result['chain']);
@@ -77,7 +82,7 @@ class ImportEvolutionChainsCommand extends Command
             if (!$evolutionChain) {
                 $evolutionChain = new EvolutionChain();
                 $evolutionChain->setApiId($i);
-                $evolutionChain->setName($firstPokemon->getFrenchName());
+                $evolutionChain->setName((string)$firstPokemon->getFrenchName());
                 $evolutionChain->addPokemon($firstPokemon);
             } else {
                 $evolutionChain->removeAllPokemons();

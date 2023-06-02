@@ -90,8 +90,14 @@ class EvolutionChain
 
     public function removeAllPokemons(): void
     {
-        foreach($this->pokemons as $pokemon) {
+        /** @var Pokemon $pokemon */
+        foreach ($this->pokemons as $pokemon) {
             $this->removePokemon($pokemon);
         }
+    }
+
+    public function __toString(): string
+    {
+        return (string)$this->getName();
     }
 }
