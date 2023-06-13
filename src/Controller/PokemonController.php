@@ -80,6 +80,11 @@ class PokemonController extends AbstractController
         UserPokemonRepository $userPokemonRepository,
     ): Response {
         $user = $this->getUser();
+
+        if (!$user instanceof User) {
+            throw new NotFoundHttpException('User not found');
+        }
+
         $data = $request->request->all();
 
         $id = $data['id'];
