@@ -53,7 +53,7 @@ class PokemonCrudController extends AbstractCrudController
                         'accept' => 'image/*'
                     ]
                 ]),
-            AssociationField::new('evolutionChain')->autocomplete()->hideOnIndex(),
+            AssociationField::new('evolutionChain')->autocomplete()->hideOnIndex()->setRequired(false),
         ];
     }
 
