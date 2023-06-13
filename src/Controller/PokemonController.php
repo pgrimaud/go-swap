@@ -27,7 +27,6 @@ class PokemonController extends AbstractController
             $generations[] = [
                 'type' => $type,
                 'name' => $name,
-                'count' => $pokemonRepository->getCountByGeneration($type)
             ];
         }
 
