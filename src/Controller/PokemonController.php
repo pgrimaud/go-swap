@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Entity\UserPokemon;
 use App\Helper\GenerationHelper;
 use App\Helper\PokedexHelper;
@@ -12,6 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class PokemonController extends AbstractController
@@ -43,7 +45,13 @@ class PokemonController extends AbstractController
     #[Route('/pokedex-friend/{id}', name: 'showFriends_pokedex')]
     public function showFriends(int $id, UserRepository $userRepository, PokemonRepository $pokemonRepository): Response
     {
-        $query = $pokemonRepository->getUserPokemon($userRepository->findOneBy(['id' => $id]));
+        $user = $userRepository->findOneBy(['id' => $id]);
+
+        if (!$user instanceof User) {
+            throw new NotFoundHttpException('User not found');
+        }
+
+        $userPokemons = $pokemonRepository->getUserPokemon($user);
 
         $generations = [];
 
@@ -57,9 +65,10 @@ class PokemonController extends AbstractController
 
         return $this->render('app/pokedex.html.twig', [
             'pokemons' => $pokemonRepository->findBy([], ['number' => 'ASC', 'id' => 'ASC']),
-            'userPokemons' => $query,
+            'userPokemons' => $userPokemons,
             'pokedexUsername' => $userRepository->findOneBy(['id' => $id]),
             'generations' => $generations,
+            'lastUpdate' => $user->getUpdatedAt(),
         ]);
     }
 
@@ -108,6 +117,10 @@ class PokemonController extends AbstractController
         }
 
         $entityManager->persist($userPokemon);
+
+        $user->setUpdatedAt(new \DateTimeImmutable());
+        $entityManager->persist($user);
+
         $entityManager->flush();
 
         return $this->json([
