@@ -3,10 +3,12 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Pokemon;
+use App\Helper\GenerationHelper;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -21,8 +23,7 @@ class PokemonCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)
-            ->setDefaultSort(['number' => 'ASC'])
-            ;
+            ->setDefaultSort(['number' => 'ASC']);
     }
 
 
@@ -30,7 +31,7 @@ class PokemonCrudController extends AbstractCrudController
     {
         return [
             IntegerField::new('number'),
-            TextField::new('generation'),
+            ChoiceField::new('generation')->setChoices(array_flip(GenerationHelper::GENERATIONS)),
             TextField::new('frenchName'),
             TextField::new('englishName'),
             BooleanField::new('isShiny'),

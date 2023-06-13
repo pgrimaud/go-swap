@@ -14,23 +14,20 @@ class GenerationHelper
     public const GENERATION_EIGHT = '8G';
     public const GENERATION_NINE = '9G';
 
-
-
-    public const GENERATION =[
-        self::GENERATION_ONE => 'Kanto',
-        self::GENERATION_TWO => 'Johto',
-        self::GENERATION_THREE => 'Hoenn',
-        self::GENERATION_FOUR => 'Sinnoh',
-        self::GENERATION_FIVE => 'Unys',
-        self::GENERATION_SIX => 'Kalos',
-        self::GENERATION_SEVEN => 'Alola',
-        self::GENERATION_EIGHT => 'Galar',
-        self::GENERATION_NINE => 'Other',
-
+    public const GENERATIONS = [
+        self::GENERATION_ONE => 'Kanto (1-151)',
+        self::GENERATION_TWO => 'Johto (152-251)',
+        self::GENERATION_THREE => 'Hoenn (252-386)',
+        self::GENERATION_FOUR => 'Sinnoh (387-493)',
+        self::GENERATION_FIVE => 'Unys (494-649)',
+        self::GENERATION_SIX => 'Kalos (650-721)',
+        self::GENERATION_SEVEN => 'Alola (722-809)',
+        self::GENERATION_EIGHT => 'Galar (810-898)',
+        self::GENERATION_NINE => 'Paldea (899-1010)',
     ];
 
     public static function exist(string $generation): bool
     {
-        return isset(self::GENERATION[$generation]);
+        return isset(self::GENERATIONS[$generation]);
     }
 }

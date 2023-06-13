@@ -25,7 +25,7 @@ class PokemonController extends AbstractController
 
         $generations = [];
 
-        foreach (GenerationHelper::GENERATION as $type => $name) {
+        foreach (GenerationHelper::GENERATIONS as $type => $name) {
             $generations[] = [
                 'type' => $type,
                 'name' => $name,
@@ -55,7 +55,7 @@ class PokemonController extends AbstractController
 
         $generations = [];
 
-        foreach (GenerationHelper::GENERATION as $type => $name) {
+        foreach (GenerationHelper::GENERATIONS as $type => $name) {
             $generations[] = [
                 'type' => $type,
                 'name' => $name,
