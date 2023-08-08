@@ -171,14 +171,40 @@ class ImportPokemonsCommand extends Command
 
         $content = $response->toArray();
 
+        $dateParis = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
+
+        // events to skip
+        $eventsToSkip = [
+            'Research Breakthrough',
+            'Season',
+            'Daily Streak Bonus',
+            'League',
+            'Cup'
+        ];
+
         foreach ($content['data'] as $event) {
 
-            $dateParis = new \DateTime('Europe/Paris');
+            $dateStart = new \DateTime($event['startAt']);
+            $dateEnd = new \DateTime($event['endsAt']);
 
-            if ($event['startAt'] <= $dateParis->format('M d Y H:i:s') &&
-                $event['endsAt'] > $dateParis->format('M d Y H:i:s')) {
+            if ($dateStart <= $dateParis && $dateEnd > $dateParis) {
+
+                $isToSkip = false;
+                foreach ($eventsToSkip as $eventToSkip) {
+                    if (str_contains($event['title'], $eventToSkip)) {
+                        $isToSkip = true;
+                    }
+                }
+
+                if ($isToSkip) {
+                    continue;
+                }
 
                 foreach ($event['features'] as $pokemon) {
+
+                    if (str_contains($pokemon['featureId'], 'EGG')) {
+                        continue;
+                    }
 
                     foreach ($pokemon['pokemon'] as $p) {
 
