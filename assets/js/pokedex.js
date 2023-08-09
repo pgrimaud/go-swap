@@ -2,7 +2,8 @@ if (document.querySelector('#search')) {
     let parameters = {
         'search': document.querySelector('#search').value.toLowerCase(),
         'pokedex': document.querySelector('#filters .active-filter').getAttribute('id'),
-        'hideCaught': document.querySelector('#hide-caught').checked
+        'hideCaught': document.querySelector('#hide-caught').checked,
+        'onlyActual': document.querySelector('#only-actual').checked,
     }
 
     filter()
@@ -37,6 +38,12 @@ if (document.querySelector('#search')) {
     // hide caught pokémon
     document.querySelector('#hide-caught').addEventListener('change', (e) => {
         parameters.hideCaught = e.currentTarget.checked
+        filter()
+    })
+
+    // display only actual pokémon
+    document.querySelector('#only-actual').addEventListener('change', (e) => {
+        parameters.onlyActual = e.currentTarget.checked
         filter()
     })
 
@@ -154,6 +161,10 @@ if (document.querySelector('#search')) {
             displayPokemonCards(`#pokedex .poke-card.pokemon-caught`, false)
         }
 
+        // hide or display 'caught' pokémon => input checkbox
+        if (parameters.onlyActual === true) {
+            displayPokemonCards(`#pokedex .poke-card.pokemon-is-not-actual`, false)
+        }
 
         // manage shiny counter
         displayShinyCounter(parameters.pokedex)
