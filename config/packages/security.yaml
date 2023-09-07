@@ -39,6 +39,7 @@ security:
         - { path: ^/admin, roles: ROLE_ADMIN, requires_channel: https }
         - { path: ^/login, roles: PUBLIC_ACCESS, requires_channel: https }
         - { path: ^/register, roles: PUBLIC_ACCESS, requires_channel: https }
+        - { path: ^/share, roles: PUBLIC_ACCESS, requires_channel: https }
         - { path: ^/, roles: ROLE_USER, requires_channel: https }
 
 

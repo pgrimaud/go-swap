@@ -50,7 +50,7 @@ if (document.querySelector('#search')) {
     // add or remove pokémon to a pokédex
     document.querySelectorAll('#pokedex .poke-card-user').forEach(el => {
         if (!window.location.pathname.includes('/pokedex-friend')) {
-            el.addEventListener('click', (event) => {
+            el.addEventListener('click', () => {
                 const data = new FormData();
                 data.append('id', el.dataset.internalId);
                 data.append('pokedex', parameters.pokedex);
@@ -78,12 +78,12 @@ if (document.querySelector('#search')) {
         }
     })
     //Scroll to the right generation
-    document.querySelector('#selectGeneration').addEventListener('change', (e) => {
+    document.querySelector('#selectGeneration').addEventListener('change', () => {
         goToGeneration(document.querySelector('#selectGeneration').value);
     })
 
     //Scroll back to the top
-    document.querySelector('#scrollToTop').addEventListener('click', (e) => {
+    document.querySelector('#scrollToTop').addEventListener('click', () => {
         goToGeneration('page-top')
     })
 
@@ -223,7 +223,7 @@ if (document.querySelector('#search')) {
             body: data,
         })
             .then(response => response.json())
-            .then(json => {
+            .then(() => {
             })
     }
 

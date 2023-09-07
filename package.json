@@ -7,6 +7,7 @@
         "@symfony/webpack-encore": "^4.0.0",
         "autoprefixer": "^10.4.14",
         "core-js": "^3.23.0",
+        "eslint": "^8.48.0",
         "postcss": "^8.4.23",
         "postcss-loader": "^7.3.0",
         "regenerator-runtime": "^0.13.9",
@@ -21,6 +22,7 @@
         "dev-server": "encore dev-server",
         "dev": "encore dev",
         "watch": "encore dev --watch",
-        "build": "encore production --progress"
+        "build": "encore production --progress",
+        "lint" : "eslint assets/js --ext .js"
     }
 }
