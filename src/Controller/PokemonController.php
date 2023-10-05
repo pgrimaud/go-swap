@@ -21,7 +21,7 @@ class PokemonController extends AbstractController
     #[Route('/pokedex', name: 'show_pokedex')]
     public function show(PokemonRepository $pokemonRepository): Response
     {
-        $query = $pokemonRepository->getUserPokemon($this->getUser());
+        $userPokemons = $pokemonRepository->getUserPokemon($this->getUser());
 
         $generations = [];
 
@@ -37,7 +37,7 @@ class PokemonController extends AbstractController
                 'number' => 'ASC',
                 'id' => 'ASC',
             ]),
-            'userPokemons' => $query,
+            'userPokemons' => $userPokemons,
             'generations' => $generations,
         ]);
     }
@@ -179,7 +179,7 @@ class PokemonController extends AbstractController
         $data = $request->request->all();
 
         $id = $data['id'];
-        $value = $data['value'];
+        $value = $data['value'] ?? 0;
 
         $userPokemon = $userPokemonRepository->findOneBy(['user' => $this->getUser(), 'pokemon' => $id]);
 
