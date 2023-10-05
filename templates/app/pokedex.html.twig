@@ -97,10 +97,12 @@
                          loading="lazy"
                          alt="Normal pictures for pokemons">
 
+                    {% if pokemon.isShiny %}
                     <img src="{{ asset('images/shiny/' ~ pokemon.shinyPicture) }}"
                          class="z-10 w-fit {% if app.request.get('type') != 'shiny' %}hidden{% endif %} shiny-picture"
                          loading="lazy"
-                         alt="Shiny pictures for pokemons">
+                         alt="Shiny #{{ pokemon.number }}">
+                    {% endif %}
                     <div class="flex flex-col justify-center z-10">
                         <p class="whitespace-nowrap text-sm text-white text-center">
                             <span class="text-xs">#{{ pokemon.number }}</span>
