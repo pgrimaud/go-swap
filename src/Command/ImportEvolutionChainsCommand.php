@@ -70,33 +70,35 @@ class ImportEvolutionChainsCommand extends Command
             // getPokemons of chain
             $pokemons = $this->getPokemons($result['chain']);
 
-            $firstPokemon = $this->pokemonRepository->findOneBy([
+            /** @var array $firstPokemons */
+            $firstPokemons = $this->pokemonRepository->findBy([
                 'number' => $pokemons[0]
             ]);
 
             // pokémon isn't in Pokémon Go or has no evolution
-            if (!$firstPokemon || count($pokemons) <= 1) {
+            if (empty($firstPokemons) || count($pokemons) === 0) {
                 continue;
             }
 
             if (!$evolutionChain) {
                 $evolutionChain = new EvolutionChain();
                 $evolutionChain->setApiId($i);
-                $evolutionChain->setName((string)$firstPokemon->getFrenchName());
-                $evolutionChain->addPokemon($firstPokemon);
+                $evolutionChain->setName((string) $firstPokemons[0]->getFrenchName());
+                array_map(fn($pokemon) => $evolutionChain->addPokemon($pokemon), $firstPokemons);
             } else {
                 $evolutionChain->removeAllPokemons();
-                $evolutionChain->addPokemon($firstPokemon);
+                array_map(fn($pokemon) => $evolutionChain->addPokemon($pokemon), $firstPokemons);
             }
 
             array_shift($pokemons);
             foreach ($pokemons as $pokemon) {
-                $pokemonEntity = $this->pokemonRepository->findOneBy([
+                /** @var array $pokemonEntities */
+                $pokemonEntities = $this->pokemonRepository->findBy([
                     'number' => $pokemon
                 ]);
 
-                if ($pokemonEntity) {
-                    $evolutionChain->addPokemon($pokemonEntity);
+                if (count($pokemonEntities) > 0) {
+                    array_map(fn($pokemonEntity) => $evolutionChain->addPokemon($pokemonEntity), $pokemonEntities);
                 }
             }
 

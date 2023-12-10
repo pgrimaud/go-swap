@@ -149,7 +149,9 @@ if (document.querySelector('#search')) {
             document.querySelectorAll(`#pokedex .poke-card`).forEach(el => {
                 if (
                     el.dataset.nameFr.includes(parameters.search) === true ||
-                    el.dataset.nameEn.includes(parameters.search) === true
+                    el.dataset.nameEn.includes(parameters.search) === true ||
+                    el.dataset.chainFr.includes(parameters.search) === true ||
+                    el.dataset.chainEn.includes(parameters.search) === true
                 ) {
                     el.classList.remove('hidden')
                 }

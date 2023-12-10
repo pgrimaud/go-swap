@@ -148,4 +148,24 @@ class PokemonRepository extends ServiceEntityRepository
         return $statement->fetchAllAssociative();
     }
 
+    public function getEvolutionsChains(): array
+    {
+        $connection = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            SELECT number, french_name, english_name, evolution_chain_id
+            FROM pokemon
+        ';
+
+        $stmt = $connection->prepare($sql);
+        $statement = $stmt->executeQuery();
+
+        $evolutionsChains = [];
+
+        foreach ($statement->fetchAllAssociative() as $pokemon) {
+            $evolutionsChains[$pokemon['evolution_chain_id']][] = $pokemon;
+        }
+
+        return $evolutionsChains;
+    }
 }

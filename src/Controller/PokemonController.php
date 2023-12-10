@@ -39,6 +39,7 @@ class PokemonController extends AbstractController
             ]),
             'userPokemons' => $userPokemons,
             'generations' => $generations,
+            'evolutionChains' => $pokemonRepository->getEvolutionsChains(),
         ]);
     }
 
