@@ -78,7 +78,7 @@
 
                 <div class="border-4 border-gray-400 border-opacity-20 cursor-pointer poke-card flex flex-col max-sm:w-[160px] w-[200px] p-2 justify-center items-center h-full bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 poke-card-user {% if pokemon.isActual == false %}pokemon-is-not-actual{% endif %} min-h-[200px]"
                      data-name-fr="{{ pokemon.frenchName|lower }}" data-name-en="{{ pokemon.englishName|lower }}"
-                     data-chain-fr="{{ display_chain(pokemon.evolutionChain.id, evolutionChains, 'fr') }}" data-chain-en="{{ display_chain(pokemon.evolutionChain.id, evolutionChains, 'en') }}"
+                     data-chain-fr="{{ display_chain(pokemon.evolutionChain.id | default(0), evolutionChains, 'fr') }}" data-chain-en="{{ display_chain(pokemon.evolutionChain.id | default(0), evolutionChains, 'en') }}"
                      data-number="{{ pokemon.number }}" data-internal-id="{{ pokemon.id }}" data-shiny="{{ pokemon.isShiny }}" data-lucky="{{ pokemon.isLucky }}"
                      data-pokedex-normal="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].normal }}{% else %}0{% endif %}"
                      data-pokedex-shiny="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].shiny }}{% else %}0{% endif %}"
