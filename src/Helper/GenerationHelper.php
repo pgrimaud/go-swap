@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Helper;
 
 class GenerationHelper
@@ -12,6 +14,7 @@ class GenerationHelper
     public const GENERATION_SIX = '6G';
     public const GENERATION_SEVEN = '7G';
     public const GENERATION_EIGHT = '8G';
+    public const GENERATION_FOUR_ALT = '4G_ALT';
     public const GENERATION_NINE = '9G';
 
     public const GENERATIONS = [
@@ -23,7 +26,8 @@ class GenerationHelper
         self::GENERATION_SIX => 'Kalos (650-721)',
         self::GENERATION_SEVEN => 'Alola (722-809)',
         self::GENERATION_EIGHT => 'Galar (810-898)',
-        self::GENERATION_NINE => 'Paldea (899-1010)',
+        self::GENERATION_FOUR_ALT => 'Hisui (889-905)',
+        self::GENERATION_NINE => 'Paldea (906-1010)',
     ];
 
     public static function exist(string $generation): bool
