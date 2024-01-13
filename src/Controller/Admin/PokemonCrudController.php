@@ -44,7 +44,8 @@ class PokemonCrudController extends AbstractCrudController
                     'attr' => [
                         'accept' => 'image/*'
                     ]
-                ]),
+                ])
+                ->setHelp('Check normal pictures <a target="_blank" href="https://www.pokebip.com/page/jeuxvideo/pokemon_go/pokemon">here</a>'),
             ImageField::new('shinyPicture')
                 ->setUploadDir('public/images/shiny')
                 ->setBasePath('images/shiny')
@@ -53,7 +54,8 @@ class PokemonCrudController extends AbstractCrudController
                     'attr' => [
                         'accept' => 'image/*'
                     ]
-                ]),
+                ])
+                ->setHelp('Check shiny pictures <a target="_blank" href="https://www.pokebip.com/page/jeuxvideo/pokemon_go/pokemon_chromatiques">here</a>'),
             AssociationField::new('evolutionChain')->autocomplete()->hideOnIndex()->setRequired(false),
         ];
     }

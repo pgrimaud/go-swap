@@ -238,12 +238,13 @@ if (document.querySelector('#search')) {
     }
 
     function hideGenerations() {
-        for (let i = 1; i <= 10; i++) {
-            if (document.querySelectorAll(`#pokedex .poke-card[data-generation='${i}G']:not(.hidden)`).length === 0) {
-                if (document.getElementById(`${i}G`)) {
-                    document.getElementById(`${i}G`).classList.add('hidden')
+        document.querySelectorAll('.generation').forEach(el => {
+            let generation = el.getAttribute('id');
+            if (document.querySelectorAll(`#pokedex .poke-card[data-generation='${generation}']:not(.hidden)`).length === 0) {
+                if (document.getElementById(`${generation}`)) {
+                    document.getElementById(`${generation}`).classList.add('hidden')
                 }
             }
-        }
+        })
     }
 }

@@ -21,7 +21,8 @@ class EvolutionChainCrudController extends AbstractCrudController
     {
         return [
             TextField::new('name'),
-            NumberField::new('apiId')->hideOnIndex()->setHelp('Check API ID <a href="https://pokeapi.co/api/v2/evolution-chain?limit=1000">here</a>'),
+            NumberField::new('apiId')->hideOnIndex()->setHelp('Check API ID <a
+                target="_blank" href="https://pokeapi.co/api/v2/evolution-chain?limit=1000">here</a>'),
             AssociationField::new('pokemons')
                 ->setFormTypeOption('choice_label', 'french_name')
                 ->setFormTypeOption('by_reference', false),

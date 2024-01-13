@@ -56,25 +56,25 @@ class ImportPokemonsCommand extends Command
             }
 
             $browser->request('GET', $url)
-                ->filter(".bipcode tbody tr td:nth-child(1)")
+                ->filter('.bipcode tbody tr td:nth-child(1)')
                 ->each(function (Crawler $node) use ($generation) {
 
-                    if ($node->filter("em")->count() >= 1 && $node->filter("em")->text() !== "Possède l'apparence d'un autre Pokémon") {
+                    if ($node->filter('em')->count() >= 1 && $node->filter('em')->text() !== 'Possède l\'apparence d\'un autre Pokémon') {
                         return;
                     }
 
-                    if ($node->filter("span")->count() >= 1) {
-                        $tdValue = str_replace($node->filter("span")->text(), "", $node->text());
+                    if ($node->filter('span')->count() >= 1) {
+                        $tdValue = str_replace($node->filter('span')->text(), '', $node->text());
                     } else {
                         $tdValue = $node->text();
                     }
 
-                    if ($node->text() === "#132 MétamorphPossède l'apparence d'un autre Pokémon") {
-                        $tdValue = str_replace($node->filter("em")->text(), "", $node->text());;
+                    if ($node->text() === '#132 MétamorphPossède l\'apparence d\'un autre Pokémon') {
+                        $tdValue = str_replace($node->filter('em')->text(), '', $node->text());;
                     }
 
-                    if (str_contains($node->text(), "Flamoutan")) {
-                        $tdValue = str_replace($node->filter("span")->text(), "", "#514 Flamoutan");
+                    if (str_contains($node->text(), 'Flamoutan')) {
+                        $tdValue = str_replace($node->filter('span')->text(), '', '#514 Flamoutan');
                     }
 
                     preg_match('#([0-9]{3,4}) (.*)#', $tdValue, $matches);
@@ -84,7 +84,7 @@ class ImportPokemonsCommand extends Command
                         $pokemon = new Pokemon();
                         $pokemon->setNumber(intval($matches[1]));
                         $pokemon->setFrenchName($matches[2]);
-                        $pokemon->setGeneration($generation . "G");
+                        $pokemon->setGeneration($generation . 'G');
                         $pokemon->setIsShiny(false);
 
                         $this->entityManager->persist($pokemon);
@@ -111,10 +111,10 @@ class ImportPokemonsCommand extends Command
             }
 
             $browser->request('GET', $url)
-                ->filter(".bipcode tr td:nth-child(1)")
+                ->filter('.bipcode tr td:nth-child(1)')
                 ->each(function (Crawler $node) {
 
-                    if (str_contains($node->text(), "#")) {
+                    if (str_contains($node->text(), '#')) {
                         preg_match('#([0-9]{3,4}) (.*)#', $node->text(), $matches);
                         $pokemon = $this->entityManager->getRepository(Pokemon::class)->findOneBy(['number' => $matches[1]]);
 
