@@ -55,7 +55,8 @@ class PokemonCrudController extends AbstractCrudController
                         'accept' => 'image/*'
                     ]
                 ])
-                ->setHelp('Check shiny pictures <a target="_blank" href="https://www.pokebip.com/page/jeuxvideo/pokemon_go/pokemon_chromatiques">here</a>'),
+                ->setHelp('Check shiny pictures <a target="_blank" href="https://www.pokebip.com/page/jeuxvideo/pokemon_go/pokemon_chromatiques">here</a>
+or <a target="_blank" href="https://9db.jp/pokego/data/2235">here</a>'),
             AssociationField::new('evolutionChain')->autocomplete()->hideOnIndex()->setRequired(false),
         ];
     }
