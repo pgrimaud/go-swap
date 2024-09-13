@@ -1,4 +1,9 @@
 parameters:
-    checkMissingIterableValueType: false
-    checkGenericClassInNonGenericObjectType: false
-
+    ignoreErrors:
+        -
+            identifier: missingType.iterableValue
+        -
+            identifier: missingType.generics
+        -
+            message: "#Offset \\d+ does not exist on array\\{.*\\}#"
+            path: %currentWorkingDirectory%/src/Command/ImportPokemonsCommand.php
