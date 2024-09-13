@@ -94,13 +94,13 @@
                          alt="Icon shiny">
 
                     <img src="{{ asset('images/normal/' ~ pokemon.normalPicture) }}"
-                         class="z-10 w-fit {% if app.request.get('type') == 'shiny' %}hidden{% endif %} normal-picture"
+                         class="z-10 w-fit {% if app.request.get('type') == 'shiny' %}hidden{% endif %} normal-picture max-w-[120px]"
                          loading="lazy"
                          alt="Normal pictures for pokemons">
 
                     {% if pokemon.isShiny %}
                     <img src="{{ asset('images/shiny/' ~ pokemon.shinyPicture) }}"
-                         class="z-10 w-fit {% if app.request.get('type') != 'shiny' %}hidden{% endif %} shiny-picture"
+                         class="z-10 w-fit {% if app.request.get('type') != 'shiny' %}hidden{% endif %} shiny-picture max-w-[120px]"
                          loading="lazy"
                          alt="Shiny #{{ pokemon.number }}">
                     {% endif %}
