@@ -70,6 +70,7 @@ class PokemonController extends AbstractController
             'pokedexUsername' => $userRepository->findOneBy(['id' => $id]),
             'generations' => $generations,
             'lastUpdate' => $user->getUpdatedAt(),
+            'evolutionChains' => $pokemonRepository->getEvolutionsChains(),
         ]);
     }
 
