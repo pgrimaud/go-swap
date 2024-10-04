@@ -6,8 +6,12 @@ namespace App\Helper;
 
 class StringHelper
 {
-    public static function cleanAccents(string $text): string
+    public static function cleanAccents(?string $text): string
     {
+        if ($text === null) {
+            return '';
+        }
+
         $accents = [
             'À', 'Á', 'Â', 'Ã', 'Ä', 'Å', 'à', 'á', 'â', 'ã', 'ä', 'å',
             'È', 'É', 'Ê', 'Ë', 'è', 'é', 'ê', 'ë',
