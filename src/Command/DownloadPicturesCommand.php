@@ -3,13 +3,16 @@
 namespace App\Command;
 
 use App\Entity\Pokemon;
+use App\Helper\StringHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[AsCommand(
     name: 'app:download-pictures',
@@ -19,7 +22,10 @@ class DownloadPicturesCommand extends Command
 {
     private SymfonyStyle $io;
 
-    public function __construct(private readonly EntityManagerInterface $entityManager)
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly HttpClientInterface $httpClient
+    )
     {
         parent::__construct();
     }
@@ -42,6 +48,8 @@ class DownloadPicturesCommand extends Command
         $progressBar = new ProgressBar($this->io, count($pokemonRepository));
         $progressBar->start();
 
+        $notFound = [];
+
         foreach ($pokemonRepository as $pokemon) {
             $progressBar->advance();
 
@@ -51,8 +59,16 @@ class DownloadPicturesCommand extends Command
                 continue;
             }
 
-            $url = 'https://www.pokebip.com/pages/icones/poke/GO/' . $pokemon->getNumber() . '.png';
-            $image = file_get_contents($url);
+            $url = 'https://www.media.pokekalos.fr/img/pokemon/pokego/' . mb_strtolower(StringHelper::cleanAccents($pokemon->getFrenchName())) . '.png';
+
+            try{
+                $request = $this->httpClient->request('GET', $url);
+                $image = $request->getContent();
+            } catch (\Exception $e) {
+                $notFound[] = [$pokemon->getNumber(), $pokemon->getFrenchName()];
+                continue;
+            }
+
             $fp = fopen(__DIR__ . '/../../public/images/normal/' . $pokemon->getNumber() . '.png', 'w');
             if ($fp && $image) {
                 fwrite($fp, $image);
@@ -63,6 +79,15 @@ class DownloadPicturesCommand extends Command
             $this->entityManager->flush();
         }
         $progressBar->finish();
+
+        $this->io->newLine(2);
+
+        $table = new Table($this->io);
+        $table
+            ->setHeaders(['Number', 'Name'])
+            ->setRows($notFound)
+        ;
+        $table->render();
     }
 
     private function getPicturesShiny(): void
@@ -71,24 +96,28 @@ class DownloadPicturesCommand extends Command
         $progressBar = new ProgressBar($this->io, count($pokemonRepository));
         $progressBar->start();
 
+        $notFound = [];
+
         foreach ($pokemonRepository as $pokemon) {
             $progressBar->advance();
 
             if (file_exists(__DIR__ . '/../../public/images/shiny/' . $pokemon->getNumber() . '.png')
-                || $pokemon->getShinyPicture() !== null) {
+                || $pokemon->getNormalPicture() !== null
+            ) {
                 continue;
             }
 
-            $endUrl = match ($pokemon->getNumber()) {
-                201 => 'f.png',
-                327 => 'p1.png',
-                710, 711 => 'fe.png',
-                default => '.png',
-            };
-            $url = 'https://www.pokebip.com/pages/icones/pokechroma/GO/' . $pokemon->getNumber() . $endUrl;
+            $url = 'https://www.media.pokekalos.fr/img/pokemon/pokego/' . mb_strtolower(StringHelper::cleanAccents($pokemon->getFrenchName())) . '-s.png';
 
-            $image = file_get_contents($url);
-            $fp = fopen(__DIR__ . '/../../public/images/shiny/' . $pokemon->getNumber() . ".png", "w");
+            try{
+                $request = $this->httpClient->request('GET', $url);
+                $image = $request->getContent();
+            } catch (\Exception $e) {
+                $notFound[] = [$pokemon->getNumber(), $pokemon->getFrenchName()];
+                continue;
+            }
+
+            $fp = fopen(__DIR__ . '/../../public/images/shiny/' . $pokemon->getNumber() . '.png', 'w');
             if ($fp && $image) {
                 fwrite($fp, $image);
                 fclose($fp);
@@ -98,5 +127,14 @@ class DownloadPicturesCommand extends Command
             $this->entityManager->flush();
         }
         $progressBar->finish();
+
+        $this->io->newLine(2);
+
+        $table = new Table($this->io);
+        $table
+            ->setHeaders(['Number', 'Name'])
+            ->setRows($notFound)
+        ;
+        $table->render();
     }
 }

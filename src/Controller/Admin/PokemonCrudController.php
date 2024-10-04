@@ -45,7 +45,7 @@ class PokemonCrudController extends AbstractCrudController
                         'accept' => 'image/*'
                     ]
                 ])
-                ->setHelp('Check normal pictures <a target="_blank" href="https://www.pokebip.com/page/jeuxvideo/pokemon_go/pokemon">here</a>'),
+                ->setHelp('Check normal pictures <a target="_blank" href="https://www.pokekalos.fr/pokedex/pokemongo/index.html">here</a>'),
             ImageField::new('shinyPicture')
                 ->setUploadDir('public/images/shiny')
                 ->setBasePath('images/shiny')
@@ -55,8 +55,7 @@ class PokemonCrudController extends AbstractCrudController
                         'accept' => 'image/*'
                     ]
                 ])
-                ->setHelp('Check shiny pictures <a target="_blank" href="https://www.pokebip.com/page/jeuxvideo/pokemon_go/pokemon_chromatiques">here</a>
-or <a target="_blank" href="https://9db.jp/pokego/data/2235">here</a>'),
+                ->setHelp('Check shiny pictures <a target="_blank" href="https://www.pokekalos.fr/pokedex/pokemongo/index.html">here</a>'),
             AssociationField::new('evolutionChain')->autocomplete()->hideOnIndex()->setRequired(false),
         ];
     }
