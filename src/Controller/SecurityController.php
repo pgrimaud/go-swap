@@ -46,6 +46,7 @@ class SecurityController extends AbstractController
                 )
             );
 
+            $user->setUpdatedAt(new \DateTimeImmutable());
             $entityManager->persist($user);
             $entityManager->flush();
             // do anything else you need here, like send an email
