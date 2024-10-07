@@ -102,7 +102,7 @@ class DownloadPicturesCommand extends Command
             $progressBar->advance();
 
             if (file_exists(__DIR__ . '/../../public/images/shiny/' . $pokemon->getNumber() . '.png')
-                || $pokemon->getNormalPicture() !== null
+                || $pokemon->getShinyPicture() !== null
             ) {
                 continue;
             }
