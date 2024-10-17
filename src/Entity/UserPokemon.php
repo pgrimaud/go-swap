@@ -37,6 +37,12 @@ class UserPokemon
     #[ORM\Column(nullable: true)]
     private ?int $numberShiny = null;
 
+    #[ORM\Column]
+    private ?bool $shadow = null;
+
+    #[ORM\Column]
+    private ?bool $purified = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -124,5 +130,25 @@ class UserPokemon
         $this->numberShiny = $numberShiny;
 
         return $this;
+    }
+
+    public function getShadow(): ?bool
+    {
+        return $this->shadow;
+    }
+
+    public function setShadow(?bool $shadow): void
+    {
+        $this->shadow = $shadow;
+    }
+
+    public function getPurified(): ?bool
+    {
+        return $this->purified;
+    }
+
+    public function setPurified(?bool $purified): void
+    {
+        $this->purified = $purified;
     }
 }

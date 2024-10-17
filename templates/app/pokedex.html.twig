@@ -39,6 +39,14 @@
                     class="bg-gradient-to-r text-white py-2 max-sm:py-2 px-6 max-sm:px-2 rounded border-white {% if app.request.get('type') == 'threeStars' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
                 3 Stars
             </button>
+            <button id="shadow"
+                    class="bg-gradient-to-r text-white py-2 max-sm:py-2 px-6 max-sm:px-2 rounded border-white {% if app.request.get('type') == 'shadow' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
+                Shadow
+            </button>
+            <button id="purified"
+                    class="bg-gradient-to-r text-white py-2 max-sm:py-2 px-6 max-sm:px-2 rounded border-white {% if app.request.get('type') == 'purified' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
+                Purified
+            </button>
         </div>
 
         <div class="flex justify-center flex-row max-sm:flex-col max-sm:gap-2 gap-10 items-center" id="filters">
@@ -79,11 +87,13 @@
                 <div class="border-4 border-gray-400 border-opacity-20 cursor-pointer poke-card flex flex-col max-sm:w-[160px] w-[200px] p-2 justify-center items-center h-full bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 poke-card-user {% if pokemon.isActual == false %}pokemon-is-not-actual{% endif %} min-h-[200px]"
                      data-name-fr="{{ pokemon.frenchName|lower }}" data-name-en="{{ pokemon.englishName|lower }}"
                      data-chain-fr="{{ display_chain(pokemon.evolutionChain.id | default(0), evolutionChains, 'fr') }}" data-chain-en="{{ display_chain(pokemon.evolutionChain.id | default(0), evolutionChains, 'en') }}"
-                     data-number="{{ pokemon.number }}" data-internal-id="{{ pokemon.id }}" data-shiny="{{ pokemon.isShiny }}" data-lucky="{{ pokemon.isLucky }}"
+                     data-number="{{ pokemon.number }}" data-internal-id="{{ pokemon.id }}" data-shiny="{{ pokemon.isShiny }}" data-lucky="{{ pokemon.isLucky }}" data-shadow="{{ pokemon.isShadow }}" data-purified="{{ pokemon.isPurified }}"
                      data-pokedex-normal="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].normal }}{% else %}0{% endif %}"
                      data-pokedex-shiny="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].shiny }}{% else %}0{% endif %}"
                      data-pokedex-lucky="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].lucky }}{% else %}0{% endif %}"
                      data-pokedex-threeStars="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].threeStars }}{% else %}0{% endif %}"
+                     data-pokedex-shadow="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].shadow }}{% else %}0{% endif %}"
+                     data-pokedex-purified="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].purified }}{% else %}0{% endif %}"
                      data-generation="{{ pokemon.generation }}"
                 >
                     <div class="background max-sm:w-[160px] w-[194px] h-[194px] absolute z-0 opacity-30 rounded-md background-lucky {% if app.request.get('type') != 'lucky' %}hidden{% endif %}"
@@ -92,6 +102,14 @@
                     <img src="{{ asset('images/shiny-icon.png') }}"
                          class="shiny-icon absolute w-[30px] z-20 ml-[6rem] md:ml-32 mb-32 mt-[-40px] {% if app.request.get('type') != 'shiny' %}hidden{% endif %}"
                          alt="Icon shiny">
+
+                    <img src="{{ asset('images/purified-icon.png') }}"
+                         class="purified-icon absolute w-[30px] z-20 ml-[-125px] mb-[-40px] {% if app.request.get('type') != 'purified' %}hidden{% endif %}"
+                         alt="Icon purified">
+
+                    <img src="{{ asset('images/shadow-icon.png') }}"
+                         class="shadow-icon absolute w-[30px] z-20 ml-[-125px] mb-[-40px] {% if app.request.get('type') != 'shadow' %}hidden{% endif %}"
+                         alt="Icon shadow">
 
                     <img src="{{ asset('images/normal/' ~ pokemon.normalPicture) }}"
                          class="z-10 w-fit {% if app.request.get('type') == 'shiny' %}hidden{% endif %} normal-picture max-w-[120px]"

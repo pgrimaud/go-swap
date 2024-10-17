@@ -61,6 +61,8 @@ class PokemonCrudController extends AbstractCrudController
             TextField::new('englishName'),
             BooleanField::new('isShiny'),
             BooleanField::new('isLucky'),
+            BooleanField::new('isShadow'),
+            BooleanField::new('isPurified'),
             ImageField::new('normalPicture')
                 ->setUploadDir('public/images/normal')
                 ->setBasePath('images/normal')

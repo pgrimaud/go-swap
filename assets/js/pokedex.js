@@ -205,7 +205,7 @@ if (document.querySelector('#search')) {
 
     function displayPokedexCardType(type) {
         // reset cards
-        document.querySelectorAll('.background-lucky, .shiny-picture, .shiny-icon').forEach(el => el.classList.add('hidden'))
+        document.querySelectorAll('.background-lucky, .shiny-picture, .shiny-icon, .purified-icon, .shadow-icon').forEach(el => el.classList.add('hidden'))
         document.querySelectorAll('.normal-picture').forEach(el => el.classList.remove('hidden'))
 
         if (type === 'shiny') {
@@ -213,9 +213,16 @@ if (document.querySelector('#search')) {
             document.querySelectorAll('.normal-picture').forEach(el => el.classList.add('hidden'))
 
             document.querySelectorAll('.poke-card[data-shiny=""]').forEach(el => el.classList.add('hidden'))
-        } else if (type === 'lucky') {
-            document.querySelectorAll('.background-lucky').forEach(el => el.classList.remove('hidden'))
-            document.querySelectorAll('.poke-card[data-lucky=""]').forEach(el => el.classList.add('hidden'))
+        } else if (['lucky', 'shadow', 'purified'].includes(type)) {
+            if (type === 'lucky') {
+                document.querySelectorAll('.background-lucky').forEach(el => el.classList.remove('hidden'))
+            } else if (type === 'shadow') {
+                document.querySelectorAll(`.shadow-icon`).forEach(el => el.classList.remove('hidden'))
+            } else if (type === 'purified') {
+                document.querySelectorAll(`.purified-icon`).forEach(el => el.classList.remove('hidden'))
+            }
+
+            document.querySelectorAll(`.poke-card[data-${type}=""]`).forEach(el => el.classList.add('hidden'))
         }
     }
 

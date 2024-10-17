@@ -48,6 +48,12 @@ class Pokemon
     #[ORM\Column]
     private ?bool $isLucky = true;
 
+    #[ORM\Column]
+    private ?bool $isShadow = false;
+
+    #[ORM\Column]
+    private ?bool $isPurified = false;
+
     public function __construct()
     {
         $this->userPokemon = new ArrayCollection();
@@ -211,5 +217,25 @@ class Pokemon
         $this->isLucky = $isLucky;
 
         return $this;
+    }
+
+    public function getIsShadow(): ?bool
+    {
+        return $this->isShadow;
+    }
+
+    public function setIsShadow(?bool $isShadow): void
+    {
+        $this->isShadow = $isShadow;
+    }
+
+    public function getIsPurified(): ?bool
+    {
+        return $this->isPurified;
+    }
+
+    public function setIsPurified(?bool $isPurified): void
+    {
+        $this->isPurified = $isPurified;
     }
 }

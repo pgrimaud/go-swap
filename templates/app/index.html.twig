@@ -17,7 +17,7 @@
                 </div>
             </div>
 
-            <div class="container pt-4 md:pt-2 mx-auto flex flex-col lg:flex-row  sm:items-center  lg:items-start gap-5 ">
+            <div class="container pt-4 md:pt-2 mx-auto grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-2 gap-5">
                 {% for dex in pokedexs %}
                     {% include 'app/pokedex-card.html.twig' %}
                 {% endfor %}

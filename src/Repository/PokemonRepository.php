@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Pokemon;
 use App\Entity\User;
+use App\Helper\PokedexHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -44,7 +45,7 @@ class PokemonRepository extends ServiceEntityRepository
     public function getUserPokemon(User|UserInterface|null $user): array
     {
         return $this->createQueryBuilder('p', 'p.id')
-            ->select('p.id, p.number', 'up.shiny', 'up.normal', 'up.lucky', 'up.threeStars', 'up.numberShiny')
+            ->select('p.id, p.number', 'up.shiny', 'up.normal', 'up.lucky', 'up.threeStars', 'up.numberShiny', 'up.shadow', 'up.purified')
             ->join('p.userPokemon', 'up')
             ->andWhere('up.user = :user')
             ->setParameter('user', $user)
@@ -66,17 +67,13 @@ class PokemonRepository extends ServiceEntityRepository
         return $result;
     }
 
-    public function countUnique(bool $shinyPokedex = false, bool $luckyPokedex = false): int
+    public function countUnique(string $type): int
     {
         $query = $this->createQueryBuilder('p')
             ->select('COUNT(DISTINCT(p.number))');
 
-        if ($shinyPokedex) {
-            $query->andWhere('p.isShiny = true');
-        }
-
-        if ($luckyPokedex) {
-            $query->andWhere('p.isLucky = true');
+        if (in_array($type, PokedexHelper::FILTERABLE_TYPES)) {
+            $query->andWhere('p.is' . ucfirst($type) . ' = true');
         }
 
         /** @var int $result */
