@@ -176,7 +176,7 @@ class ImportPokemonsCommand extends Command
         // events to skip
         $eventsToSkip = [
             'Research Breakthrough',
-            'Season',
+            //'Season',
             'Daily Streak Bonus',
             'League',
             'Cup'
@@ -202,12 +202,12 @@ class ImportPokemonsCommand extends Command
 
                 foreach ($event['features'] as $pokemon) {
 
-                    if (str_contains($pokemon['featureId'], 'EGG')) {
+
+                    if ($pokemon['featureId'] === 'INCREASED_SPAWN_SOUTHERN_HEMISPHERE') {
                         continue;
                     }
 
                     foreach ($pokemon['pokemon'] as $p) {
-
                         $englishName = ucfirst(strtolower($p['pokemon_id']));
 
                         if (str_contains($englishName, '_')) {
