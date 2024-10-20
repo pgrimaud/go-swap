@@ -165,4 +165,13 @@ class PokemonRepository extends ServiceEntityRepository
 
         return $evolutionsChains;
     }
+
+    public function getPokemonByName(string $name): ?Pokemon
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.englishName LIKE :name')
+            ->setParameter('name', $name)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
