@@ -34,6 +34,13 @@ if (document.querySelector('#search')) {
             filter()
         })
     })
+    // pokédex type filters on mobile
+    document.querySelector('#mobile-filters').addEventListener('change', (elem) => {
+        window.history.replaceState({}, '', `?type=${elem.target.value}`)
+        parameters.pokedex = elem.target.value
+
+        filter()
+    })
 
     // hide caught pokémon
     document.querySelector('#hide-caught').addEventListener('change', (e) => {
@@ -78,9 +85,11 @@ if (document.querySelector('#search')) {
         }
     })
     //Scroll to the right generation
-    document.querySelector('#selectGeneration').addEventListener('change', () => {
-        goToGeneration(document.querySelector('#selectGeneration').value);
-    })
+    document.querySelectorAll('*[name=selectGeneration]').forEach(btn => {
+        btn.addEventListener('change', (event => {
+            goToGeneration(event.target.value);
+        }));
+    });
 
     //Scroll back to the top
     document.querySelector('#scrollToTop').addEventListener('click', () => {

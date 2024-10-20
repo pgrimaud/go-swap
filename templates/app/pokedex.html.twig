@@ -21,8 +21,7 @@
             >
         </div>
 
-        <div class="flex flex-row justify-center items-center {% if app.request.get('id') == false %}max-sm:hidden{% endif %} gap-10 mb-6 max-sm:mb-4 max-lg:gap-4 max-lg:mx-auto max-lg:items-stretch"
-             id="filters">
+        <div class="flex flex-row justify-center items-center max-sm:hidden gap-10 mb-6 max-sm:mb-4 max-lg:gap-4 max-lg:mx-auto max-lg:items-stretch" id="filters">
             <button id="normal"
                     class="bg-gradient-to-r text-white py-2 max-sm:py-2 px-6 max-sm:px-2 rounded border-white {% if app.request.get('type') == 'normal' or app.request.get('type') == '' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
                 Normal
@@ -62,11 +61,30 @@
                 </label>
             </div>
 
-            <select name="selectGeneration" id="selectGeneration" class="flex bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 h-9 block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 pl-3">
+            <!-- Select pour les générations, visible uniquement sur desktop -->
+            <select name="selectGeneration" id="selectGeneration" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 h-9 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 pl-3 max-sm:hidden">
                 {% for generation in generations %}
                     <option value="{{ generation.type }}">{{ generation.name }}</option>
                 {% endfor %}
             </select>
+
+            <div class="hidden max-sm:flex max-sm:gap-2 max-sm:justify-between">
+                <select id="mobile-filters" class="w-1/2 flex-grow-0 box-border p-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 h-9 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option value="normal" {% if app.request.get('type') == 'normal' or app.request.get('type') == '' %}selected{% endif %}>Normal</option>
+                    <option value="shiny" {% if app.request.get('type') == 'shiny' %}selected{% endif %}>Shiny</option>
+                    <option value="lucky" {% if app.request.get('type') == 'lucky' %}selected{% endif %}>Lucky</option>
+                    <option value="threeStars" {% if app.request.get('type') == 'threeStars' %}selected{% endif %}>3 Stars</option>
+                    <option value="shadow" {% if app.request.get('type') == 'shadow' %}selected{% endif %}>Shadow</option>
+                    <option value="purified" {% if app.request.get('type') == 'purified' %}selected{% endif %}>Purified</option>
+                </select>
+
+                <select name="selectGeneration" class="w-1/2 flex-grow-0 box-border p-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 h-9 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    {% for generation in generations %}
+                        <option value="{{ generation.type }}">{{ generation.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
         </div>
 
         <div class="h-fit flex flex-row flex-wrap gap-4 pt-4 justify-center pb-10" id="pokedex">
@@ -104,11 +122,11 @@
                          alt="Icon shiny">
 
                     <img src="{{ asset('images/purified-icon.png') }}"
-                         class="purified-icon absolute w-[30px] z-20 ml-[-125px] mb-[-40px] {% if app.request.get('type') != 'purified' %}hidden{% endif %}"
+                         class="purified-icon absolute w-[30px] z-20 ml-[6rem] md:ml-32 mb-32 {% if app.request.get('type') != 'purified' %}hidden{% endif %}"
                          alt="Icon purified">
 
                     <img src="{{ asset('images/shadow-icon.png') }}"
-                         class="shadow-icon absolute w-[30px] z-20 ml-[-125px] mb-[-40px] {% if app.request.get('type') != 'shadow' %}hidden{% endif %}"
+                         class="shadow-icon absolute w-[30px] z-20 ml-[6rem] md:ml-32 mb-32 {% if app.request.get('type') != 'shadow' %}hidden{% endif %}"
                          alt="Icon shadow">
 
                     <img src="{{ asset('images/normal/' ~ pokemon.normalPicture) }}"
