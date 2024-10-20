@@ -168,10 +168,12 @@ class PokemonRepository extends ServiceEntityRepository
 
     public function getPokemonByName(string $name): ?Pokemon
     {
-        return $this->createQueryBuilder('p')
+        $result = $this->createQueryBuilder('p')
             ->where('p.englishName LIKE :name')
             ->setParameter('name', $name)
             ->getQuery()
             ->getOneOrNullResult();
+
+        return $result instanceof Pokemon ? $result : null;
     }
 }
