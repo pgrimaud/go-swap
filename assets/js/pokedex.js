@@ -137,6 +137,9 @@ if (document.querySelector('#search')) {
     }
 
     function filter() {
+        // hide container
+        document.querySelector('#pokedex').classList.add('hidden')
+
         // reset cards
         displayAllGeneration()
         displayNoPokemonFound(false)
@@ -185,6 +188,9 @@ if (document.querySelector('#search')) {
         displayNoPokemonFound(document.querySelectorAll('#pokedex .poke-card:not(.hidden)').length === 0)
 
         hideGenerations()
+
+        // display container
+        document.querySelector('#pokedex').classList.remove('hidden')
     }
 
     function displayShinyCounter(pokedex) {
