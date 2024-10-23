@@ -36,6 +36,7 @@ class AppController extends AbstractController
                 'name' => $name,
                 'caught' => $userPokemonRepository->countByPokedex($this->getUser(), $type),
                 'total' => $pokemonRepository->countUnique($type),
+                'details' => $userPokemonRepository->countByGeneration($this->getUser(), $type),
             ];
         }
 

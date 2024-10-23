@@ -37,3 +37,11 @@ function displayModal(modal) {
         });
     }
 }
+
+if (document.querySelector('.button-details')) {
+    document.querySelectorAll('.button-details').forEach(button => {
+        button.addEventListener('click', () => {
+            displayModal(document.getElementById(`modal-details-${button.getAttribute('data-type')}`))
+        })
+    });
+}

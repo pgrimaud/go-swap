@@ -16,6 +16,7 @@ class GenerationHelper
     public const GENERATION_EIGHT = '8G';
     public const GENERATION_FOUR_ALT = '4G_ALT';
     public const GENERATION_NINE = '9G';
+    public const GENERATION_OTHER = '10G';
 
     public const GENERATIONS = [
         self::GENERATION_ONE => 'Kanto (1-151)',
@@ -33,5 +34,12 @@ class GenerationHelper
     public static function exist(string $generation): bool
     {
         return isset(self::GENERATIONS[$generation]);
+    }
+
+    public static function getAllGenerations(): array
+    {
+        return array_merge(self::GENERATIONS, [
+            self::GENERATION_OTHER => 'Other'
+        ]);
     }
 }

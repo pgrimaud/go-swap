@@ -2,7 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\User;
 use App\Entity\UserPokemon;
+use App\Helper\GenerationHelper;
+use App\Helper\PokedexHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -55,4 +58,52 @@ class UserPokemonRepository extends ServiceEntityRepository
         return $result;
     }
 
+    public function countByGeneration(?UserInterface $user, string $type): array
+    {
+        if (!$user instanceof User) {
+            return [];
+        }
+
+        $connection = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            SELECT COUNT(DISTINCT(p.number)) as total, p.generation
+            FROM pokemon p 
+            RIGHT JOIN user_pokemon up ON up.pokemon_id = p.id
+            RIGHT JOIN user u ON u.id = up.user_id
+            WHERE u.id = :userId
+            AND up.' . PokedexHelper::POKEDEX_MAPPING_FIELD[$type] . ' = 1
+            GROUP BY p.generation
+            ORDER BY generation';
+
+        $stmt = $connection->prepare($sql);
+
+        $statement = $stmt->executeQuery([
+            'userId' => $user->getId(),
+        ]);
+
+        $results = $statement->fetchAllAssociative();
+
+        $allGenerations = GenerationHelper::getAllGenerations();
+
+        $allGenerationInit = [];
+
+        foreach ($allGenerations as $generationCode => $generationName) {
+            $allGenerationInit[$generationCode] = [
+                'total' => 0,
+                'generation' => $generationCode,
+                'name' => $generationName
+            ];
+        }
+
+        foreach ($results as $result) {
+            $allGenerationInit[$result['generation']] = [
+                'total' => $result['total'],
+                'generation' => $result['generation'],
+                'name' => GenerationHelper::getAllGenerations()[$result['generation']]
+            ];
+        }
+
+        return $allGenerationInit;
+    }
 }

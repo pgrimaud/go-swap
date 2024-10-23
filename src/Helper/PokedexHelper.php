@@ -41,7 +41,15 @@ class PokedexHelper
         'MEGA' => '', // not implemented yet
         'G-MAX' => '', // not implemented yet
         'ALL' => self::POKEDEX_NORMAL,
+    ];
 
+    public const POKEDEX_MAPPING_FIELD = [
+        self::POKEDEX_NORMAL => 'normal',
+        self::POKEDEX_SHINY => 'shiny',
+        self::POKEDEX_LUCKY => 'lucky',
+        self::POKEDEX_THREE_STARS => 'three_stars',
+        self::POKEDEX_SHADOW => 'shadow',
+        self::POKEDEX_PURIFIED => 'purified',
     ];
 
     public static function exist(string $pokedex): bool
