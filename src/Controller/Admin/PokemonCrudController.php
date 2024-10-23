@@ -94,6 +94,9 @@ class PokemonCrudController extends AbstractCrudController
         $newPokemon = clone $pokemon;
 
         try {
+            $newPokemon->setNormalPicture(null);
+            $newPokemon->setShinyPicture(null);
+
             $this->entityManager->persist($newPokemon);
             $this->entityManager->flush();
 
