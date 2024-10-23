@@ -14,6 +14,7 @@ class PokedexHelper
     public const POKEDEX_PURIFIED = 'purified';
 
     public const FILTERABLE_TYPES = [
+        self::POKEDEX_LUCKY,
         self::POKEDEX_SHINY,
         self::POKEDEX_SHADOW,
         self::POKEDEX_PURIFIED,
