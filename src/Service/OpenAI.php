@@ -12,10 +12,13 @@ class OpenAI
     {
     }
 
-    public function getTextFromPicture(string $picturePath, $useMock = false): array
+    public function getTextFromPicture(string $picturePath, bool $useMock = false): array
     {
         if ($useMock === true) {
-            return json_decode(file_get_contents(__DIR__ . '/../../data/open-ai-mock.json'), true);
+            /** @var array $data */
+            $data = json_decode((string) file_get_contents(__DIR__ . '/../../data/open-ai-mock.json'), true);
+
+            return $data['data'];
         }
 
         $client = OpenAIClient::client($this->apiKey);
