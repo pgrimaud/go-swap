@@ -28,6 +28,21 @@ class PokedexHelper
         self::POKEDEX_PURIFIED => 'Purified',
     ];
 
+    public const POKEDEX_SCREENSHOT_MAPPING = [
+        'PURIFIED' => self::POKEDEX_PURIFIED,
+        'SHADOW' => self::POKEDEX_SHADOW,
+        'PERFECT' => '', // not implemented yet
+        '3 STARS' => self::POKEDEX_THREE_STARS,
+        'SHINY 3 STARS' => '', // not implemented yet
+        'SHINY' => self::POKEDEX_SHINY,
+        'LUCKY' => self::POKEDEX_LUCKY,
+        'EVENT' => '',
+        'MEGA' => '', // not implemented yet
+        'G-MAX' => '', // not implemented yet
+        'ALL' => self::POKEDEX_NORMAL,
+
+    ];
+
     public static function exist(string $pokedex): bool
     {
         return isset(self::POKEDEX[$pokedex]);

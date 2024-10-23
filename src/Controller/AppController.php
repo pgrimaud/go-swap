@@ -8,6 +8,7 @@ use App\Helper\PokedexHelper;
 use App\Repository\PokemonRepository;
 use App\Repository\UserPokemonRepository;
 use App\Repository\UserRepository;
+use App\Service\OpenAI;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -23,7 +24,8 @@ class AppController extends AbstractController
     public function index(
         Request               $request,
         PokemonRepository     $pokemonRepository,
-        UserPokemonRepository $userPokemonRepository
+        UserPokemonRepository $userPokemonRepository,
+        OpenAI $openAI
     ): Response
     {
         $pokedexs = [];
@@ -40,7 +42,7 @@ class AppController extends AbstractController
         $form = $this->createForm(CheckType::class);
         $form->handleRequest($request);
 
-        $isValid = $this->handlePictureUpload($form);
+        $isValid = $this->checkPictureUpload($form, $openAI, $pokedexs);
 
         return $this->render('app/index.html.twig', [
             'pokedexs' => $pokedexs,
@@ -85,25 +87,60 @@ class AppController extends AbstractController
         ]);
     }
 
-    private function handlePictureUpload(FormInterface $form): bool
+    private function checkPictureUpload(FormInterface $form, OpenAI $openAI, array $pokedexs): bool
     {
-        $this->addFlash('error', 'Wrong or invalid file');
-
         if ($form->isSubmitted() && $form->isValid()) {
-            sleep(3);
             /** @var ?UploadedFile $pictureFile */
             $pictureFile = $form->get('picture')->getData();
 
             if ($pictureFile) {
                 $newFilename = uniqid() . '.' . $pictureFile->guessExtension();
+                $uploadFolder = __DIR__ . '/../../var/upload/';
+                $completePath = $uploadFolder . $newFilename;
+
+                if (is_dir($uploadFolder) === false) {
+                    mkdir($uploadFolder);
+                }
 
                 try {
+                    $hasError = false;
+
                     $pictureFile->move(
-                        __DIR__ . '/../../public/upload/',
+                        __DIR__ . '/../../var/upload/',
                         $newFilename
                     );
 
-                    //
+                    $result = $openAI->getTextFromPicture($completePath);
+
+                    foreach($result as $item) {
+                        $outputName = $item['text'];
+                        $number = $item['number'];
+
+                        if (isset(PokedexHelper::POKEDEX_SCREENSHOT_MAPPING[$outputName])) {
+                            $name = PokedexHelper::POKEDEX_SCREENSHOT_MAPPING[$outputName];
+
+                            foreach($pokedexs as $pokedex) {
+                                if ($pokedex['type'] === $name) {
+                                    if ($pokedex['caught'] !== $number) {
+                                        $this->addFlash('error', sprintf(
+                                            '<b class="text-gray-50">%s</b> : excepted <b class="text-gray-50">%d</b>, got <b class="text-gray-50">%d</b>',
+                                            $pokedex['name'],
+                                            $pokedex['caught'],
+                                            $number
+                                        ));
+                                        $hasError = true;
+                                    }
+                                    break;
+                                }
+                            }
+
+                        }
+                    }
+
+                unlink($completePath);
+
+                return !$hasError;
+
                 } catch (FileException $e) {
                     $this->addFlash('error', $e->getMessage());
                     return false;
