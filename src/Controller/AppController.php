@@ -3,11 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\CheckType;
 use App\Helper\PokedexHelper;
 use App\Repository\PokemonRepository;
 use App\Repository\UserPokemonRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -16,6 +21,7 @@ class AppController extends AbstractController
 {
     #[Route('/', name: 'app_index')]
     public function index(
+        Request               $request,
         PokemonRepository     $pokemonRepository,
         UserPokemonRepository $userPokemonRepository
     ): Response
@@ -31,8 +37,16 @@ class AppController extends AbstractController
             ];
         }
 
+        $form = $this->createForm(CheckType::class);
+        $form->handleRequest($request);
+
+        $isValid = $this->handlePictureUpload($form);
+
         return $this->render('app/index.html.twig', [
-            'pokedexs' => $pokedexs
+            'pokedexs' => $pokedexs,
+            'form' => $form->createView(),
+            'isValid' => $isValid,
+            'submitted' => $form->isSubmitted()
         ]);
     }
 
@@ -69,5 +83,37 @@ class AppController extends AbstractController
             'userPokemons' => $allMissingPokemonsUser,
             'friendPokemons' => $allMissingPokemonsFriend,
         ]);
+    }
+
+    private function handlePictureUpload(FormInterface $form): bool
+    {
+        $this->addFlash('error', 'Wrong or invalid file');
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            sleep(3);
+            /** @var ?UploadedFile $pictureFile */
+            $pictureFile = $form->get('picture')->getData();
+
+            if ($pictureFile) {
+                $newFilename = uniqid() . '.' . $pictureFile->guessExtension();
+
+                try {
+                    $pictureFile->move(
+                        __DIR__ . '/../../public/upload/',
+                        $newFilename
+                    );
+
+                    //
+                } catch (FileException $e) {
+                    $this->addFlash('error', $e->getMessage());
+                    return false;
+                }
+            }
+        } elseif ($form->isValid() === false) {
+            $this->addFlash('error', 'Invalid form submission');
+            return false;
+        }
+
+        return true;
     }
 }

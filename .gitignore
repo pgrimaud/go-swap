@@ -33,3 +33,6 @@ public/images/shiny
 
 !public/images/normal/.gitkeep
 !public/images/shiny/.gitkeep
+
+!public/upload/.gitkeep
+public/upload
