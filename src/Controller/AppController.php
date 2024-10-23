@@ -109,7 +109,7 @@ class AppController extends AbstractController
                     return false;
                 }
             }
-        } elseif ($form->isValid() === false) {
+        } elseif ($form->isSubmitted() && $form->isValid() === false) {
             $this->addFlash('error', 'Invalid form submission');
             return false;
         }
