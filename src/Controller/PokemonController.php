@@ -108,6 +108,8 @@ class PokemonController extends AbstractController
             $userPokemon->setThreeStars(false);
             $userPokemon->setShadow(false);
             $userPokemon->setPurified(false);
+            $userPokemon->setShinyThreeStars(false);
+            $userPokemon->setPerfect(false);
         } else {
             $userPokemon = $alreadyExist;
         }

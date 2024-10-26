@@ -12,19 +12,24 @@ class PokedexHelper
     public const POKEDEX_THREE_STARS = 'threeStars';
     public const POKEDEX_SHADOW = 'shadow';
     public const POKEDEX_PURIFIED = 'purified';
+    public const POKEDEX_SHINY_THREE_STARS = 'shinyThreeStars';
+    public const PERFECT = 'perfect';
 
     public const FILTERABLE_TYPES = [
         self::POKEDEX_LUCKY,
         self::POKEDEX_SHINY,
         self::POKEDEX_SHADOW,
         self::POKEDEX_PURIFIED,
+        self::POKEDEX_SHINY_THREE_STARS,
     ];
 
     public const POKEDEX = [
         self::POKEDEX_NORMAL => 'Normal',
-        self::POKEDEX_SHINY => 'Shiny',
-        self::POKEDEX_LUCKY => 'Lucky',
         self::POKEDEX_THREE_STARS => '3 Stars',
+        self::POKEDEX_SHINY => 'Shiny',
+        self::POKEDEX_SHINY_THREE_STARS => 'Shiny 3 Stars',
+        self::POKEDEX_LUCKY => 'Lucky',
+        self::PERFECT => 'Perfect',
         self::POKEDEX_SHADOW => 'Shadow',
         self::POKEDEX_PURIFIED => 'Purified',
     ];
@@ -32,9 +37,9 @@ class PokedexHelper
     public const POKEDEX_SCREENSHOT_MAPPING = [
         'PURIFIED' => self::POKEDEX_PURIFIED,
         'SHADOW' => self::POKEDEX_SHADOW,
-        'PERFECT' => '', // not implemented yet
+        'PERFECT' => self::PERFECT,
         '3 STARS' => self::POKEDEX_THREE_STARS,
-        'SHINY 3 STARS' => '', // not implemented yet
+        'SHINY 3 STARS' => self::POKEDEX_SHINY_THREE_STARS,
         'SHINY' => self::POKEDEX_SHINY,
         'LUCKY' => self::POKEDEX_LUCKY,
         'EVENT' => '',
@@ -50,6 +55,8 @@ class PokedexHelper
         self::POKEDEX_THREE_STARS => 'three_stars',
         self::POKEDEX_SHADOW => 'shadow',
         self::POKEDEX_PURIFIED => 'purified',
+        self::PERFECT => 'perfect',
+        self::POKEDEX_SHINY_THREE_STARS => 'shiny_three_stars',
     ];
 
     public static function exist(string $pokedex): bool

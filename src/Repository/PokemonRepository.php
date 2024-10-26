@@ -45,7 +45,7 @@ class PokemonRepository extends ServiceEntityRepository
     public function getUserPokemon(User|UserInterface|null $user): array
     {
         return $this->createQueryBuilder('p', 'p.id')
-            ->select('p.id, p.number', 'up.shiny', 'up.normal', 'up.lucky', 'up.threeStars', 'up.numberShiny', 'up.shadow', 'up.purified')
+            ->select('p.id, p.number', 'up.shiny', 'up.normal', 'up.lucky', 'up.threeStars', 'up.numberShiny', 'up.shadow', 'up.purified', 'up.shinyThreeStars', 'up.perfect')
             ->join('p.userPokemon', 'up')
             ->andWhere('up.user = :user')
             ->setParameter('user', $user)

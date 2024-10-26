@@ -26,17 +26,25 @@
                     class="bg-gradient-to-r text-white py-2 max-sm:py-2 px-6 max-sm:px-2 rounded border-white {% if app.request.get('type') == 'normal' or app.request.get('type') == '' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
                 Normal
             </button>
+            <button id="threeStars"
+                    class="bg-gradient-to-r text-white py-2 max-sm:py-2 px-6 max-sm:px-2 rounded border-white {% if app.request.get('type') == 'threeStars' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
+                3 Stars
+            </button>
             <button id="shiny"
                     class="bg-gradient-to-r text-white py-2 max-sm:py-2 px-6 max-sm:px-2 rounded border-white {% if app.request.get('type') == 'shiny' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
                 Shiny
+            </button>
+            <button id="shinyThreeStars"
+                    class="bg-gradient-to-r text-white py-2 max-sm:py-2 px-6 max-sm:px-2 rounded border-white {% if app.request.get('type') == 'shinyThreeStars' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
+                Shiny 3 Stars
             </button>
             <button id="lucky"
                     class="bg-gradient-to-r text-white py-2 max-sm:py-2 px-6 max-sm:px-2 rounded border-white {% if app.request.get('type') == 'lucky' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
                 Lucky
             </button>
-            <button id="threeStars"
-                    class="bg-gradient-to-r text-white py-2 max-sm:py-2 px-6 max-sm:px-2 rounded border-white {% if app.request.get('type') == 'threeStars' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
-                3 Stars
+            <button id="perfect"
+                    class="bg-gradient-to-r text-white py-2 max-sm:py-2 px-6 max-sm:px-2 rounded border-white {% if app.request.get('type') == 'perfect' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
+                Perfect
             </button>
             <button id="shadow"
                     class="bg-gradient-to-r text-white py-2 max-sm:py-2 px-6 max-sm:px-2 rounded border-white {% if app.request.get('type') == 'shadow' %}bg-gradient-to-r from-pink-400 to-purple-600 active-filter{% else %}bg-slate-700{% endif %}">
@@ -71,9 +79,11 @@
             <div class="hidden max-sm:flex max-sm:gap-2 max-sm:justify-between">
                 <select id="mobile-filters" class="w-1/2 flex-grow-0 box-border p-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 h-9 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option value="normal" {% if app.request.get('type') == 'normal' or app.request.get('type') == '' %}selected{% endif %}>Normal</option>
-                    <option value="shiny" {% if app.request.get('type') == 'shiny' %}selected{% endif %}>Shiny</option>
-                    <option value="lucky" {% if app.request.get('type') == 'lucky' %}selected{% endif %}>Lucky</option>
                     <option value="threeStars" {% if app.request.get('type') == 'threeStars' %}selected{% endif %}>3 Stars</option>
+                    <option value="shiny" {% if app.request.get('type') == 'shiny' %}selected{% endif %}>Shiny</option>
+                    <option value="shiny" {% if app.request.get('type') == 'shinyThreeStart' %}selected{% endif %}>Shiny 3 Stars</option>
+                    <option value="lucky" {% if app.request.get('type') == 'lucky' %}selected{% endif %}>Lucky</option>
+                    <option value="lucky" {% if app.request.get('type') == 'perfect' %}selected{% endif %}>Perfect</option>
                     <option value="shadow" {% if app.request.get('type') == 'shadow' %}selected{% endif %}>Shadow</option>
                     <option value="purified" {% if app.request.get('type') == 'purified' %}selected{% endif %}>Purified</option>
                 </select>
@@ -112,6 +122,8 @@
                      data-pokedex-threeStars="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].threeStars }}{% else %}0{% endif %}"
                      data-pokedex-shadow="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].shadow }}{% else %}0{% endif %}"
                      data-pokedex-purified="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].purified }}{% else %}0{% endif %}"
+                     data-pokedex-shinyThreeStars="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].shinyThreeStars }}{% else %}0{% endif %}"
+                     data-pokedex-perfect="{% if userPokemons[pokemon.id] is defined %}{{ userPokemons[pokemon.id].perfect }}{% else %}0{% endif %}"
                      data-generation="{{ pokemon.generation }}"
                 >
                     <div class="background max-sm:w-[160px] w-[194px] h-[194px] absolute z-0 opacity-30 rounded-md background-lucky {% if app.request.get('type') != 'lucky' %}hidden{% endif %}"
@@ -134,7 +146,7 @@
                          loading="lazy"
                          alt="Normal pictures for pokemons">
 
-                    {% if pokemon.isShiny %}
+                    {% if pokemon.isShiny or pokemon.isShinyThreeStars %}
                     <img src="{{ asset('images/shiny/' ~ pokemon.shinyPicture) }}"
                          class="z-10 w-fit {% if app.request.get('type') != 'shiny' %}hidden{% endif %} shiny-picture max-w-[120px]"
                          loading="lazy"

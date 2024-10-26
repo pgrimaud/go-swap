@@ -43,6 +43,12 @@ class UserPokemon
     #[ORM\Column]
     private ?bool $purified = null;
 
+    #[ORM\Column]
+    private ?bool $shinyThreeStars = null;
+
+    #[ORM\Column]
+    private ?bool $perfect = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -150,5 +156,25 @@ class UserPokemon
     public function setPurified(?bool $purified): void
     {
         $this->purified = $purified;
+    }
+
+    public function getShinyThreeStars(): ?bool
+    {
+        return $this->shinyThreeStars;
+    }
+
+    public function setShinyThreeStars(?bool $shinyThreeStars): void
+    {
+        $this->shinyThreeStars = $shinyThreeStars;
+    }
+
+    public function getPerfect(): ?bool
+    {
+        return $this->perfect;
+    }
+
+    public function setPerfect(?bool $perfect): void
+    {
+        $this->perfect = $perfect;
     }
 }

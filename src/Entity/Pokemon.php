@@ -54,6 +54,9 @@ class Pokemon
     #[ORM\Column]
     private ?bool $isPurified = false;
 
+    #[ORM\Column]
+    private ?bool $isShinyThreeStars = null;
+
     public function __construct()
     {
         $this->userPokemon = new ArrayCollection();
@@ -237,5 +240,15 @@ class Pokemon
     public function setIsPurified(?bool $isPurified): void
     {
         $this->isPurified = $isPurified;
+    }
+
+    public function getIsShinyThreeStars(): ?bool
+    {
+        return $this->isShinyThreeStars;
+    }
+
+    public function setIsShinyThreeStars(?bool $isShinyThreeStars): void
+    {
+        $this->isShinyThreeStars = $isShinyThreeStars;
     }
 }
