@@ -21,7 +21,10 @@ class PokemonController extends AbstractController
     #[Route('/pokedex', name: 'show_pokedex')]
     public function show(PokemonRepository $pokemonRepository): Response
     {
-        $userPokemons = $pokemonRepository->getUserPokemon($this->getUser());
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $userPokemons = $pokemonRepository->getUserPokemon($user);
 
         $generations = [];
 
@@ -32,6 +35,12 @@ class PokemonController extends AbstractController
             ];
         }
 
+        $missingByDex = [];
+
+        foreach (PokedexHelper::POKEDEX as $type => $name) {
+            $missingByDex[$type] = $pokemonRepository->missingPokemons((int) $user->getId(), $type);
+        }
+
         return $this->render('app/pokedex.html.twig', [
             'pokemons' => $pokemonRepository->findBy([], [
                 'number' => 'ASC',
@@ -40,6 +49,7 @@ class PokemonController extends AbstractController
             'userPokemons' => $userPokemons,
             'generations' => $generations,
             'evolutionChains' => $pokemonRepository->getEvolutionsChains(),
+            'missingByDex' => $missingByDex
         ]);
     }
 

@@ -176,4 +176,38 @@ class PokemonRepository extends ServiceEntityRepository
 
         return $result instanceof Pokemon ? $result : null;
     }
+
+    public function missingPokemons(int $userId, string $type): string
+    {
+        $field = PokedexHelper::POKEDEX_MAPPING_FIELD[$type];
+
+        $connection = $this->getEntityManager()->getConnection();
+
+        $sql = sprintf('
+            SELECT p.number
+            FROM pokemon p
+            LEFT JOIN user_pokemon up ON up.pokemon_id = p.id
+            WHERE up.user_id = :userId
+            AND up.%s = 0
+        ', $field);
+
+        if (in_array($type, PokedexHelper::FILTERABLE_TYPES)) {
+            $sql .= sprintf(' AND p.is_%s = 1', $field);
+        }
+
+        $stmt = $connection->prepare($sql);
+        $statement = $stmt->executeQuery([
+            'userId' => $userId,
+        ]);
+
+        $results = $statement->fetchAllNumeric();
+
+        $filter = array_map(function ($result) {
+            return $result[0];
+        }, $results);
+
+        sort($filter);
+
+        return implode(',', $filter);
+    }
 }

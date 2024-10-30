@@ -12,6 +12,7 @@ class EvolutionChainExtension extends AbstractExtension
     {
         return [
             new TwigFunction('display_chain', [EvolutionChainExtensionRuntime::class, 'displayChain']),
+            new TwigFunction('display_missing', [EvolutionChainExtensionRuntime::class, 'displayMissing']),
         ];
     }
 }

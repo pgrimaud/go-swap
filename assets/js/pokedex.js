@@ -4,6 +4,7 @@ if (document.querySelector('#search')) {
         'pokedex': document.querySelector('#filters .active-filter').getAttribute('id'),
         'hideCaught': document.querySelector('#hide-caught').checked,
         'onlyActual': document.querySelector('#only-actual').checked,
+        'locked': document.querySelector('#locked').checked,
     }
 
     filter()
@@ -19,10 +20,10 @@ if (document.querySelector('#search')) {
     })
 
     // pokédex type filters
-    document.querySelectorAll('#filters button').forEach(el => {
+    document.querySelectorAll('#filters .btn-filter').forEach(el => {
         el.addEventListener('click', (e) => {
             // reset all buttons style
-            document.querySelectorAll('#filters button').forEach(el => {
+            document.querySelectorAll('#filters .btn-filter').forEach(el => {
                 el.classList.remove('from-pink-400', 'to-purple-600', 'active-filter')
                 el.classList.add('bg-slate-700')
             })
@@ -54,10 +55,20 @@ if (document.querySelector('#search')) {
         filter()
     })
 
+    // manage edition locking
+    document.querySelector('#locked').addEventListener('change', (e) => {
+        parameters.locked = e.currentTarget.checked
+    })
+
     // add or remove pokémon to a pokédex
     document.querySelectorAll('#pokedex .poke-card-user').forEach(el => {
         if (!window.location.pathname.includes('/pokedex-friend')) {
             el.addEventListener('click', () => {
+
+                if (parameters.locked === true) {
+                    return
+                }
+
                 const data = new FormData();
                 data.append('id', el.dataset.internalId);
                 data.append('pokedex', parameters.pokedex);
@@ -102,6 +113,16 @@ if (document.querySelector('#search')) {
             event.stopPropagation()
             changeCounter(btn)
         }));
+    });
+
+    document.getElementById('copy-missing').addEventListener('click', (event) => {
+        const target = event.currentTarget;
+        navigator.clipboard.writeText(target.getAttribute(`data-missing-${parameters.pokedex}`))
+        target.innerHTML = 'Copied! ✅'
+
+        setTimeout(() => {
+            target.innerHTML = 'Copy missing'
+        }, 1000);
     });
 
     /**
