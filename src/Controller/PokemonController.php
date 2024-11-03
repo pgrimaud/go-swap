@@ -74,6 +74,12 @@ class PokemonController extends AbstractController
             ];
         }
 
+        $missingByDex = [];
+
+        foreach (PokedexHelper::POKEDEX as $type => $name) {
+            $missingByDex[$type] = $pokemonRepository->missingPokemons((int) $user->getId(), $type);
+        }
+
         return $this->render('app/pokedex.html.twig', [
             'pokemons' => $pokemonRepository->findBy([], ['number' => 'ASC', 'id' => 'ASC']),
             'userPokemons' => $userPokemons,
@@ -81,6 +87,7 @@ class PokemonController extends AbstractController
             'generations' => $generations,
             'lastUpdate' => $user->getUpdatedAt(),
             'evolutionChains' => $pokemonRepository->getEvolutionsChains(),
+            'missingByDex' => $missingByDex
         ]);
     }
 
