@@ -184,7 +184,7 @@ class PokemonRepository extends ServiceEntityRepository
         $connection = $this->getEntityManager()->getConnection();
 
         $sql = sprintf('
-            SELECT p.number, p.evolution_chain_id
+            SELECT p.number, p.evolution_chain_id, p.evolution_chain_position
             FROM pokemon p
             LEFT JOIN user_pokemon up ON up.pokemon_id = p.id
             WHERE up.user_id = :userId

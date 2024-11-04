@@ -10,9 +10,10 @@ use App\Repository\PokemonRepository;
 class MissingPokemon
 {
     public function __construct(
-        private PokemonRepository $pokemonRepository,
+        private PokemonRepository        $pokemonRepository,
         private EvolutionChainRepository $evolutionChainRepository
-    ) {
+    )
+    {
     }
 
     public function getMissingByDex(int $userId, string $type): string
@@ -22,15 +23,23 @@ class MissingPokemon
 
         $numbers = [];
 
-        array_map(function ($result) use (&$numbers, $evolutionChains) {
-            $numbers[] = $result['number'];
-            if (isset($evolutionChains[$result['evolution_chain_id']])) {
-                $numbers = array_merge($numbers, $evolutionChains[$result['evolution_chain_id']]);
-            }
+        array_map(function ($result) use (&$numbers) {
+            $numbers[$result['number']] = $result['number'];
         }, $results);
 
-        $numbers = array_unique($numbers);
+        foreach ($results as $result) {
+            if (isset($evolutionChains[$result['evolution_chain_id']])) {
+                foreach ($evolutionChains[$result['evolution_chain_id']] as $evolution) {
+                    $numbers[] = $evolution;
+                    if ($result['number'] === $evolution) {
+                        break;
+                    }
+                }
+            }
+        }
+
         sort($numbers);
+        $numbers = array_unique($numbers);
 
         return implode(',', $numbers);
     }

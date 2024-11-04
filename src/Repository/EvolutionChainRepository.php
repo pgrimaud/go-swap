@@ -44,8 +44,9 @@ class EvolutionChainRepository extends ServiceEntityRepository
         $connection = $this->getEntityManager()->getConnection();
 
         $sql = '
-            SELECT p.number, p.evolution_chain_id
+            SELECT p.number, p.evolution_chain_id, p.evolution_chain_position
             FROM pokemon p
+            ORDER BY p.evolution_chain_position
         ';
 
         $stmt = $connection->prepare($sql);

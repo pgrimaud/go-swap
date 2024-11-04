@@ -22,11 +22,12 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class ImportEvolutionChainsCommand extends Command
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly PokemonRepository $pokemonRepository,
+        private readonly EntityManagerInterface   $entityManager,
+        private readonly PokemonRepository        $pokemonRepository,
         private readonly EvolutionChainRepository $evolutionChainRepository,
-        private readonly HttpClientInterface $httpClient
-    ) {
+        private readonly HttpClientInterface      $httpClient
+    )
+    {
         parent::__construct();
     }
 
@@ -83,7 +84,7 @@ class ImportEvolutionChainsCommand extends Command
             if (!$evolutionChain) {
                 $evolutionChain = new EvolutionChain();
                 $evolutionChain->setApiId($i);
-                $evolutionChain->setName((string) $firstPokemons[0]->getFrenchName());
+                $evolutionChain->setName((string)$firstPokemons[0]->getFrenchName());
                 array_map(fn($pokemon) => $evolutionChain->addPokemon($pokemon), $firstPokemons);
             } else {
                 $evolutionChain->removeAllPokemons();
@@ -103,6 +104,26 @@ class ImportEvolutionChainsCommand extends Command
             }
 
             $this->entityManager->persist($evolutionChain);
+
+            $evolutions = $this->extractEvolution($result['chain']);
+
+
+            foreach ($evolutions as $k => $evolution) {
+                $pokemon = $this->pokemonRepository->findOneBy([
+                    'number' => $evolution
+                ]);
+
+                // probably a pokémon that isn't in Pokémon Go yet
+                if ($pokemon === null) {
+                    continue;
+                }
+
+                if ($pokemon->getEvolutionChainPosition() === null) {
+                    $pokemon->setEvolutionChainPosition($k + 1);
+                    $this->entityManager->persist($pokemon);
+                }
+            }
+
             $this->entityManager->flush();
         }
 
@@ -129,5 +150,21 @@ class ImportEvolutionChainsCommand extends Command
         }
 
         return $pokemons;
+    }
+
+    private function extractEvolution(array $evolution, array $evolutions = []): array
+    {
+        preg_match('/pokemon-species\/(\d+)\//', $evolution['species']['url'], $matches);
+
+        if(!empty($matches[1])) {
+            $evolutions[] = (int)$matches[1];
+            if (!empty($evolution['evolves_to'])) {
+                foreach ($evolution['evolves_to'] as $nextEvolution) {
+                    return $this->extractEvolution($nextEvolution, $evolutions);
+                }
+            }
+        }
+
+        return $evolutions;
     }
 }

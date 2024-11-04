@@ -57,6 +57,9 @@ class Pokemon
     #[ORM\Column]
     private ?bool $isShinyThreeStars = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $evolutionChainPosition = 0;
+
     public function __construct()
     {
         $this->userPokemon = new ArrayCollection();
@@ -250,5 +253,17 @@ class Pokemon
     public function setIsShinyThreeStars(?bool $isShinyThreeStars): void
     {
         $this->isShinyThreeStars = $isShinyThreeStars;
+    }
+
+    public function getEvolutionChainPosition(): ?int
+    {
+        return $this->evolutionChainPosition;
+    }
+
+    public function setEvolutionChainPosition(?int $evolutionChainPosition): static
+    {
+        $this->evolutionChainPosition = $evolutionChainPosition;
+
+        return $this;
     }
 }
