@@ -9,6 +9,7 @@ use App\Helper\PokedexHelper;
 use App\Repository\PokemonRepository;
 use App\Repository\UserPokemonRepository;
 use App\Repository\UserRepository;
+use App\Service\MissingPokemon;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,7 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class PokemonController extends AbstractController
 {
     #[Route('/pokedex', name: 'show_pokedex')]
-    public function show(PokemonRepository $pokemonRepository): Response
+    public function show(PokemonRepository $pokemonRepository, MissingPokemon $missingPokemon): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -38,7 +39,7 @@ class PokemonController extends AbstractController
         $missingByDex = [];
 
         foreach (PokedexHelper::POKEDEX as $type => $name) {
-            $missingByDex[$type] = $pokemonRepository->missingPokemons((int) $user->getId(), $type);
+            $missingByDex[$type] = $missingPokemon->getMissingByDex((int) $user->getId(), $type);
         }
 
         return $this->render('app/pokedex.html.twig', [
@@ -54,7 +55,12 @@ class PokemonController extends AbstractController
     }
 
     #[Route('/pokedex-friend/{id}', name: 'showFriends_pokedex')]
-    public function showFriends(int $id, UserRepository $userRepository, PokemonRepository $pokemonRepository): Response
+    public function showFriends(
+        int $id, UserRepository
+        $userRepository,
+        PokemonRepository $pokemonRepository,
+        MissingPokemon $missingPokemon
+    ): Response
     {
         $user = $userRepository->findOneBy(['id' => $id]);
 
@@ -77,7 +83,7 @@ class PokemonController extends AbstractController
         $missingByDex = [];
 
         foreach (PokedexHelper::POKEDEX as $type => $name) {
-            $missingByDex[$type] = $pokemonRepository->missingPokemons((int) $user->getId(), $type);
+            $missingByDex[$type] = $missingPokemon->getMissingByDex((int) $user->getId(), $type);
         }
 
         return $this->render('app/pokedex.html.twig', [

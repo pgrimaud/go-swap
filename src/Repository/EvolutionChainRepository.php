@@ -38,4 +38,25 @@ class EvolutionChainRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    public function getEvolutionByApiId(): array
+    {
+        $connection = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            SELECT p.number, p.evolution_chain_id
+            FROM pokemon p
+        ';
+
+        $stmt = $connection->prepare($sql);
+        $statement = $stmt->executeQuery();
+
+        $evolutionChains = [];
+
+        array_map(function ($result) use (&$evolutionChains) {
+            $evolutionChains[$result['evolution_chain_id']][] = $result['number'];
+        }, $statement->fetchAllAssociative());
+
+        return $evolutionChains;
+    }
 }

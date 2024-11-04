@@ -177,14 +177,14 @@ class PokemonRepository extends ServiceEntityRepository
         return $result instanceof Pokemon ? $result : null;
     }
 
-    public function missingPokemons(int $userId, string $type): string
+    public function missingPokemons(int $userId, string $type): array
     {
         $field = PokedexHelper::POKEDEX_MAPPING_FIELD[$type];
 
         $connection = $this->getEntityManager()->getConnection();
 
         $sql = sprintf('
-            SELECT p.number
+            SELECT p.number, p.evolution_chain_id
             FROM pokemon p
             LEFT JOIN user_pokemon up ON up.pokemon_id = p.id
             WHERE up.user_id = :userId
@@ -200,14 +200,6 @@ class PokemonRepository extends ServiceEntityRepository
             'userId' => $userId,
         ]);
 
-        $results = $statement->fetchAllNumeric();
-
-        $filter = array_map(function ($result) {
-            return $result[0];
-        }, $results);
-
-        sort($filter);
-
-        return implode(',', $filter);
+        return $statement->fetchAllAssociative();
     }
 }
