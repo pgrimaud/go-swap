@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Entity\Pokemon;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -21,20 +22,35 @@ use Symfony\Component\DomCrawler\Crawler;
 )]
 class ImportPokemonsCommand extends Command
 {
-
     public function __construct(private readonly EntityManagerInterface $entityManager)
     {
         parent::__construct();
+    }
+
+    public function configure()
+    {
+        $this->addOption(
+            'only-current',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Import only current pokemons',
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
+        if ($input->getOption('only-current') === 'true') {
+            $this->importCurrentPokemons($io);
+            $io->success('Done ! - ' . date('Y-m-d H:i:s'));
+            return Command::SUCCESS;
+        }
+
         $this->importPokemons();
         $this->importShiny();
         $this->importEnglishName();
-        $this->importCurrentPokemons();
+        $this->importCurrentPokemons($io);
 
         $io->success('Done ! - ' . date('Y-m-d H:i:s'));
 
@@ -152,8 +168,10 @@ class ImportPokemonsCommand extends Command
 
     }
 
-    private function importCurrentPokemons(): void
+    private function importCurrentPokemons(SymfonyStyle $io): void
     {
+        $io->success('Updating actual pokemons...');
+
         $isActualPokemons = $this->entityManager->getRepository(Pokemon::class)->findBy(['isActual' => true]);
         foreach ($isActualPokemons as $pokemon) {
             $pokemon->setIsActual(false);
@@ -199,6 +217,8 @@ class ImportPokemonsCommand extends Command
                 if ($isToSkip) {
                     continue;
                 }
+
+                $io->writeln($event['title']);
 
                 foreach ($event['features'] as $pokemon) {
 
