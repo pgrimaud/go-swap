@@ -60,6 +60,7 @@ class PokemonCrudController extends AbstractCrudController
             TextField::new('frenchName'),
             TextField::new('englishName'),
             BooleanField::new('isShiny'),
+            BooleanField::new('isShinyThreeStars')->hideOnIndex(),
             BooleanField::new('isLucky'),
             BooleanField::new('isShadow'),
             BooleanField::new('isPurified'),
