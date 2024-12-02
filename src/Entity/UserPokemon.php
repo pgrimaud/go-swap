@@ -18,7 +18,7 @@ class UserPokemon
     #[ORM\JoinColumn(nullable: false)]
     private User|UserInterface|null $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'userPokemon')]
+    #[ORM\ManyToOne(targetEntity: Pokemon::class, inversedBy: 'userPokemon')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Pokemon $pokemon = null;
 

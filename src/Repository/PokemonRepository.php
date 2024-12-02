@@ -54,6 +54,19 @@ class PokemonRepository extends ServiceEntityRepository
             ->getArrayResult();
     }
 
+
+    public function getUserPvPPokemon(User|UserInterface|null $user): array
+    {
+        return $this->createQueryBuilder('p', 'p.id')
+            ->select('p.id, up.hidden, up.littleCupRank, up.greatLeagueRank, up.ultraLeagueRank')
+            ->join('p.userPvPPokemon', 'up')
+            ->andWhere('up.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('p.number', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+    }
+
     public function getCountByGeneration(string $generation): int
     {
         /** @var int $result */

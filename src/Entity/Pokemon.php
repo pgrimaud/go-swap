@@ -60,9 +60,13 @@ class Pokemon
     #[ORM\Column(nullable: true)]
     private ?int $evolutionChainPosition = 0;
 
+    #[ORM\OneToMany(mappedBy: 'pokemon', targetEntity: UserPvPPokemon::class, orphanRemoval: true)]
+    private Collection $userPvPPokemon;
+    
     public function __construct()
     {
         $this->userPokemon = new ArrayCollection();
+        $this->userPvPPokemon = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -263,6 +267,36 @@ class Pokemon
     public function setEvolutionChainPosition(?int $evolutionChainPosition): static
     {
         $this->evolutionChainPosition = $evolutionChainPosition;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserPvPPokemon>
+     */
+    public function getUserPvPPokemon(): Collection
+    {
+        return $this->userPvPPokemon;
+    }
+
+    public function addUserPvPPokemon(UserPvPPokemon $userPvPPokemon): self
+    {
+        if (!$this->userPvPPokemon->contains($userPvPPokemon)) {
+            $this->userPvPPokemon->add($userPvPPokemon);
+            $userPvPPokemon->setPokemon($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserPvPPokemon(UserPvPPokemon $userPvPPokemon): self
+    {
+        if ($this->userPvPPokemon->removeElement($userPvPPokemon)) {
+            // set the owning side to null (unless already changed)
+            if ($userPvPPokemon->getPokemon() === $this) {
+                $userPvPPokemon->setPokemon(null);
+            }
+        }
 
         return $this;
     }

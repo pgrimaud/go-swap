@@ -34,12 +34,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserPokemon::class, orphanRemoval: true)]
     private Collection $userPokemon;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserPvPPokemon::class, orphanRemoval: true)]
+    private Collection $userPvPPokemon;
+
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
     public function __construct()
     {
         $this->userPokemon = new ArrayCollection();
+        $this->userPvPPokemon = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -141,6 +145,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
     public function __toString(): string
     {
         return (string)$this->username;
@@ -154,6 +159,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserPvPPokemon>
+     */
+    public function getUserPvPPokemon(): Collection
+    {
+        return $this->userPvPPokemon;
+    }
+
+    public function addUserPvPPokemon(UserPvPPokemon $userPvPPokemon): self
+    {
+        if (!$this->userPvPPokemon->contains($userPvPPokemon)) {
+            $this->userPvPPokemon->add($userPvPPokemon);
+            $userPvPPokemon->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserPvPPokemon(UserPvPPokemon $userPvPPokemon): self
+    {
+        if ($this->userPvPPokemon->removeElement($userPvPPokemon)) {
+            // set the owning side to null (unless already changed)
+            if ($userPvPPokemon->getUser() === $this) {
+                $userPvPPokemon->setUser(null);
+            }
+        }
 
         return $this;
     }
