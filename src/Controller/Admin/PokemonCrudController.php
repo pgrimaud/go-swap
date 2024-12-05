@@ -85,6 +85,7 @@ class PokemonCrudController extends AbstractCrudController
                 ])
                 ->setHelp('Check shiny pictures <a target="_blank" href="https://www.pokekalos.fr/pokedex/pokemongo/index.html">here</a>'),
             AssociationField::new('evolutionChain')->autocomplete()->hideOnIndex()->setRequired(false),
+            AssociationField::new('types')->autocomplete()->setRequired(true)->setFormTypeOption('by_reference', false),
         ];
     }
 

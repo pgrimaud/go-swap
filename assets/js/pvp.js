@@ -114,8 +114,8 @@ if (document.querySelector('#list-pvp')) {
     }
 
     function changeInputColor(element, rank) {
-        element.classList.remove('border-gray-500', 'border-green-500', 'border-yellow-500', 'border-red-500', 'border-white');
-        element.classList.remove('bg-slate-600', 'bg-green-700', 'bg-yellow-700', 'bg-red-700');
+        element.classList.remove('border-blue-500', 'border-green-500', 'border-yellow-500', 'border-red-500', 'border-back');
+        element.classList.remove('bg-blue-700', 'bg-green-700', 'bg-yellow-700', 'bg-red-700', 'bg-black');
 
         if (rank === 0 || isNaN(rank)) {
             element.classList.add('border-gray-500', 'bg-slate-600');
@@ -123,10 +123,11 @@ if (document.querySelector('#list-pvp')) {
         }
 
         const classMap = {
-            1: ['border-green-500', 'bg-green-700'],
-            10: ['border-yellow-500', 'bg-yellow-700'],
-            30: ['border-red-500', 'bg-red-700'],
-            100: ['border-white', 'bg-slate-600'],
+            1: ['border-blue-500', 'bg-blue-700'],
+            10: ['border-green-500', 'bg-green-700'],
+            30: ['border-yellow-500', 'bg-yellow-700'],
+            100: ['border-red-500', 'bg-red-700'],
+            4096: ['border-back', 'bg-black'],
         };
 
         for (const [maxRank, classes] of Object.entries(classMap)) {

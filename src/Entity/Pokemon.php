@@ -62,11 +62,18 @@ class Pokemon
 
     #[ORM\OneToMany(mappedBy: 'pokemon', targetEntity: UserPvPPokemon::class, orphanRemoval: true)]
     private Collection $userPvPPokemon;
+
+    /**
+     * @var Collection<int, Type>
+     */
+    #[ORM\ManyToMany(targetEntity: Type::class, inversedBy: 'pokemons')]
+    private Collection $types;
     
     public function __construct()
     {
         $this->userPokemon = new ArrayCollection();
         $this->userPvPPokemon = new ArrayCollection();
+        $this->types = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -297,6 +304,30 @@ class Pokemon
                 $userPvPPokemon->setPokemon(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Type>
+     */
+    public function getTypes(): Collection
+    {
+        return $this->types;
+    }
+
+    public function addType(Type $type): static
+    {
+        if (!$this->types->contains($type)) {
+            $this->types->add($type);
+        }
+
+        return $this;
+    }
+
+    public function removeType(Type $type): static
+    {
+        $this->types->removeElement($type);
 
         return $this;
     }

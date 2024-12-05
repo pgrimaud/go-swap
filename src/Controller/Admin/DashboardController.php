@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\EvolutionChain;
 use App\Entity\Pokemon;
+use App\Entity\Type;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -56,6 +57,22 @@ class DashboardController extends AbstractDashboardController
         return $this->redirect($adminUrlGenerator->setController(PokemonCrudController::class)->generateUrl());
     }
 
+    #[Route('/admin/update-types', name: 'admin_update_types')]
+    public function updateTypes(): Response
+    {
+        $application = new Application($this->kernel);
+        $application->setAutoExit(false);
+
+        $input = new ArrayInput(['command' => 'app:import-types']);
+
+        $output = new BufferedOutput();
+        $application->run($input, $output);
+
+        $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
+        /* @phpstan-ignore-next-line */
+        return $this->redirect($adminUrlGenerator->setController(PokemonCrudController::class)->generateUrl());
+    }
+
     public function configureMenuItems(): iterable
     {
         $websiteUrl = $this->urlGenerator->generate('app_index');
@@ -63,7 +80,9 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Admin');
         yield MenuItem::linkToCrud('Pokemons', 'fas fa-list', Pokemon::class);
         yield MenuItem::linkToCrud('Evolution chains', 'fas fa-link', EvolutionChain::class);
+        yield MenuItem::linkToCrud('Types', 'fas fa-shield', Type::class);
         yield MenuItem::section('Commands');
         yield MenuItem::linkToUrl('Update pictures', 'fa fa-image', $this->urlGenerator->generate('admin_update_pictures'));
+        yield MenuItem::linkToUrl('Update types', 'fa fa-gear', $this->urlGenerator->generate('admin_update_types'));
     }
 }

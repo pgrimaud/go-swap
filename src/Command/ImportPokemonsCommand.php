@@ -27,7 +27,7 @@ class ImportPokemonsCommand extends Command
         parent::__construct();
     }
 
-    public function configure()
+    public function configure(): void
     {
         $this->addOption(
             'only-current',

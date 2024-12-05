@@ -19,7 +19,10 @@ class PvPController extends AbstractController
     public function index(PokemonRepository $pokemonRepository): Response
     {
         return $this->render('pvp/index.html.twig', [
-            'pokemons' =>  $pokemonRepository->findAll(),
+            'pokemons' =>  $pokemonRepository->findBy([], [
+                'number' => 'ASC',
+                'id' => 'ASC',
+            ]),
             'evolutionChains' => $pokemonRepository->getEvolutionsChains(),
             'userPokemons' => $pokemonRepository->getUserPvPPokemon($this->getUser()),
         ]);
