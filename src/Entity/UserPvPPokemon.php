@@ -27,13 +27,13 @@ class UserPvPPokemon
     private ?User $user = null;
 
     #[ORM\Column]
-    private ?int $littleCupRank = null;
+    private ?int $littleCupRank = 0;
 
     #[ORM\Column]
-    private ?int $greatLeagueRank = null;
+    private ?int $greatLeagueRank = 0;
 
     #[ORM\Column]
-    private ?int $ultraLeagueRank = null;
+    private ?int $ultraLeagueRank = 0;
 
     #[ORM\Column(options: ['default' => false])]
     private bool $hidden = false;

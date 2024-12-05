@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="p-6 max-sm:pt-2 max-lg:h-fit">
+    <div class="p-6 max-sm:pt-2 max-lg:h-fit h-full">
 
         {% include 'partials/header.html.twig' %}
 
-        <div class="h-5/6 flex flex-col justify-center max-lg:h-full pt-6 lg:pt-16">
+        <div class="h-2/6 flex flex-col justify-center max-lg:h-full pt-6 lg:pt-8">
             <div class="container mx-auto flex flex-wrap flex-col md:flex-row items-center h-full mb-8 md:mb-12">
                 <div class="flex flex-col w-full xl:w-2/5 justify-center lg:items-start overflow-y-hidden h-full">
                     <h1 class="my-4 text-3xl md:text-5xl text-white opacity-75 font-bold leading-tight text-center md:text-left">
@@ -19,15 +19,17 @@
                 <div class="flex w-full xl:w-3/5 items-center justify-center md:justify-end h-full text-xs">
                     <div class="flex items-center justify-center h-full">
                         {{ form_start(form, {'attr': {'class': 'flex items-center form-submission'}}) }}
-                            {{ form_widget(form.picture, {'attr': {'class': 'border-gray-300 p-2 max-w-[200px]'}}) }}
-                            <button type="submit" class="ml-4 bg-gradient-to-r {{ random_button() }} text-white font-bold py-2 px-4 rounded">
-                                Upload
-                            </button>
+                        {{ form_widget(form.picture, {'attr': {'class': 'border-gray-300 p-2 max-w-[200px]'}}) }}
+                        <button type="submit" class="ml-4 bg-gradient-to-r {{ random_button() }} text-white font-bold py-2 px-4 rounded">
+                            Upload
+                        </button>
                         {{ form_end(form) }}
                     </div>
                 </div>
             </div>
+        </div>
 
+        <div class="h-2/6 flex flex-col justify-center max-lg:h-full pt-6 lg:pt-8">
             <div class="container pt-4 md:pt-2 mx-auto grid grid-cols-1 lg:grid-cols-4 lg:grid-rows-2 gap-5">
                 {% for dex in pokedexs %}
                     {% include 'app/pokedex-card.html.twig' %}
