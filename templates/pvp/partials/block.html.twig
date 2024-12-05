@@ -1,0 +1,18 @@
+<div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-5 dark:bg-gray-800 dark:border-gray-700 items-center flex flex-col">
+    <p class="text-center pb-6">
+        <img src="{{ image }}" class="inline h-[50px]">
+    </p>
+    <h2 class="mb-2 text-3xl text-white text-center font-extrabold">{{ title }}</h2>
+    <div class=" text-gray-900 dark:text-white">
+        <span class="ml-1 text-lg font-normal text-gray-500 dark:text-gray-400">{{ description }}</span>
+        <br>
+    </div>
+    {% set color = random_button()  %}
+
+    <div class="flex text-sm">
+        <a href="{{ link }}"
+           class="mr-1 bg-gradient-to-r {{ color }} text-white font-bold py-2 px-6 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out mt-10">
+            Go
+        </a>
+    </div>
+</div>

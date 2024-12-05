@@ -215,4 +215,15 @@ class PokemonRepository extends ServiceEntityRepository
 
         return $statement->fetchAllAssociative();
     }
+
+    public function findAllWithTags(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->select('p, t')
+            ->join('p.types', 't')
+            ->orderBy('p.number', 'ASC')
+            ->orderBy('p.id', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+    }
 }

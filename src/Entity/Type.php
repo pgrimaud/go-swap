@@ -30,9 +30,16 @@ class Type
     #[ORM\ManyToMany(targetEntity: Pokemon::class, mappedBy: 'types')]
     private Collection $pokemons;
 
+    /**
+     * @var Collection<int, TypeEffectiveness>
+     */
+    #[ORM\OneToMany(mappedBy: 'sourceType', targetEntity: TypeEffectiveness::class, orphanRemoval: true)]
+    private Collection $effectivenesses;
+
     public function __construct()
     {
         $this->pokemons = new ArrayCollection();
+        $this->effectivenesses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -106,5 +113,35 @@ class Type
     public function __toString(): string
     {
         return (string) $this->name;
+    }
+
+    /**
+     * @return Collection<int, TypeEffectiveness>
+     */
+    public function getEffectivenesses(): Collection
+    {
+        return $this->effectivenesses;
+    }
+
+    public function addEffectiveness(TypeEffectiveness $effectiveness): static
+    {
+        if (!$this->effectivenesses->contains($effectiveness)) {
+            $this->effectivenesses->add($effectiveness);
+            $effectiveness->setSourceType($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEffectiveness(TypeEffectiveness $effectiveness): static
+    {
+        if ($this->effectivenesses->removeElement($effectiveness)) {
+            // set the owning side to null (unless already changed)
+            if ($effectiveness->getSourceType() === $this) {
+                $effectiveness->setSourceType(null);
+            }
+        }
+
+        return $this;
     }
 }

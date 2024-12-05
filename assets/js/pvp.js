@@ -2,6 +2,7 @@ if (document.querySelector('#list-pvp')) {
     let parameters = {
         'search': document.querySelector('#search-pvp').value.toLowerCase(),
         'displayHidden': document.querySelector('#display-hidden').checked,
+        'onlyOwned': document.querySelector('#only-owned').checked,
     }
 
     filter()
@@ -22,10 +23,15 @@ if (document.querySelector('#list-pvp')) {
         filter()
     })
 
+    // display only owned
+    document.querySelector('#only-owned').addEventListener('change', (e) => {
+        parameters.onlyOwned = e.currentTarget.checked
+        filter()
+    })
+
     // rank inputs
     document.querySelectorAll('.rank-input').forEach(el => {
         el.addEventListener('change', () => {
-
             changeInputColor(el, parseInt(el.value));
 
             const data = new FormData();
@@ -35,6 +41,22 @@ if (document.querySelector('#list-pvp')) {
 
             fetchApi(data, '/pvp/update')
 
+            // probably to hide ?
+            const row = el.closest('.pokemon-row');
+            let hasRank = false;
+
+            row.querySelectorAll('.rank-input').forEach(elInput => {
+                if (!isNaN(parseInt(elInput.value)) || parseInt(elInput.value) > 0) {
+                    hasRank = true;
+                }
+            })
+
+            if (hasRank === false) {
+                row.dataset.owned = '0';
+                filter();
+            } else {
+                row.dataset.owned = '1';
+            }
         })
     })
 
@@ -64,12 +86,10 @@ if (document.querySelector('#list-pvp')) {
     })
 
     function filter() {
-        console.log(parameters)
-
         // reset rows
         displayPokemonAllRows(true)
 
-        // filter searc
+        // filter search
         if (/^\d+$/.test(parameters.search) === true) {
             displayPokemonAllRows(false)
             displayPokemonRows(`.pokemon-row[data-number='${parameters.search}']`, true)
@@ -86,6 +106,12 @@ if (document.querySelector('#list-pvp')) {
                 ) {
                     el.classList.remove('hidden')
                 }
+            })
+        }
+
+        if (parameters.onlyOwned === true) {
+            document.querySelectorAll('.pokemon-row[data-owned="0"]').forEach(el => {
+                el.classList.add('hidden')
             })
         }
     }
@@ -114,8 +140,8 @@ if (document.querySelector('#list-pvp')) {
     }
 
     function changeInputColor(element, rank) {
-        element.classList.remove('border-blue-500', 'border-green-500', 'border-yellow-500', 'border-red-500', 'border-back');
-        element.classList.remove('bg-blue-700', 'bg-green-700', 'bg-yellow-700', 'bg-red-700', 'bg-black');
+        element.classList.remove('border-gray-700', 'border-blue-500', 'border-green-500', 'border-yellow-500', 'border-red-500', 'border-back');
+        element.classList.remove('bg-slate-600', 'bg-blue-700', 'bg-green-700', 'bg-yellow-700', 'bg-red-700', 'bg-black');
 
         if (rank === 0 || isNaN(rank)) {
             element.classList.add('border-gray-500', 'bg-slate-600');

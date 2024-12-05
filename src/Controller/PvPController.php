@@ -28,6 +28,22 @@ class PvPController extends AbstractController
         ]);
     }
 
+    #[Route('/pvp/list', name: 'app_pvp_list')]
+    public function list(PokemonRepository $pokemonRepository): Response
+    {
+        return $this->render('pvp/list.html.twig', [
+            'pokemons' =>  $pokemonRepository->findAllWithTags(),
+            'evolutionChains' => $pokemonRepository->getEvolutionsChains(),
+            'userPokemons' => $pokemonRepository->getUserPvPPokemon($this->getUser()),
+        ]);
+    }
+
+    #[Route('/pvp/types', name: 'app_pvp_types')]
+    public function types(): Response
+    {
+        return $this->render('pvp/types.html.twig');
+    }
+
     #[Route('/pvp/update', name: 'app_pvp_update')]
     public function add(
         Request $request,

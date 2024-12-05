@@ -73,6 +73,22 @@ class DashboardController extends AbstractDashboardController
         return $this->redirect($adminUrlGenerator->setController(PokemonCrudController::class)->generateUrl());
     }
 
+    #[Route('/admin/update-types-effectiveness', name: 'admin_update_types_effectiveness')]
+    public function updateTypesEffectiveness(): Response
+    {
+        $application = new Application($this->kernel);
+        $application->setAutoExit(false);
+
+        $input = new ArrayInput(['command' => 'app:import-types-effectiveness']);
+
+        $output = new BufferedOutput();
+        $application->run($input, $output);
+
+        $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
+        /* @phpstan-ignore-next-line */
+        return $this->redirect($adminUrlGenerator->setController(PokemonCrudController::class)->generateUrl());
+    }
+
     public function configureMenuItems(): iterable
     {
         $websiteUrl = $this->urlGenerator->generate('app_index');
@@ -83,6 +99,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Types', 'fas fa-shield', Type::class);
         yield MenuItem::section('Commands');
         yield MenuItem::linkToUrl('Update pictures', 'fa fa-image', $this->urlGenerator->generate('admin_update_pictures'));
-        yield MenuItem::linkToUrl('Update types', 'fa fa-gear', $this->urlGenerator->generate('admin_update_types'));
+        yield MenuItem::linkToUrl('Update types', 'fa fa-shield', $this->urlGenerator->generate('admin_update_types'));
+        yield MenuItem::linkToUrl('Update effectiveness', 'fa fa-arrow-right', $this->urlGenerator->generate('admin_update_types_effectiveness'));
     }
 }

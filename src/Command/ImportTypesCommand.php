@@ -57,6 +57,9 @@ class ImportTypesCommand extends Command
         'Dialga',
         'Palkia',
         'Giratina',
+        'Genesect',
+        'Sinistea',
+        'Polteageist',
     ];
 
     private const API_FORM_ALLOWED = [
@@ -85,6 +88,8 @@ class ImportTypesCommand extends Command
         'Hisuian',
         'Galarian',
         'Paldea',
+        'Chill', // Genesect
+        'Antique', // Sinistea & Polteageist
     ];
 
     /**
