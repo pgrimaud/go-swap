@@ -40,10 +40,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    /**
+     * @var Collection<int, PvPQuiz>
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: PvPQuiz::class, orphanRemoval: true)]
+    private Collection $pvpQuizzes;
+
     public function __construct()
     {
         $this->userPokemon = new ArrayCollection();
         $this->userPvPPokemon = new ArrayCollection();
+        $this->pvpQuizzes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -187,6 +194,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($userPvPPokemon->getUser() === $this) {
                 $userPvPPokemon->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PvPQuiz>
+     */
+    public function getPvpQuizzes(): Collection
+    {
+        return $this->pvpQuizzes;
+    }
+
+    public function addPvpQuiz(PvPQuiz $pvpQuiz): static
+    {
+        if (!$this->pvpQuizzes->contains($pvpQuiz)) {
+            $this->pvpQuizzes->add($pvpQuiz);
+            $pvpQuiz->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePvpQuiz(PvPQuiz $pvpQuiz): static
+    {
+        if ($this->pvpQuizzes->removeElement($pvpQuiz)) {
+            // set the owning side to null (unless already changed)
+            if ($pvpQuiz->getUser() === $this) {
+                $pvpQuiz->setUser(null);
             }
         }
 

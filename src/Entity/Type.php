@@ -144,4 +144,18 @@ class Type
 
         return $this;
     }
+
+    public function getStrongAgainst(): Collection
+    {
+        return $this->effectivenesses->filter(function (TypeEffectiveness $effectiveness) {
+            return $effectiveness->getMultiplier() > 1;
+        });
+    }
+
+    public function getBestDefender(): Collection
+    {
+        return $this->effectivenesses->filter(function (TypeEffectiveness $effectiveness) {
+            return $effectiveness->getMultiplier() < 1;
+        });
+    }
 }

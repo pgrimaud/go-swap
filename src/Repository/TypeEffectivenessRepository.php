@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Type;
 use App\Entity\TypeEffectiveness;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -16,28 +17,23 @@ class TypeEffectivenessRepository extends ServiceEntityRepository
         parent::__construct($registry, TypeEffectiveness::class);
     }
 
-    //    /**
-    //     * @return TypeEffectiveness[] Returns an array of TypeEffectiveness objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('t')
-    //            ->andWhere('t.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('t.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function getWeakAgainst(): array
+    {
+        $results = [];
 
-    //    public function findOneBySomeField($value): ?TypeEffectiveness
-    //    {
-    //        return $this->createQueryBuilder('t')
-    //            ->andWhere('t.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        /** @var TypeEffectiveness[] $queryResults */
+        $queryResults = $this->createQueryBuilder('te')
+            ->select('te')
+            ->where('te.multiplier > 1')
+            ->getQuery()
+            ->getResult();
+
+        foreach ($queryResults as $queryResult) {
+            /** @var Type $targetType */
+            $targetType = $queryResult->getTargetType();
+            $results[$targetType->getId()][] = $queryResult;
+        }
+
+        return $results;
+    }
 }

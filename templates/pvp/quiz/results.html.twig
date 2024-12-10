@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="h-full p-6 max-sm:pt-2 max-lg:h-fit">
+        {% include 'partials/header.html.twig' %}
+
+        {% include 'pvp/partials/navbar.html.twig' with {
+            'links': [
+                {'name': 'PvP', 'url': path('app_pvp_index')},
+                {'name': 'Quizzes', 'url': path('app_pvp_quizzes')},
+                {'name': 'Results #' ~ quiz.id, 'url': '#'},
+            ]
+        } %}
+
+    </div>
+{% endblock %}

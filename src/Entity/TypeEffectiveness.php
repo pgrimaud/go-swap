@@ -6,7 +6,7 @@ use App\Repository\TypeEffectivenessRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TypeEffectivenessRepository::class)]
-class TypeEffectiveness
+class   TypeEffectiveness
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

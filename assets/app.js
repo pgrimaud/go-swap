@@ -10,3 +10,4 @@ import './styles/app.css';
 import './js/pokedex.js';
 import './js/home.js';
 import './js/pvp.js';
+import './js/pvp-quiz.js';

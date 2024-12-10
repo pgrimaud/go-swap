@@ -21,6 +21,10 @@ module.exports = {
     'border-2',
     'bg-slate-600',
     'border-gray-500',
+    'text-red-500',
+    'text-orange-500',
+    'text-green-500',
+    'w-[25px]'
   ],
   theme: {
     extend: {},

@@ -16,28 +16,30 @@ class TypeRepository extends ServiceEntityRepository
         parent::__construct($registry, Type::class);
     }
 
-    //    /**
-    //     * @return Type[] Returns an array of Type objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('t')
-    //            ->andWhere('t.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('t.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function getRandomType(): ?Type
+    {
+        $result = $this->createQueryBuilder('t')
+            ->orderBy('RAND()')
+            ->setMaxResults(1)
+            ->getQuery()->getOneOrNullResult();
 
-    //    public function findOneBySomeField($value): ?Type
-    //    {
-    //        return $this->createQueryBuilder('t')
-    //            ->andWhere('t.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        return $result instanceof Type ? $result : null;
+    }
+
+    /**
+     * @param array<Type> $correctAnswerTypes
+     *
+     * @return array<Type>
+     */
+    public function findRandomTypes(array $correctAnswerTypes, int $maxResults = 3): array
+    {
+        $query = $this->createQueryBuilder('t')
+            ->where('t NOT IN (:correctAnswerTypes)')
+            ->setParameter('correctAnswerTypes', $correctAnswerTypes)
+            ->orderBy('RAND()')
+            ->setMaxResults($maxResults)
+            ->getQuery()->getResult();
+
+        return is_array($query) ? $query : [];
+    }
 }
