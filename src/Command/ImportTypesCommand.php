@@ -168,6 +168,7 @@ class ImportTypesCommand extends Command
                 $newPokemonEntities = [];
                 foreach ($pokemonEntities as $pokemonEntity) {
                     if (str_contains((string) $pokemonEntity->getEnglishName(), 'Alolan')) {
+                        $pokemonEntity->setForm($pokemon['form']);
                         $newPokemonEntities[] = $pokemonEntity;
                     }
                 }
@@ -176,6 +177,7 @@ class ImportTypesCommand extends Command
                 $newPokemonEntities = [];
                 foreach ($pokemonEntities as $pokemonEntity) {
                     if (str_contains((string) $pokemonEntity->getEnglishName(), 'Hisuian')) {
+                        $pokemonEntity->setForm($pokemon['form']);
                         $newPokemonEntities[] = $pokemonEntity;
                     }
                 }
@@ -184,6 +186,7 @@ class ImportTypesCommand extends Command
                 $newPokemonEntities = [];
                 foreach ($pokemonEntities as $pokemonEntity) {
                     if (str_contains((string) $pokemonEntity->getEnglishName(), 'Galarian')) {
+                        $pokemonEntity->setForm($pokemon['form']);
                         $newPokemonEntities[] = $pokemonEntity;
                     }
                 }
@@ -192,6 +195,7 @@ class ImportTypesCommand extends Command
                 $newPokemonEntities = [];
                 foreach ($pokemonEntities as $pokemonEntity) {
                     if (str_contains((string) $pokemonEntity->getEnglishName(), 'Paldean')) {
+                        $pokemonEntity->setForm($pokemon['form']);
                         $newPokemonEntities[] = $pokemonEntity;
                     }
                 }
@@ -205,6 +209,7 @@ class ImportTypesCommand extends Command
                         && !str_contains((string) $pokemonEntity->getEnglishName(), 'Hisuian')
                         && !str_contains((string) $pokemonEntity->getEnglishName(), 'Paldean')
                     ) {
+                        $pokemonEntity->setForm($pokemon['form']);
                         $newPokemonEntities[] = $pokemonEntity;
                     }
                 }
@@ -217,6 +222,8 @@ class ImportTypesCommand extends Command
             } elseif (count($pokemonEntities) === 0) {
                 // pokémon not released yet
                 continue;
+            } else if(count($pokemonEntities) === 1 && $pokemon['form'] === 'Normal') {
+                $pokemonEntities[0]->setForm($pokemon['form']);
             }
 
             foreach ($pokemonEntities as $pokemonEntity) {

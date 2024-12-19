@@ -68,6 +68,9 @@ class Pokemon
      */
     #[ORM\ManyToMany(targetEntity: Type::class, inversedBy: 'pokemons')]
     private Collection $types;
+
+    #[ORM\Column(length: 255)]
+    private ?string $form = null;
     
     public function __construct()
     {
@@ -328,6 +331,18 @@ class Pokemon
     public function removeType(Type $type): static
     {
         $this->types->removeElement($type);
+
+        return $this;
+    }
+
+    public function getForm(): ?string
+    {
+        return $this->form;
+    }
+
+    public function setForm(string $form): static
+    {
+        $this->form = $form;
 
         return $this;
     }
