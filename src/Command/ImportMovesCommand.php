@@ -15,6 +15,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use function PHPUnit\Framework\throwException;
 
 #[AsCommand(
     name: 'app:import-moves',
@@ -111,6 +112,10 @@ class ImportMovesCommand extends Command
         $this->entityManager->flush();
     }
 
+    /**
+     * @param string $typeName
+     * @return Type
+     */
     private function getType(string $typeName): Type
     {
         foreach ($this->types as $type) {
@@ -120,6 +125,8 @@ class ImportMovesCommand extends Command
         }
 
         $this->io->error('Type not found: ' . $typeName);
+
+        throw new \Exception('Type not found: ' . $typeName);
     }
 
     private function importCurrentPokemonMoves(): void
