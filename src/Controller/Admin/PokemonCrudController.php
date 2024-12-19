@@ -59,6 +59,7 @@ class PokemonCrudController extends AbstractCrudController
             ChoiceField::new('generation')->setChoices(array_flip(GenerationHelper::GENERATIONS)),
             TextField::new('frenchName'),
             TextField::new('englishName'),
+            TextField::new('form')->setHelp('Check forms <a target="_blank" href="https://pogoapi.net/api/v1/pokemon_types.json">here</a>'),
             BooleanField::new('isShiny'),
             BooleanField::new('isShinyThreeStars')->hideOnIndex(),
             BooleanField::new('isLucky'),
