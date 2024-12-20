@@ -7,6 +7,8 @@ use App\Entity\PvPQuiz;
 use App\Entity\User;
 use App\Factory\PvPQuestionFactory;
 use App\Repository\PvPQuizRepository;
+use App\Repository\TypeRepository;
+use App\Service\TypeEffectiveness;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,6 +52,7 @@ class PvPQuizController extends AbstractController
 
         $question->setStatus(PvPQuestion::STATUS_ANSWERED);
         $question->setGoodAnswer($validAnswer);
+        $question->setUserAnswer($answerId);
 
         /** @var PvPQuiz $quiz */
         $quiz = $question->getPvpQuiz();
@@ -96,8 +99,7 @@ class PvPQuizController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_pvp_quiz')]
-    public function quiz(PvPQuiz $quiz, PvPQuestionFactory $pvpQuestionFactory): Response
-    {
+    public function quiz(PvPQuiz $quiz, PvPQuestionFactory $pvpQuestionFactory): Response {
         // has already a question created
         $question = $quiz->getLastUnansweredQuestion();
 

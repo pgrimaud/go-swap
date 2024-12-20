@@ -71,12 +71,22 @@ class Pokemon
 
     #[ORM\Column(length: 255)]
     private ?string $form = null;
-    
+
+    /**
+     * @var Collection<int, PokemonMove>
+     */
+    #[ORM\OneToMany(mappedBy: 'pokemon', targetEntity: PokemonMove::class, orphanRemoval: true)]
+    private Collection $pokemonMoves;
+
+    #[ORM\Column(length: 255)]
+    private ?string $slug = null;
+
     public function __construct()
     {
         $this->userPokemon = new ArrayCollection();
         $this->userPvPPokemon = new ArrayCollection();
         $this->types = new ArrayCollection();
+        $this->pokemonMoves = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -343,6 +353,57 @@ class Pokemon
     public function setForm(string $form): static
     {
         $this->form = $form;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PokemonMove>
+     */
+    public function getPokemonMoves(): Collection
+    {
+        return $this->pokemonMoves;
+    }
+
+    public function addPokemonMove(PokemonMove $pokemonMove): static
+    {
+        if (!$this->pokemonMoves->contains($pokemonMove)) {
+            $this->pokemonMoves->add($pokemonMove);
+            $pokemonMove->setPokemon($this);
+        }
+
+        return $this;
+    }
+
+    public function removePokemonMove(PokemonMove $pokemonMove): static
+    {
+        if ($this->pokemonMoves->removeElement($pokemonMove)) {
+            // set the owning side to null (unless already changed)
+            if ($pokemonMove->getPokemon() === $this) {
+                $pokemonMove->setPokemon(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function removeAllPokemonMoves(): static
+    {
+        foreach ($this->pokemonMoves as $pokemonMove) {
+            $this->removePokemonMove($pokemonMove);
+        }
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
 
         return $this;
     }

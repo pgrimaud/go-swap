@@ -17,23 +17,51 @@ class TypeEffectivenessRepository extends ServiceEntityRepository
         parent::__construct($registry, TypeEffectiveness::class);
     }
 
-    public function getWeakAgainst(): array
+    public function getStrongAgainst(Type $type): mixed
     {
-        $results = [];
-
-        /** @var TypeEffectiveness[] $queryResults */
-        $queryResults = $this->createQueryBuilder('te')
-            ->select('te')
+        return $this->createQueryBuilder('te')
+            ->select('te, t')
+            ->join('te.targetType', 't')
             ->where('te.multiplier > 1')
+            ->andWhere('te.sourceType = :type')
+            ->setParameter('type', $type)
             ->getQuery()
             ->getResult();
+    }
 
-        foreach ($queryResults as $queryResult) {
-            /** @var Type $targetType */
-            $targetType = $queryResult->getTargetType();
-            $results[$targetType->getId()][] = $queryResult;
-        }
+    public function getVulnerableTo(Type $type): mixed
+    {
+        return $this->createQueryBuilder('te')
+            ->select('te, t')
+            ->join('te.sourceType', 't')
+            ->where('te.multiplier > 1')
+            ->andWhere('te.targetType = :type')
+            ->setParameter('type', $type)
+            ->getQuery()
+            ->getResult();
+    }
 
-        return $results;
+    public function getResistantTo(Type $type): mixed
+    {
+        return $this->createQueryBuilder('te')
+            ->select('te, t')
+            ->join('te.sourceType', 't')
+            ->where('te.multiplier < 1')
+            ->andWhere('te.targetType = :type')
+            ->setParameter('type', $type)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getNotEffectiveAgainst(Type $type): mixed
+    {
+        return $this->createQueryBuilder('te')
+            ->select('te, t')
+            ->join('te.targetType', 't')
+            ->where('te.multiplier < 1')
+            ->andWhere('te.sourceType = :type')
+            ->setParameter('type', $type)
+            ->getQuery()
+            ->getResult();
     }
 }

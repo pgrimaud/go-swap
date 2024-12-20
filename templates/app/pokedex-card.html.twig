@@ -1,11 +1,11 @@
-<div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-5 dark:bg-gray-800 dark:border-gray-700 items-center flex flex-col">
-    <h2 class="mb-2 text-xl font-medium text-gray-500 dark:text-gray-400 text-center">{{ dex.name }}</h2>
-    <div class="flex items-baseline text-gray-900 dark:text-white">
+<div class="w-full p-4 border rounded-lg shadow sm:p-5 bg-gray-800 border-gray-700 items-center flex flex-col">
+    <h2 class="mb-2 text-xl font-medium text-gray-400 text-center">{{ dex.name }}</h2>
+    <div class="flex items-baseline text-white">
         <span class="text-4xl font-extrabold tracking-tight">{{ dex.caught }}</span>
-        <span class="ml-1 text-sm font-normal text-gray-500 dark:text-gray-400">/{{ dex.total }}</span>
+        <span class="ml-1 text-sm font-normal text-gray-400">/{{ dex.total }}</span>
         <br>
     </div>
-    <div class="flex items-baseline text-gray-900 dark:text-gray-400">
+    <div class="flex items-baseline text-gray-400">
         <span class="text-s tracking-tight">{{ (dex.caught / dex.total * 100)|round(2) }}%</span>
         <br>
     </div>

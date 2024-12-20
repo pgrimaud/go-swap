@@ -37,6 +37,9 @@ class PvPQuestion
     #[ORM\Column(length: 255)]
     private ?string $status = self::STATUS_CREATED;
 
+    #[ORM\Column]
+    private ?int $userAnswer = 0;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -110,5 +113,17 @@ class PvPQuestion
     public function setStatus(?string $status): void
     {
         $this->status = $status;
+    }
+
+    public function getUserAnswer(): ?int
+    {
+        return $this->userAnswer;
+    }
+
+    public function setUserAnswer(int $userAnswer): static
+    {
+        $this->userAnswer = $userAnswer;
+
+        return $this;
     }
 }

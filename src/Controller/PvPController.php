@@ -42,24 +42,32 @@ class PvPController extends AbstractController
 
     #[Route('/pvp/types', name: 'app_pvp_types')]
     public function types(
-        TypeRepository              $typeRepository,
+        TypeRepository $typeRepository,
         TypeEffectivenessRepository $effectivenessRepository
-    ): Response
-    {
+    ): Response {
+        $allTypesWithData = [];
+
+        foreach ($typeRepository->findAll() as $type) {
+            $allTypesWithData[$type->getId()] = [
+                'type' => $type,
+                'strongAgainst' => $effectivenessRepository->getStrongAgainst($type),
+                'vulnerableTo' => $effectivenessRepository->getVulnerableTo($type),
+                'notEffectiveAgainst' => $effectivenessRepository->getNotEffectiveAgainst($type),
+            ];
+        }
+
         return $this->render('pvp/types.html.twig', [
-            'types' => $typeRepository->findAll(),
-            'weakAgainst' => $effectivenessRepository->getWeakAgainst(),
+            'allTypesWithData' => $allTypesWithData ,
         ]);
     }
 
     #[Route('/pvp/update', name: 'app_pvp_update')]
     public function add(
-        Request                  $request,
-        EntityManagerInterface   $entityManager,
-        PokemonRepository        $pokemonRepository,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        PokemonRepository $pokemonRepository,
         UserPvPPokemonRepository $userPvPPokemonRepository,
-    ): Response
-    {
+    ): Response {
         $user = $this->getUser();
 
         if (!$user instanceof User) {
@@ -107,12 +115,11 @@ class PvPController extends AbstractController
 
     #[Route('/pvp/display', name: 'app_pvp_display')]
     public function displayOrHide(
-        Request                  $request,
-        EntityManagerInterface   $entityManager,
-        PokemonRepository        $pokemonRepository,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        PokemonRepository $pokemonRepository,
         UserPvPPokemonRepository $userPvPPokemonRepository,
-    ): Response
-    {
+    ): Response {
         $user = $this->getUser();
 
         if (!$user instanceof User) {

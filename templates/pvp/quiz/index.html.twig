@@ -30,32 +30,32 @@
                 </tr>
                 </thead>
                 <tbody>
-                    {% for quizz in quizzes %}
+                    {% for quiz in quizzes %}
                         <tr class="text-gray-100 hover:bg-gray-500">
-                            <td class="px-4 py-2 border border-gray-500">#{{ quizz.id }}</td>
+                            <td class="px-4 py-2 border border-gray-500">#{{ quiz.id }}</td>
                             <td class="px-4 py-2 border border-gray-500">
-                                {% if quizz.grade is not null %}
-                                    <span class="font-bold {{ grade_color(quizz.grade) }}">{{ quizz.grade }}%</span>
+                                {% if quiz.grade is not null %}
+                                    <span class="font-bold {{ grade_color(quiz.grade) }}">{{ quiz.grade }}%</span>
                                 {% else %}
                                     -
                                 {% endif %}
                             </td>
                             <td class="px-4 py-2 border border-gray-500">
-                                {% if quizz.grade is not null %}
-                                    {{ quizz.endedAt | date('Y/m/d H:i:s') }}
+                                {% if quiz.grade is not null %}
+                                    {{ quiz.endedAt | date('Y/m/d H:i:s') }}
                                 {% else %}
                                     -
                                 {% endif %}
                             </td>
                             <td class="px-4 py-2 border border-gray-500">
                                 {% set color = random_button() %}
-                                {% if quizz.grade is not null %}
-                                    <a href="{{ path('app_pvp_quiz_result', { 'id': quizz.id }) }}"
+                                {% if quiz.grade is not null %}
+                                    <a href="{{ path('app_pvp_quiz_result', { 'id': quiz.id }) }}"
                                        class="bg-gradient-to-r {{ color }} text-white font-bold py-1 px-4 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out">
                                         Results
                                     </a>
                                 {% else %}
-                                    <a href="{{ path('app_pvp_quiz', { 'id': quizz.id }) }}"
+                                    <a href="{{ path('app_pvp_quiz', { 'id': quiz.id }) }}"
                                        class="bg-gradient-to-r {{ color }} text-white font-bold py-1 px-2 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out">
                                         Continue
                                     </a>

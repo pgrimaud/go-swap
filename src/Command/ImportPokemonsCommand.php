@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Pokemon;
+use App\Repository\PokemonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputOption;
@@ -14,6 +15,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 
 #[AsCommand(
@@ -22,7 +24,7 @@ use Symfony\Component\DomCrawler\Crawler;
 )]
 class ImportPokemonsCommand extends Command
 {
-    public function __construct(private readonly EntityManagerInterface $entityManager)
+    public function __construct(private readonly EntityManagerInterface $entityManager, private readonly PokemonRepository $pokemonRepository, private readonly HttpClientInterface $httpClient)
     {
         parent::__construct();
     }
@@ -51,6 +53,7 @@ class ImportPokemonsCommand extends Command
         $this->importShiny();
         $this->importEnglishName();
         $this->importCurrentPokemons($io);
+        $this->importSlugNames();
 
         $io->success('Done ! - ' . date('Y-m-d H:i:s'));
 
@@ -246,6 +249,24 @@ class ImportPokemonsCommand extends Command
                 }
             }
 
+        }
+    }
+
+    private function importSlugNames(): void
+    {
+        /** @var Pokemon[] $pokemons */
+        $pokemons = $this->pokemonRepository->getPokemonWithoutSlug();
+
+        foreach($pokemons as $pokemon) {
+            $request = $this->httpClient->request(
+                'GET',
+                sprintf('https://pokemon-go-api.github.io/pokemon-go-api/api/pokedex/id/%s.json', $pokemon->getNumber()),
+            );
+            $response = $request->toArray();
+
+            $pokemon->setSlug(strtolower($response['formId']));
+
+            $this->entityManager->flush();
         }
     }
 }

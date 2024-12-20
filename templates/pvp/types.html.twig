@@ -22,10 +22,10 @@
                 </tr>
                 </thead>
                 <tbody>
-                    {% for type in types %}
+                    {% for type in allTypesWithData %}
                         <tr class="hover:bg-gray-500">
                             <td class="px-4 py-1 border border-gray-500 w1/4">
-                                <img src="{{ asset('images/type/' ~ type.icon) }}" class="inline w-[30px]">
+                                <img src="{{ asset('images/type/' ~ type.type.icon) }}" class="inline w-[30px]">
                             </td>
                             <td class="px-4 py-1 border border-gray-500 w1/4">
                                 {% for effectiveness in type.strongAgainst %}
@@ -33,12 +33,12 @@
                                 {% endfor %}
                             </td>
                             <td class="px-4 py-1 border border-gray-500 w1/4">
-                                {% for weakAgainst in weakAgainst[type.id] %}
+                                {% for weakAgainst in type.vulnerableTo %}
                                     <img src="{{ asset('images/type/' ~ weakAgainst.sourceType.icon) }}" class="inline w-[30px]">
                                 {% endfor %}
                             </td>
                             <td class="px-4 py-1 border border-gray-500 w1/4">
-                                {% for bestDefenderType in type.getBestDefender %}
+                                {% for bestDefenderType in type.notEffectiveAgainst %}
                                     <img src="{{ asset('images/type/' ~ bestDefenderType.targetType.icon) }}" class="inline w-[30px]">
                                 {% endfor %}
                             </td>

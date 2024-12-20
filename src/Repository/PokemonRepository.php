@@ -226,4 +226,13 @@ class PokemonRepository extends ServiceEntityRepository
             ->getQuery()
             ->getArrayResult();
     }
+
+    public function getPokemonWithoutSlug(): mixed
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.slug IS NULL or p.slug = :emptySlug')
+            ->setParameter('emptySlug', '')
+            ->getQuery()
+            ->getResult();
+    }
 }

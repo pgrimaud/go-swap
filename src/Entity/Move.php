@@ -3,10 +3,11 @@
 namespace App\Entity;
 
 use App\Repository\MoveRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MoveRepository::class)]
-#[ORM\UniqueConstraint(name: 'api_id_uniq', columns: ['api_id'])]
 class Move
 {
     public const FAST_MOVE = 'fast';
@@ -36,8 +37,16 @@ class Move
     #[ORM\Column]
     private ?int $energyDelta = null;
 
-    #[ORM\Column]
-    private ?int $apiId = null;
+    /**
+     * @var Collection<int, PokemonMove>
+     */
+    #[ORM\OneToMany(mappedBy: 'move', targetEntity: PokemonMove::class, orphanRemoval: true)]
+    private Collection $pokemonMoves;
+
+    public function __construct()
+    {
+        $this->pokemonMoves = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -116,14 +125,32 @@ class Move
         return $this;
     }
 
-    public function getApiId(): ?int
+    /**
+     * @return Collection<int, PokemonMove>
+     */
+    public function getPokemonMoves(): Collection
     {
-        return $this->apiId;
+        return $this->pokemonMoves;
     }
 
-    public function setApiId(int $apiId): static
+    public function addPokemonMove(PokemonMove $pokemonMove): static
     {
-        $this->apiId = $apiId;
+        if (!$this->pokemonMoves->contains($pokemonMove)) {
+            $this->pokemonMoves->add($pokemonMove);
+            $pokemonMove->setMove($this);
+        }
+
+        return $this;
+    }
+
+    public function removePokemonMove(PokemonMove $pokemonMove): static
+    {
+        if ($this->pokemonMoves->removeElement($pokemonMove)) {
+            // set the owning side to null (unless already changed)
+            if ($pokemonMove->getMove() === $this) {
+                $pokemonMove->setMove(null);
+            }
+        }
 
         return $this;
     }
