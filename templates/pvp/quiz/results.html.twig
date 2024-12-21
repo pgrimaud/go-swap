@@ -24,11 +24,11 @@
                 <tbody>
                 {% for question in quiz.pvpQuestions %}
                     <tr>
-                        <td class="px-4 py-2 border border-gray-500 w-1/4 text-center">{{ type_icon(question.question)|raw }}</td>
+                        <td class="px-4 py-2 border border-gray-500 w-1/4 text-center text-white">{{ type_icon(question.question)|raw }}</td>
                         <td class="px-4 py-2 border border-gray-500 w-1/4 {% if question.goodAnswer %}text-green-400{% else %}text-red-400{% endif %}">
                             {{ type_icon(question.answers[question.userAnswer])|raw }}
                         </td>
-                        <td class="px-4 py-2 border border-gray-500 w-1/4">
+                        <td class="px-4 py-2 border border-gray-500 w-1/4 text-white">
                             {% if question.goodAnswer == false %}
                                 {{ type_icon(question.answers[question.validAnswer])|raw }}
                             {% else %}
