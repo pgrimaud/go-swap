@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\UserPvPPokemon;
+use App\Repository\MoveRepository;
 use App\Repository\PokemonRepository;
 use App\Repository\TypeEffectivenessRepository;
 use App\Repository\TypeRepository;
@@ -18,25 +19,25 @@ use Symfony\Component\Routing\Attribute\Route;
 class PvPController extends AbstractController
 {
     #[Route('/pvp', name: 'app_pvp_index')]
-    public function index(PokemonRepository $pokemonRepository): Response
+    public function index(): Response
     {
-        return $this->render('pvp/index.html.twig', [
-            'pokemons' => $pokemonRepository->findBy([], [
-                'number' => 'ASC',
-                'id' => 'ASC',
-            ]),
-            'evolutionChains' => $pokemonRepository->getEvolutionsChains(),
-            'userPokemons' => $pokemonRepository->getUserPvPPokemon($this->getUser()),
-        ]);
+        return $this->render('pvp/index.html.twig');
     }
 
     #[Route('/pvp/list', name: 'app_pvp_list')]
-    public function list(PokemonRepository $pokemonRepository): Response
-    {
+    public function list(
+        PokemonRepository $pokemonRepository,
+        UserPvPPokemonRepository $userPvPPokemonRepository
+    ): Response {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $allPokemons = $pokemonRepository->findBy(criteria: [], orderBy: ['number' => 'ASC']);
+        $userPokemons = $userPvPPokemonRepository->findBy(['user' => $user]);
+
         return $this->render('pvp/list.html.twig', [
-            'pokemons' => $pokemonRepository->findAllWithTags(),
-            'evolutionChains' => $pokemonRepository->getEvolutionsChains(),
-            'userPokemons' => $pokemonRepository->getUserPvPPokemon($this->getUser()),
+            'pokemons' => $allPokemons,
+            'userPokemons' => $userPokemons,
         ]);
     }
 
@@ -44,7 +45,8 @@ class PvPController extends AbstractController
     public function types(
         TypeRepository $typeRepository,
         TypeEffectivenessRepository $effectivenessRepository
-    ): Response {
+    ): Response
+    {
         $allTypesWithData = [];
 
         foreach ($typeRepository->findAll() as $type) {
@@ -57,59 +59,45 @@ class PvPController extends AbstractController
         }
 
         return $this->render('pvp/types.html.twig', [
-            'allTypesWithData' => $allTypesWithData ,
+            'allTypesWithData' => $allTypesWithData,
         ]);
     }
 
-    #[Route('/pvp/update', name: 'app_pvp_update')]
+    #[Route('/pvp/add', name: 'app_pvp_add')]
     public function add(
         Request $request,
+        MoveRepository $moveRepository,
         EntityManagerInterface $entityManager,
         PokemonRepository $pokemonRepository,
-        UserPvPPokemonRepository $userPvPPokemonRepository,
-    ): Response {
-        $user = $this->getUser();
+    ): Response
+    {
+        $fastMove = $moveRepository->find($request->request->get('fastMove'));
+        $chargedMove1 = $moveRepository->find($request->request->get('chargedMove1'));
 
-        if (!$user instanceof User) {
-            throw new NotFoundHttpException('User not found');
-        }
-
-        $data = $request->request->all();
-
-        $id = $data['id'];
-        $league = $data['league'];
-
-        $rank = $data['rank'] === '' ? 0 : (int)$data['rank'];
-
-        if ($rank < 0 || $rank > 4096) {
-            return $this->json([
-                'message' => 'Rank must be between 1 and 4096',
-            ], 400);
-        }
-
-        $alreadyExist = $userPvPPokemonRepository->findOneBy(
-            ['user' => $user, 'pokemon' => $id]
-        );
-
-        if (!$alreadyExist) {
-            $pokemon = $pokemonRepository->findOneBy(['id' => $id]);
-
-            $userPokemon = new UserPvPPokemon();
-            $userPokemon->setUser($user);
-            $userPokemon->setPokemon($pokemon);
+        if ($request->request->get('chargedMove2')) {
+            $chargedMove2 = $moveRepository->find($request->request->get('chargedMove2'));
         } else {
-            $userPokemon = $alreadyExist;
+            $chargedMove2 = null;
         }
 
-        $method = 'set' . ucfirst($league) . 'Rank';
-        $userPokemon->$method($rank);
+        $pokemon = $pokemonRepository->find($request->request->get('pokemonId'));
 
-        $entityManager->persist($userPokemon);
+        $userPvPPokemon = new UserPvPPokemon();
+        $userPvPPokemon->setUser($this->getUser());
+        $userPvPPokemon->setPokemon($pokemon);
+        $userPvPPokemon->setFastMove($fastMove);
+        $userPvPPokemon->setChargedMove1($chargedMove1);
+        $userPvPPokemon->setChargedMove2($chargedMove2);
+        $userPvPPokemon->setLeague($request->request->get('league'));
+        $userPvPPokemon->setShadow((bool)$request->request->get('shadow'));
+        $userPvPPokemon->setRank((int)$request->request->get('rank'));
 
+        $entityManager->persist($userPvPPokemon);
         $entityManager->flush();
 
         return $this->json([
-            'message' => 'Pokemon updated',
+            'status' => 'ok',
+            'message' => 'Pokemon added',
         ]);
     }
 
@@ -119,7 +107,8 @@ class PvPController extends AbstractController
         EntityManagerInterface $entityManager,
         PokemonRepository $pokemonRepository,
         UserPvPPokemonRepository $userPvPPokemonRepository,
-    ): Response {
+    ): Response
+    {
         $user = $this->getUser();
 
         if (!$user instanceof User) {

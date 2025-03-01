@@ -8,6 +8,7 @@
         "autoprefixer": "^10.4.14",
         "core-js": "^3.23.0",
         "eslint": "^8.48.0",
+        "node": ">=18.0",
         "postcss": "^8.4.23",
         "postcss-loader": "^7.3.0",
         "regenerator-runtime": "^0.13.9",
@@ -23,6 +24,6 @@
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress",
-        "lint" : "eslint assets/js --ext .js"
+        "lint": "eslint assets/js --ext .js"
     }
 }

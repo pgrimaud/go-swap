@@ -4,6 +4,8 @@
     <div class="h-full p-6 max-sm:pt-2 max-lg:h-fit" id="list-pvp">
         {% include 'partials/header.html.twig' %}
 
+        {% include 'pvp/partials/modal-pvp.html.twig' %}
+
         {% include 'pvp/partials/navbar.html.twig' with {
             'links': [
                 {'name': 'PvP', 'url': path('app_pvp_index')},
@@ -11,11 +13,15 @@
             ]
         } %}
 
-        <div class="w-1/2 flex flex-col m-auto max-sm:mb-0 max-lg:w-full mt-8">
-            <input placeholder="Search for a pokemon..." type="text" autofocus autocomplete="off" spellcheck="false"
-                   class="w-full shadow appearance-none border rounded p-3 text-gray-700 leading-tight mb-4 "
+        <div class="w-1/2 flex max-lg:flex-col flex-row max-sm:items-center m-auto max-lg:w-full mt-8 mb-4">
+            <input placeholder="Search for a pokemon..." type="text" autocomplete="off" spellcheck="false"
+                   class="max-lg:w-full w-3/4 h-25 align-items-center shadow appearance-none border rounded p-3 text-gray-700 leading-tight"
                    id="search-pvp"
             >
+            <button class="max-sm:mt-2 max-lg:w-1/2 w-1/4 max-lg:ml-0 ml-8 h-25 align-items-center bg-gradient-to-r from-purple-800 to-green-500 text-white font-bold py-2 rounded"
+                    type="button" id="pvp-add-button">
+                Add
+            </button>
         </div>
 
         <div class="flex justify-center flex-row max-sm:flex-col max-sm:gap-2 gap-10 items-center" id="filters-pvp">
@@ -40,98 +46,100 @@
                     <tr class="text-gray-100">
                         <th class="px-4 py-2 border border-gray-500 w-1/4">Picture</th>
                         <th class="px-4 py-2 border border-gray-500 w-1/4 max-sm:hidden">Pokémon</th>
-                        <th class="px-4 py-2 border border-gray-500 w-1/4">Ranks</th>
+                        <th class="px-4 py-2 border border-gray-500 w-1/4">Rank</th>
                         <th class="px-4 py-2 border border-gray-500 w-1/4">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                {% for pokemon in pokemons %}
-                    {% set isOwned = userPokemons[pokemon.id] is defined and (userPokemons[pokemon.id].littleCupRank != 0 or userPokemons[pokemon.id].greatLeagueRank != 0 or userPokemons[pokemon.id].ultraLeagueRank != 0) %}
-                    <tr
-                        data-name-fr="{{ pokemon.frenchName|lower }}"
-                        data-name-en="{{ pokemon.englishName|lower }}"
-                        data-chain-fr="{{ display_chain(pokemon.evolutionChain.id | default(0), evolutionChains, 'fr') }}"
-                        data-chain-en="{{ display_chain(pokemon.evolutionChain.id | default(0), evolutionChains, 'en') }}"
-                        data-number="{{ pokemon.number }}"
-                        data-internal-id="{{ pokemon.id }}"
-                        data-pokemon-hidden="{% if userPokemons[pokemon.id] is defined and userPokemons[pokemon.id].hidden == 1 %}1{% else %}0{% endif %}"
-                        data-owned="{% if isOwned %}1{% else %}0{% endif %}"
-                        class="pokemon-row {% if (userPokemons[pokemon.id] is defined and userPokemons[pokemon.id].hidden == 1) or isOwned == false %}hidden{% endif %}"
-                    >
-                        <td class="px-4 py-2 border border-gray-500 w1/4">
-                            <img loading="lazy" src="{{ asset('images/normal/' ~ pokemon.normalPicture) }}" class="w-[100px] max-sm:w-[70px] h-[100px] max-sm:h-[70px] m-auto object-cover">
-                            <div class="hidden max-sm:block">
-                                <p class="text-white text-sm">#{{ pokemon.number }}</p>
-                                <p class="text-white text-sm">{{ pokemon.frenchName }}</p>
-                                <p class="text-slate-300 text-xs">{{ pokemon.englishName }}</p>
-                                <div class="text-center my-2">
-                                    {% for type in pokemon.types %}
-                                        <img src="{{ asset('images/type/' ~ type.icon) }}" class="inline w-[20px] h-[20px]">
-                                    {% endfor %}
+                {#
+                    {% for pokemon in pokemons %}
+                        {% set isOwned = userPokemons[pokemon.id] is defined and (userPokemons[pokemon.id].littleCupRank != 0 or userPokemons[pokemon.id].greatLeagueRank != 0 or userPokemons[pokemon.id].ultraLeagueRank != 0) %}
+                        <tr
+                            data-name-fr="{{ pokemon.frenchName|lower }}"
+                            data-name-en="{{ pokemon.englishName|lower }}"
+                            data-chain-fr="{{ display_chain(pokemon.evolutionChain.id | default(0), evolutionChains, 'fr') }}"
+                            data-chain-en="{{ display_chain(pokemon.evolutionChain.id | default(0), evolutionChains, 'en') }}"
+                            data-number="{{ pokemon.number }}"
+                            data-internal-id="{{ pokemon.id }}"
+                            data-pokemon-hidden="{% if userPokemons[pokemon.id] is defined and userPokemons[pokemon.id].hidden == 1 %}1{% else %}0{% endif %}"
+                            data-owned="{% if isOwned %}1{% else %}0{% endif %}"
+                            class="pokemon-row {% if (userPokemons[pokemon.id] is defined and userPokemons[pokemon.id].hidden == 1) or isOwned == false %}hidden{% endif %}"
+                        >
+                            <td class="px-4 py-2 border border-gray-500 w1/4">
+                                <img loading="lazy" src="{{ asset('images/normal/' ~ pokemon.normalPicture) }}" class="w-[100px] max-sm:w-[70px] h-[100px] max-sm:h-[70px] m-auto object-cover">
+                                <div class="hidden max-sm:block">
+                                    <p class="text-white text-sm">#{{ pokemon.number }}</p>
+                                    <p class="text-white text-sm">{{ pokemon.frenchName }}</p>
+                                    <p class="text-slate-300 text-xs">{{ pokemon.englishName }}</p>
+                                    <div class="text-center my-2">
+                                        {% for type in pokemon.types %}
+                                            <img src="{{ asset('images/type/' ~ type.icon) }}" class="inline w-[20px] h-[20px]">
+                                        {% endfor %}
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                        <td class="px-4 py-2 border border-gray-500 w1/4 max-sm:hidden">
-                            <div>
-                                <p class="text-white text-sm">#{{ pokemon.number }}</p>
-                                <p class="text-white text-sm">{{ pokemon.frenchName }}</p>
-                                <p class="text-slate-300 text-xs">{{ pokemon.englishName }}</p>
-                                <div class="text-center mt-2">
-                                    {% for type in pokemon.types %}
-                                        <img src="{{ asset('images/type/' ~ type.icon) }}" class="inline w-[20px] h-[20px]">
-                                    {% endfor %}
+                            </td>
+                            <td class="px-4 py-2 border border-gray-500 w1/4 max-sm:hidden">
+                                <div>
+                                    <p class="text-white text-sm">#{{ pokemon.number }}</p>
+                                    <p class="text-white text-sm">{{ pokemon.frenchName }}</p>
+                                    <p class="text-slate-300 text-xs">{{ pokemon.englishName }}</p>
+                                    <div class="text-center mt-2">
+                                        {% for type in pokemon.types %}
+                                            <img src="{{ asset('images/type/' ~ type.icon) }}" class="inline w-[20px] h-[20px]">
+                                        {% endfor %}
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                        <td class="px-4 py-2 border border-gray-500 w1/4">
-                            <div class="flex flex-col gap-2 items-center">
-                                <div class="relative flex items-center">
-                                    <img src="{{ asset('images/pvp/lc.png') }}" alt="LC Icon" class="absolute left-2 w-5 h-5">
-                                    <input
-                                            value="{% if userPokemons[pokemon.id] is defined and userPokemons[pokemon.id].littleCupRank != 0 %}{{ userPokemons[pokemon.id].littleCupRank }}{% endif %}"
-                                            data-league="littleCup"
-                                            data-internal-id="{{ pokemon.id }}"
-                                            type="number" min="1" max="4096"
-                                            class="{% if userPokemons[pokemon.id] is defined %}{{ border_color(userPokemons[pokemon.id].littleCupRank) }}{% else %}{{ border_color(0) }}{% endif %}
-                                            text-white rank-input with-spin pl-8 pr-2 py-1 border rounded focus:outline-none focus:ring"
-                                            placeholder="-"
-                                    >
+                            </td>
+                            <td class="px-4 py-2 border border-gray-500 w1/4">
+                                <div class="flex flex-col gap-2 items-center">
+                                    <div class="relative flex items-center">
+                                        <img src="{{ asset('images/pvp/lc.png') }}" alt="LC Icon" class="absolute left-2 w-5 h-5">
+                                        <input
+                                                value="{% if userPokemons[pokemon.id] is defined and userPokemons[pokemon.id].littleCupRank != 0 %}{{ userPokemons[pokemon.id].littleCupRank }}{% endif %}"
+                                                data-league="littleCup"
+                                                data-internal-id="{{ pokemon.id }}"
+                                                type="number" min="1" max="4096"
+                                                class="{% if userPokemons[pokemon.id] is defined %}{{ border_color(userPokemons[pokemon.id].littleCupRank) }}{% else %}{{ border_color(0) }}{% endif %}
+                                                text-white rank-input with-spin pl-8 pr-2 py-1 border rounded focus:outline-none focus:ring"
+                                                placeholder="-"
+                                        >
+                                    </div>
+                                    <div class="relative flex items-center">
+                                        <img src="{{ asset('images/pvp/gl.png') }}" alt="GL Icon" class="absolute left-2 w-5 h-5">
+                                        <input
+                                               value="{% if userPokemons[pokemon.id] is defined and userPokemons[pokemon.id].greatLeagueRank != 0 %}{{ userPokemons[pokemon.id].greatLeagueRank }}{% endif %}"
+                                               data-league="greatLeague"
+                                               data-internal-id="{{ pokemon.id }}"
+                                               type="number" min="1" max="4096"
+                                               class="{% if userPokemons[pokemon.id] is defined %}{{ border_color(userPokemons[pokemon.id].greatLeagueRank) }}{% else %}{{ border_color(0) }}{% endif %}
+                                               text-white rank-input with-spin pl-8 pr-2 py-1 border rounded focus:outline-none focus:ring "
+                                               placeholder="-"
+                                        >
+                                    </div>
+                                    <div class="relative flex items-center">
+                                        <img src="{{ asset('images/pvp/ul.png') }}" alt="UL Icon" class="absolute left-2 w-5 h-5">
+                                        <input
+                                               value="{% if userPokemons[pokemon.id] is defined and userPokemons[pokemon.id].ultraLeagueRank != 0 %}{{ userPokemons[pokemon.id].ultraLeagueRank }}{% endif %}"
+                                               data-league="ultraLeague"
+                                               data-internal-id="{{ pokemon.id }}"
+                                               type="number" min="1" max="4096"
+                                               class="{% if userPokemons[pokemon.id] is defined %}{{ border_color(userPokemons[pokemon.id].ultraLeagueRank) }}{% else %}{{ border_color(0) }}{% endif %}
+                                               text-white rank-input with-spin pl-8 pr-2 py-1 border rounded focus:outline-none focus:ring "
+                                               placeholder="-"
+                                        >
+                                    </div>
                                 </div>
-                                <div class="relative flex items-center">
-                                    <img src="{{ asset('images/pvp/gl.png') }}" alt="GL Icon" class="absolute left-2 w-5 h-5">
-                                    <input
-                                           value="{% if userPokemons[pokemon.id] is defined and userPokemons[pokemon.id].greatLeagueRank != 0 %}{{ userPokemons[pokemon.id].greatLeagueRank }}{% endif %}"
-                                           data-league="greatLeague"
-                                           data-internal-id="{{ pokemon.id }}"
-                                           type="number" min="1" max="4096"
-                                           class="{% if userPokemons[pokemon.id] is defined %}{{ border_color(userPokemons[pokemon.id].greatLeagueRank) }}{% else %}{{ border_color(0) }}{% endif %}
-                                           text-white rank-input with-spin pl-8 pr-2 py-1 border rounded focus:outline-none focus:ring "
-                                           placeholder="-"
-                                    >
-                                </div>
-                                <div class="relative flex items-center">
-                                    <img src="{{ asset('images/pvp/ul.png') }}" alt="UL Icon" class="absolute left-2 w-5 h-5">
-                                    <input
-                                           value="{% if userPokemons[pokemon.id] is defined and userPokemons[pokemon.id].ultraLeagueRank != 0 %}{{ userPokemons[pokemon.id].ultraLeagueRank }}{% endif %}"
-                                           data-league="ultraLeague"
-                                           data-internal-id="{{ pokemon.id }}"
-                                           type="number" min="1" max="4096"
-                                           class="{% if userPokemons[pokemon.id] is defined %}{{ border_color(userPokemons[pokemon.id].ultraLeagueRank) }}{% else %}{{ border_color(0) }}{% endif %}
-                                           text-white rank-input with-spin pl-8 pr-2 py-1 border rounded focus:outline-none focus:ring "
-                                           placeholder="-"
-                                    >
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-4 py-2 border border-gray-500 w1/4">
-                            {% if userPokemons[pokemon.id] is defined and userPokemons[pokemon.id].hidden == 1 %}
-                                <button class="btn-hide px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600" data-internal-id="{{ pokemon.id }}">Unhide</button>
-                            {% else %}
-                                <button class="btn-hide px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600" data-internal-id="{{ pokemon.id }}">Hide</button>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
+                            </td>
+                            <td class="px-4 py-2 border border-gray-500 w1/4">
+                                {% if userPokemons[pokemon.id] is defined and userPokemons[pokemon.id].hidden == 1 %}
+                                    <button class="btn-hide px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600" data-internal-id="{{ pokemon.id }}">Unhide</button>
+                                {% else %}
+                                    <button class="btn-hide px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600" data-internal-id="{{ pokemon.id }}">Hide</button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                #}
                 </tbody>
             </table>
         </div>

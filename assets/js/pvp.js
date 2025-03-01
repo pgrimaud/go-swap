@@ -1,166 +1,119 @@
 if (document.querySelector('#list-pvp')) {
-    let parameters = {
-        'search': document.querySelector('#search-pvp').value.toLowerCase(),
-        'displayHidden': document.querySelector('#display-hidden').checked,
-        'onlyOwned': document.querySelector('#only-owned').checked,
+
+    const pvpAddButton = document.querySelector('#pvp-add-button');
+    const pokemonIdSelect = document.querySelector('#pokemon-id');
+    const movesContainer = document.querySelector('#pvp-moves');
+    const selectFastMove = document.querySelector('#fast-move');
+    const selectChargedMove1 = document.querySelector('#charged-move-1');
+    const selectChargedMove2 = document.querySelector('#charged-move-2');
+    const leagueContainer = document.querySelector('#pvp-league');
+    const saveBtn = document.querySelector('#pvp-save-pokemon');
+
+    if (pvpAddButton) {
+        pvpAddButton.addEventListener('click', () => {
+            pokemonIdSelect.selectedIndex = 0;
+            movesContainer.classList.add('hidden')
+            leagueContainer.classList.add('hidden')
+            document.querySelector('#pvp-rank').value = '';
+            displayModal(document.getElementById('pvp-add'));
+        });
     }
 
-    filter()
-
-    /**
-     * EVENTS
-     */
-
-    // input search
-    document.querySelector('#search-pvp').addEventListener('keyup', (e) => {
-        parameters.search = e.currentTarget.value.toLowerCase()
-        filter()
-    })
-
-    // display hidden pokemon
-    document.querySelector('#display-hidden').addEventListener('change', (e) => {
-        parameters.displayHidden = e.currentTarget.checked
-        filter()
-    })
-
-    // display only owned
-    document.querySelector('#only-owned').addEventListener('change', (e) => {
-        parameters.onlyOwned = e.currentTarget.checked
-        filter()
-    })
-
-    // rank inputs
-    document.querySelectorAll('.rank-input').forEach(el => {
-        el.addEventListener('change', () => {
-            changeInputColor(el, parseInt(el.value));
-
-            const data = new FormData();
-            data.append('id', el.dataset.internalId);
-            data.append('rank', el.value);
-            data.append('league',el.dataset.league);
-
-            fetchApi(data, '/pvp/update')
-
-            // probably to hide ?
-            const row = el.closest('.pokemon-row');
-            let hasRank = false;
-
-            row.querySelectorAll('.rank-input').forEach(elInput => {
-                if (!isNaN(parseInt(elInput.value)) || parseInt(elInput.value) > 0) {
-                    hasRank = true;
-                }
-            })
-
-            if (hasRank === false) {
-                row.dataset.owned = '0';
-                filter();
-            } else {
-                row.dataset.owned = '1';
-            }
-        })
-    })
-
-    // hidden btn
-    document.querySelectorAll('.btn-hide').forEach(el => {
-        el.addEventListener('click', () => {
-            const toHide = el.classList.contains('bg-red-500') ? 1 : 0;
-            const data = new FormData();
-            data.append('id', el.dataset.internalId);
-            data.append('hidden', toHide);
-
-            if (toHide) {
-                el.innerHTML = 'Unhide';
-                el.classList.remove('bg-red-500', 'hover:bg-red-700');
-                el.classList.add('bg-green-500', 'hover:bg-green-700');
-                el.closest('.pokemon-row').classList.add('hidden');
-                el.closest('.pokemon-row').dataset.pokemonHidden = 1;
-            } else {
-                el.innerHTML = 'Hide';
-                el.classList.remove('bg-green-500', 'hover:bg-green-700');
-                el.classList.add('bg-red-500', 'hover:bg-red-700');
-                el.closest('.pokemon-row').dataset.pokemonHidden = 0;
-            }
-
-            fetchApi(data, '/pvp/display');
-        })
-    })
-
-    function filter() {
-        // reset rows
-        displayPokemonAllRows(true)
-
-        // filter search
-        if (/^\d+$/.test(parameters.search) === true) {
-            displayPokemonAllRows(false)
-            displayPokemonRows(`.pokemon-row[data-number='${parameters.search}']`, true)
-        } else if (parameters.search === '') {
-            // nothing to do
-        } else {
-            displayPokemonAllRows(false)
-            document.querySelectorAll(`.pokemon-row`).forEach(el => {
-                if (
-                    el.dataset.nameFr.includes(parameters.search) === true ||
-                    el.dataset.nameEn.includes(parameters.search) === true ||
-                    el.dataset.chainFr.includes(parameters.search) === true ||
-                    el.dataset.chainEn.includes(parameters.search) === true
-                ) {
-                    el.classList.remove('hidden')
-                }
-            })
-        }
-
-        if (parameters.onlyOwned === true) {
-            document.querySelectorAll('.pokemon-row[data-owned="0"]').forEach(el => {
-                el.classList.add('hidden')
-            })
-        }
-    }
-
-    function displayPokemonAllRows(reset) {
-        const selector = parameters.displayHidden === true ? '.pokemon-row' : '.pokemon-row[data-pokemon-hidden="0"]'
-        document.querySelectorAll(selector).forEach(el => el.classList.toggle('hidden', !reset))
-
-        if (parameters.displayHidden === false) {
-            document.querySelectorAll('.pokemon-row[data-pokemon-hidden="1"]').forEach(el => el.classList.add('hidden'))
-        }
-    }
-
-    function displayPokemonRows(selector, reset) {
-        document.querySelectorAll(selector).forEach(el => el.classList.toggle('hidden', !reset))
-    }
-
-    function fetchApi(data, url) {
-        fetch(url, {
-            method: 'POST',
-            body: data,
-        })
-            .then(response => response.json())
-            .then(() => {
-            })
-    }
-
-    function changeInputColor(element, rank) {
-        element.classList.remove('border-gray-700', 'border-blue-500', 'border-green-500', 'border-yellow-500', 'border-red-500', 'border-back');
-        element.classList.remove('bg-slate-600', 'bg-blue-700', 'bg-green-700', 'bg-yellow-700', 'bg-red-700', 'bg-black');
-
-        if (rank === 0 || isNaN(rank)) {
-            element.classList.add('border-gray-500', 'bg-slate-600');
-            return;
-        }
-
-        const classMap = {
-            1: ['border-blue-500', 'bg-blue-700'],
-            10: ['border-green-500', 'bg-green-700'],
-            30: ['border-yellow-500', 'bg-yellow-700'],
-            100: ['border-red-500', 'bg-red-700'],
-            4096: ['border-back', 'bg-black'],
-        };
-
-        for (const [maxRank, classes] of Object.entries(classMap)) {
-            if (rank <= maxRank) {
-                element.classList.add(...classes);
+    if (pokemonIdSelect) {
+        pokemonIdSelect.addEventListener('change', async (event) => {
+            const el = event.currentTarget;
+            if (el.value === '') {
                 return;
             }
+
+            const data = new FormData();
+            data.append('id', el.value);
+
+            try {
+                const responseData = await fetchApi(data, '/moves-from-pokemon');
+                movesContainer.classList.remove('hidden');
+                // fast
+                setOptionToSelect('#fast-move', responseData.fast)
+                // charged 1
+                setOptionToSelect('#charged-move-1', responseData.charged)
+                // charged 2
+                setOptionToSelect('#charged-move-2', responseData.charged)
+
+            } catch (error) {
+                console.error('Error', error);
+            }
+        });
+    }
+
+    selectFastMove.addEventListener('change', checkMoves);
+    selectChargedMove1.addEventListener('change', checkMoves);
+    selectChargedMove2.addEventListener('change', checkMoves);
+    saveBtn.addEventListener('click', savePokemon);
+
+    async function savePokemon() {
+        const data = new FormData();
+        data.append('pokemonId', document.querySelector('#pokemon-id').value);
+        data.append('fastMove', document.querySelector('#fast-move').value);
+        data.append('chargedMove1', document.querySelector('#charged-move-1').value);
+        data.append('chargedMove2', document.querySelector('#charged-move-2').value);
+        data.append('league', document.querySelector('#pvp-pokemon-league').value);
+        data.append('rank', document.querySelector('#pvp-rank').value);
+        data.append('isShadow', document.querySelector('#pvp-is-shadow').checked);
+
+        const responseData = await fetchApi(data, '/pvp/add');
+
+        if (responseData.status === 'ok') {
+            location.reload();
+        } else {
+            alert('And error occured!');
+        }
+    }
+
+    function checkMoves() {
+        if (selectFastMove.value !== '' && selectChargedMove1.value !== '') {
+            leagueContainer.classList.remove('hidden');
+        } else {
+            leagueContainer.classList.add('hidden');
+        }
+    }
+
+    async function fetchApi(data, url) {
+        const response = await fetch(url, {
+            method: 'POST',
+            body: data,
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    }
+
+    function setOptionToSelect(selector, choices) {
+        document.querySelector(selector).innerHTML = '<option value="">-</option>';
+        choices.forEach(choice => {
+            document.querySelector(selector).innerHTML += `<option value="${choice.id}">${choice.name}${choice.elite === true ? ' (Elite TM)' : ''}</option>`;
+        });
+    }
+
+    function displayModal(modal) {
+        const body = document.body;
+
+        modal.classList.remove('hidden', 'opacity-0');
+        modal.classList.add('opacity-100');
+        modal.querySelector('.transform').classList.remove('scale-95');
+        modal.querySelector('.transform').classList.add('scale-100');
+        body.style.overflow = 'hidden';
+
+        const closeModal = modal.querySelector('.closeModal');
+        if (closeModal) {
+            closeModal.addEventListener('click', () => {
+                modal.classList.add('opacity-0');
+                modal.classList.remove('opacity-100');
+                modal.querySelector('.transform').classList.add('scale-95');
+                modal.querySelector('.transform').classList.remove('scale-100');
+                modal.classList.add('hidden');
+                body.style.overflow = 'auto';
+            });
         }
     }
 }

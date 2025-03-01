@@ -3,16 +3,17 @@
 namespace App\Entity;
 
 use App\Repository\UserPvPPokemonRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserPvPPokemonRepository::class)]
 #[ORM\Table(name: 'user_pvp_pokemon')]
-#[ORM\UniqueConstraint(
-    name: 'pokemon_user_uniq',
-    columns: ['pokemon_id', 'user_id'],
-)]
 class UserPvPPokemon
 {
+    public const string LITTLE_CUP = 'little_cup';
+    public const string GREAT_LEAGUE = 'great_league';
+    public const string ULTRA_LEAGUE = 'ultra_league';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -27,16 +28,25 @@ class UserPvPPokemon
     private ?User $user = null;
 
     #[ORM\Column]
-    private ?int $littleCupRank = 0;
+    private ?int $rank = 0;
+
+    #[ORM\Column(type: Types::STRING, nullable: false)]
+    private ?string $league = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Move $fastMove = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Move $chargedMove1 = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Move $chargedMove2 = null;
 
     #[ORM\Column]
-    private ?int $greatLeagueRank = 0;
-
-    #[ORM\Column]
-    private ?int $ultraLeagueRank = 0;
-
-    #[ORM\Column(options: ['default' => false])]
-    private bool $hidden = false;
+    private ?bool $shadow = null;
 
     public function getId(): ?int
     {
@@ -67,50 +77,70 @@ class UserPvPPokemon
         return $this;
     }
 
-    public function getLittleCupRank(): ?int
+    public function getRank(): ?int
     {
-        return $this->littleCupRank;
+        return $this->rank;
     }
 
-    public function setLittleCupRank(int $littleCupRank): static
+    public function setRank(?int $rank): void
     {
-        $this->littleCupRank = $littleCupRank;
+        $this->rank = $rank;
+    }
+
+    public function getLeague(): ?string
+    {
+        return $this->league;
+    }
+
+    public function setLeague(string $league): void
+    {
+        $this->league = $league;
+    }
+
+    public function getFastMove(): ?Move
+    {
+        return $this->fastMove;
+    }
+
+    public function setFastMove(?Move $fastMove): static
+    {
+        $this->fastMove = $fastMove;
 
         return $this;
     }
 
-    public function getGreatLeagueRank(): ?int
+    public function getChargedMove1(): ?Move
     {
-        return $this->greatLeagueRank;
+        return $this->chargedMove1;
     }
 
-    public function setGreatLeagueRank(int $greatLeagueRank): static
+    public function setChargedMove1(?Move $chargedMove1): static
     {
-        $this->greatLeagueRank = $greatLeagueRank;
+        $this->chargedMove1 = $chargedMove1;
 
         return $this;
     }
 
-    public function getUltraLeagueRank(): ?int
+    public function getChargedMove2(): ?Move
     {
-        return $this->ultraLeagueRank;
+        return $this->chargedMove2;
     }
 
-    public function setUltraLeagueRank(int $ultraLeagueRank): static
+    public function setChargedMove2(?Move $chargedMove2): static
     {
-        $this->ultraLeagueRank = $ultraLeagueRank;
+        $this->chargedMove2 = $chargedMove2;
 
         return $this;
     }
 
-    public function isHidden(): bool
+    public function isShadow(): ?bool
     {
-        return $this->hidden;
+        return $this->shadow;
     }
 
-    public function setHidden(bool $hidden): static
+    public function setShadow(bool $shadow): static
     {
-        $this->hidden = $hidden;
+        $this->shadow = $shadow;
 
         return $this;
     }
