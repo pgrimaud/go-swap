@@ -368,14 +368,14 @@ class Pokemon
     public function getFastMoves(): Collection
     {
         return $this->pokemonMoves->filter(function (PokemonMove $pokemonMove) {
-            return $pokemonMove->getMove()->getAttackType() === Move::FAST_MOVE;
+            return $pokemonMove->getMove()?->getAttackType() === Move::FAST_MOVE;
         });
     }
 
     public function getChargedMoves(): Collection
     {
         return $this->pokemonMoves->filter(function (PokemonMove $pokemonMove) {
-            return $pokemonMove->getMove()->getAttackType() === Move::CHARGED_MOVE;
+            return $pokemonMove->getMove()?->getAttackType() === Move::CHARGED_MOVE;
         });
     }
 

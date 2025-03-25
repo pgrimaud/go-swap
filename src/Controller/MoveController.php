@@ -16,6 +16,10 @@ class MoveController extends AbstractController
     {
         $pokemon = $pokemonRepository->find($request->request->get('id'));
 
+        if (!$pokemon){
+           throw $this->createNotFoundException('Pokemon not found');
+        }
+
         /** @var PokemonMove[] $allFastMoves */
         $allFastMoves = $pokemon->getFastMoves();
         /** @var PokemonMove[] $allChargedMoves */
@@ -24,7 +28,7 @@ class MoveController extends AbstractController
         $fastResponse = [];
         foreach ($allFastMoves as $move) {
             $fastResponse[] = [
-                'name' => $move->getMove()->getName(),
+                'name' => $move->getMove()?->getName(),
                 'elite' => $move->isElite(),
                 'id' => $move->getId(),
             ];
@@ -33,7 +37,7 @@ class MoveController extends AbstractController
         $chargedResponse = [];
         foreach ($allChargedMoves as $move) {
             $chargedResponse[] = [
-                'name' => $move->getMove()->getName(),
+                'name' => $move->getMove()?->getName(),
                 'elite' => $move->isElite(),
                 'id' => $move->getId(),
             ];

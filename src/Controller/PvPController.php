@@ -82,13 +82,16 @@ class PvPController extends AbstractController
 
         $pokemon = $pokemonRepository->find($request->request->get('pokemonId'));
 
+        /** @var User $user */
+        $user = $this->getUser();
+
         $userPvPPokemon = new UserPvPPokemon();
-        $userPvPPokemon->setUser($this->getUser());
+        $userPvPPokemon->setUser($user);
         $userPvPPokemon->setPokemon($pokemon);
         $userPvPPokemon->setFastMove($fastMove);
         $userPvPPokemon->setChargedMove1($chargedMove1);
         $userPvPPokemon->setChargedMove2($chargedMove2);
-        $userPvPPokemon->setLeague($request->request->get('league'));
+        $userPvPPokemon->setLeague((string) $request->request->get('league'));
         $userPvPPokemon->setShadow((bool)$request->request->get('shadow'));
         $userPvPPokemon->setRank((int)$request->request->get('rank'));
 
@@ -134,7 +137,7 @@ class PvPController extends AbstractController
             $userPokemon = $alreadyExist;
         }
 
-        $userPokemon->setHidden($display);
+        //$userPokemon->setHidden($display);
 
         $entityManager->persist($userPokemon);
 

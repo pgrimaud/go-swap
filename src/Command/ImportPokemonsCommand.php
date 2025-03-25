@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Entity\Pokemon;
 use App\Repository\PokemonRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Predis\Client;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\HttpClient\HttpClient;
@@ -43,8 +44,9 @@ class ImportPokemonsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
+        $this->importCurrentPokemons($io);
+
         if ($input->getOption('only-current') === 'true') {
-            $this->importCurrentPokemons($io);
             $io->success('Done ! - ' . date('Y-m-d H:i:s'));
             return Command::SUCCESS;
         }
@@ -183,72 +185,19 @@ class ImportPokemonsCommand extends Command
             $this->entityManager->flush();
         }
 
-        $client = HttpClient::create();
+        $client = new Client();
+        /** @var array<string, string> $pokemons */
+        $pokemons = json_decode((string) $client->get('all_pokemons'), true);
 
-        $response = $client->request(
-            'GET',
-            'https://api.gofieldguide.app/events/get-events'
-        );
+        foreach ($pokemons as $pokemon) {
+            $pokemonFound = $this->entityManager->getRepository(Pokemon::class)->findOneBy(['number' => $pokemon]);
 
-        $content = $response->toArray();
+            if ($pokemonFound) {
+                $pokemonFound->setIsActual(true);
 
-        $dateParis = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
-
-        // events to skip
-        $eventsToSkip = [
-            'Research Breakthrough',
-            //'Season',
-            'Daily Streak Bonus',
-            'League',
-            'Cup'
-        ];
-
-        foreach ($content['data'] as $event) {
-
-            $dateStart = new \DateTime($event['startAt']);
-            $dateEnd = new \DateTime($event['endsAt']);
-
-            if ($dateStart <= $dateParis && $dateEnd > $dateParis) {
-
-                $isToSkip = false;
-                foreach ($eventsToSkip as $eventToSkip) {
-                    if (str_contains($event['title'], $eventToSkip)) {
-                        $isToSkip = true;
-                    }
-                }
-
-                if ($isToSkip) {
-                    continue;
-                }
-
-                $io->writeln($event['title']);
-
-                foreach ($event['features'] as $pokemon) {
-
-
-                    if ($pokemon['featureId'] === 'INCREASED_SPAWN_SOUTHERN_HEMISPHERE') {
-                        continue;
-                    }
-
-                    foreach ($pokemon['pokemon'] as $p) {
-                        $englishName = ucfirst(strtolower($p['pokemon_id']));
-
-                        if (str_contains($englishName, '_')) {
-                            $englishName = str_replace('_', '-', $englishName);
-                        }
-
-                        $pokemon = $this->entityManager->getRepository(Pokemon::class)->findOneBy(['englishName' => $englishName]);
-
-                        if ($pokemon) {
-                            $pokemon->setIsActual(true);
-
-                            $this->entityManager->persist($pokemon);
-                            $this->entityManager->flush();
-                        }
-                    }
-                }
+                $this->entityManager->persist($pokemonFound);
+                $this->entityManager->flush();
             }
-
         }
     }
 
