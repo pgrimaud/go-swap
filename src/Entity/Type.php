@@ -3,9 +3,12 @@
 namespace App\Entity;
 
 use App\Repository\TypeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TypeRepository::class)]
+#[ORM\UniqueConstraint(name: 'slug_uniq', columns: ['slug'])]
 class Type
 {
     #[ORM\Id]
@@ -14,7 +17,7 @@ class Type
     private int $id;
 
     #[ORM\Column(length: 255)]
-    private ?string $nale = null;
+    private ?string $name = null;
 
     #[ORM\Column(length: 255)]
     private ?string $slug = null;
@@ -22,19 +25,30 @@ class Type
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $icon = null;
 
+    /**
+     * @var Collection<int, Move>
+     */
+    #[ORM\OneToMany(targetEntity: Move::class, mappedBy: 'type', orphanRemoval: true)]
+    private Collection $moves;
+
+    public function __construct()
+    {
+        $this->moves = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getNale(): ?string
+    public function getName(): ?string
     {
-        return $this->nale;
+        return $this->name;
     }
 
-    public function setNale(string $nale): static
+    public function setName(string $name): static
     {
-        $this->nale = $nale;
+        $this->name = $name;
 
         return $this;
     }
@@ -59,6 +73,36 @@ class Type
     public function setIcon(?string $icon): static
     {
         $this->icon = $icon;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Move>
+     */
+    public function getMoves(): Collection
+    {
+        return $this->moves;
+    }
+
+    public function addMove(Move $move): static
+    {
+        if (!$this->moves->contains($move)) {
+            $this->moves->add($move);
+            $move->setType($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMove(Move $move): static
+    {
+        if ($this->moves->removeElement($move)) {
+            // set the owning side to null (unless already changed)
+            if ($move->getType() === $this) {
+                $move->setType(null);
+            }
+        }
 
         return $this;
     }
