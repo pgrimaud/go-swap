@@ -42,11 +42,6 @@ class UpdateMovesCommand extends AbstractSuggestCommand
         $moves = $this->gameMasterService->getMoves();
 
         foreach ($moves as $move) {
-            // skip special moves
-            if ('TRANSFORM' === $move['moveId']) {
-                continue;
-            }
-
             $moveEntity = $this->moveRepository->findOneBy(['slug' => strtolower($move['moveId'])]);
 
             if (!$moveEntity instanceof Move || $moveEntity->getHash() !== HashHelper::fromMove($move)) {
@@ -85,7 +80,7 @@ class UpdateMovesCommand extends AbstractSuggestCommand
         $type = $this->typeRepository->findOneBy(['slug' => $typeAsString]);
 
         if (!$type instanceof Type) {
-            $io->error('Type not found : '.$typeAsString);
+            $io->error('Type not found : ' . $typeAsString);
             $this->runParentCommand($io, 'app:update:types');
 
             return $this->getType($io, $typeAsString);

@@ -23,6 +23,7 @@ class HashHelper
             $pokemon['baseStats']['def'],
             $pokemon['baseStats']['hp'],
             in_array('shadoweligible', $pokemon['tags'] ?? []),
+            serialize(array_merge($pokemon['chargedMoves'], $pokemon['fastMoves'], $pokemon['eliteMoves'] ?? [])),
         ]));
     }
 

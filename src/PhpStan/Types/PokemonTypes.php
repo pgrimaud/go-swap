@@ -13,6 +13,7 @@ namespace App\PhpStan\Types;
  *      types: list<string>,
  *      fastMoves: list<string>,
  *      chargedMoves: list<string>,
+ *      eliteMoves?: list<string>,
  *      tags?: list<string>,
  *      defaultIVs: array{
  *          cp500: array{0: int, 1: int, 2: int, 3: int},

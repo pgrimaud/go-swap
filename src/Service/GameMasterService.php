@@ -23,7 +23,7 @@ readonly class GameMasterService
      */
     public function getPokemons(): array
     {
-        $response = $this->httpClient->request('GET', $this->gameMasterUrl.'/pokemon.json');
+        $response = $this->httpClient->request('GET', $this->gameMasterUrl . '/pokemon.json');
         /** @var array<int, Pokemon> $data */
         $data = json_decode($response->getContent(), true);
 
@@ -35,7 +35,7 @@ readonly class GameMasterService
      */
     public function getMoves(): array
     {
-        $response = $this->httpClient->request('GET', $this->gameMasterUrl.'/moves.json');
+        $response = $this->httpClient->request('GET', $this->gameMasterUrl . '/moves.json');
         /** @var array<int, Move> $data */
         $data = json_decode($response->getContent(), true);
 

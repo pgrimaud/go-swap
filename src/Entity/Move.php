@@ -2,14 +2,21 @@
 
 namespace App\Entity;
 
+use App\Contract\Trait\TimestampableTrait;
 use App\Repository\MoveRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 
 #[ORM\Entity(repositoryClass: MoveRepository::class)]
 #[ORM\UniqueConstraint(name: 'slug_uniq', columns: ['slug'])]
+#[HasLifecycleCallbacks]
 class Move
 {
+    use TimestampableTrait;
+
     public const string BUFF_TARGET_SELF = 'self';
     public const string BUFF_TARGET_OPPONENT = 'opponent';
 
@@ -63,6 +70,17 @@ class Move
 
     #[ORM\Column(length: 255)]
     private ?string $hash = null;
+
+    /**
+     * @var Collection<int, PokemonMove>
+     */
+    #[ORM\OneToMany(targetEntity: PokemonMove::class, mappedBy: 'move', orphanRemoval: true)]
+    private Collection $pokemonMoves;
+
+    public function __construct()
+    {
+        $this->pokemonMoves = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -233,6 +251,36 @@ class Move
     public function setHash(string $hash): static
     {
         $this->hash = $hash;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PokemonMove>
+     */
+    public function getPokemonMoves(): Collection
+    {
+        return $this->pokemonMoves;
+    }
+
+    public function addPokemonMove(PokemonMove $pokemonMove): static
+    {
+        if (!$this->pokemonMoves->contains($pokemonMove)) {
+            $this->pokemonMoves->add($pokemonMove);
+            $pokemonMove->setMove($this);
+        }
+
+        return $this;
+    }
+
+    public function removePokemonMove(PokemonMove $pokemonMove): static
+    {
+        if ($this->pokemonMoves->removeElement($pokemonMove)) {
+            // set the owning side to null (unless already changed)
+            if ($pokemonMove->getMove() === $this) {
+                $pokemonMove->setMove(null);
+            }
+        }
 
         return $this;
     }

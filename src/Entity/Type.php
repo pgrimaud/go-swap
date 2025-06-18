@@ -2,15 +2,20 @@
 
 namespace App\Entity;
 
+use App\Contract\Trait\TimestampableTrait;
 use App\Repository\TypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 
 #[ORM\Entity(repositoryClass: TypeRepository::class)]
 #[ORM\UniqueConstraint(name: 'slug_uniq', columns: ['slug'])]
+#[HasLifecycleCallbacks]
 class Type
 {
+    use TimestampableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -31,9 +36,16 @@ class Type
     #[ORM\OneToMany(targetEntity: Move::class, mappedBy: 'type', orphanRemoval: true)]
     private Collection $moves;
 
+    /**
+     * @var Collection<int, Pokemon>
+     */
+    #[ORM\ManyToMany(targetEntity: Pokemon::class, mappedBy: 'types')]
+    private Collection $pokemon;
+
     public function __construct()
     {
         $this->moves = new ArrayCollection();
+        $this->pokemon = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -102,6 +114,33 @@ class Type
             if ($move->getType() === $this) {
                 $move->setType(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Pokemon>
+     */
+    public function getPokemon(): Collection
+    {
+        return $this->pokemon;
+    }
+
+    public function addPokemon(Pokemon $pokemon): static
+    {
+        if (!$this->pokemon->contains($pokemon)) {
+            $this->pokemon->add($pokemon);
+            $pokemon->addType($this);
+        }
+
+        return $this;
+    }
+
+    public function removePokemon(Pokemon $pokemon): static
+    {
+        if ($this->pokemon->removeElement($pokemon)) {
+            $pokemon->removeType($this);
         }
 
         return $this;

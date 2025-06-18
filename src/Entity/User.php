@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -30,6 +32,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    /**
+     * @var Collection<int, UserPvPPokemon>
+     */
+    #[ORM\OneToMany(targetEntity: UserPvPPokemon::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $userPvPPokemon;
+
+    public function __construct()
+    {
+        $this->userPvPPokemon = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -101,5 +114,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, UserPvPPokemon>
+     */
+    public function getUserPvPPokemon(): Collection
+    {
+        return $this->userPvPPokemon;
+    }
+
+    public function addUserPvPPokemon(UserPvPPokemon $userPvPPokemon): static
+    {
+        if (!$this->userPvPPokemon->contains($userPvPPokemon)) {
+            $this->userPvPPokemon->add($userPvPPokemon);
+            $userPvPPokemon->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserPvPPokemon(UserPvPPokemon $userPvPPokemon): static
+    {
+        if ($this->userPvPPokemon->removeElement($userPvPPokemon)) {
+            // set the owning side to null (unless already changed)
+            if ($userPvPPokemon->getUser() === $this) {
+                $userPvPPokemon->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

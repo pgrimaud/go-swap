@@ -13,3 +13,7 @@
 /.php-cs-fixer.php
 /.php-cs-fixer.cache
 ###< friendsofphp/php-cs-fixer ###
+
+public/pictures/*
+!public/pictures/normal/.gitkeep
+!public/pictures/shiny/.gitkeep

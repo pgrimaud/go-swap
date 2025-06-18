@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello DebugController!{% endblock %}
+
+{% block body %}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Pokemon</th>
+            <th>Slug</th>
+            <th>Picture</th>
+        </tr>
+    {% for pokemon in allPokemon %}
+        <tr>
+            <td>{{ pokemon.number }}</td>
+            <td>{{ pokemon.name }}</td>
+            <td>{{ pokemon.slug }}</td>
+            {% if pokemon.picture is not null %}
+                <td>
+                    <img src="{{ asset(pokemon.picture) }}" alt="{{ pokemon.name }}" width="50" height="50" />
+                </td>
+            {% else %}
+                <td>-</td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+    </table>
+{% endblock %}
