@@ -162,4 +162,14 @@ class UserPvPPokemon
 
         return $this;
     }
+
+    public function getLeague(): string
+    {
+        return $this->league;
+    }
+
+    public function setLeague(string $league): void
+    {
+        $this->league = $league;
+    }
 }

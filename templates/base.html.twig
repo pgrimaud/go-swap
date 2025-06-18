@@ -2,15 +2,34 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
+        <title>{% block title %}Go Swap{% endblock %}</title>
+        <link rel="icon" href="{{ asset('pictures/icon.png') }}">
+        <link rel="apple-touch-icon" href="{{ asset('pictures/icon.png') }}">
+        <meta name="description" content="Swap, unlock & complete">
+        <meta name="theme-color" content="#1f2d3d" />
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:title" content="Go Swap">
+        <meta name="twitter:description" content="Swap, unlock & complete">
+        <meta name="twitter:creator" content="@pgrimaud">
+        <meta name="twitter:image" content="{{ asset('pictures/icon.png') }}">
+        <meta property="og:title" content="Go Swap" />
+        <meta property="og:description" content="Swap, unlock & complete." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://go-swap.com" />
+        <meta property="og:image" content="{{ asset('pictures/icon.png') }}" />
+        <meta property="og:locale" content="fr_FR" />
+        <meta property="og:site_name" content="Go Swap" />
+
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
         {% block stylesheets %}
         {% endblock %}
 
         {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
-    <body>
+    <body class="bg-white dark:bg-gray-900">
         {% block body %}{% endblock %}
     </body>
 </html>

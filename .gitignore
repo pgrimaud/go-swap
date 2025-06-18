@@ -17,3 +17,8 @@
 public/pictures/*
 !public/pictures/normal/.gitkeep
 !public/pictures/shiny/.gitkeep
+
+###> symfony/asset-mapper ###
+/public/assets/
+/assets/vendor/
+###< symfony/asset-mapper ###
