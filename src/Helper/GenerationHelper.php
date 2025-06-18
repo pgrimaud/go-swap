@@ -18,7 +18,7 @@ class GenerationHelper
     public const string GENERATION_PALDEA = 'paldea';
     public const string GENERATION_UNIDENTIFIED = 'unidentified';
 
-    //public const array GENERATIONS = [
+    // public const array GENERATIONS = [
     //    self::GENERATION_KANTO,
     //    self::GENERATION_JOHTO,
     //    self::GENERATION_HOENN,
@@ -30,7 +30,7 @@ class GenerationHelper
     //    self::GENERATION_HISUI,
     //    self::GENERATION_PALDEA,
     //    self::GENERATION_UNIDENTIFIED,
-    //];
+    // ];
 
     public static function get(int $number): string
     {
