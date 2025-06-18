@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello PvPController!{% endblock %}
+
+{% block body %}
+    {% include 'partials/header.html.twig' %}
+
+    <div class="flex flex-wrap justify-center items-center flex-grow gap-4">
+        {% include 'partials/card.html.twig' with {
+            title: 'Pokémon',
+            image: asset('pictures/icons/pokeballs.png'),
+            description: 'Manage your PvP Pokémon',
+            link: path('app_pvp_index')
+        } %}
+
+        {% include 'partials/card.html.twig' with {
+            title: 'Types effectiveness',
+            image: asset('pictures/icons/grass.png'),
+            description: 'Check effectiveness table',
+            link: path('app_pvp_index')
+        } %}
+
+        {% include 'partials/card.html.twig' with {
+            title: 'Quiz',
+            image: asset('pictures/icons/unown-qm.png'),
+            description: 'Train types and moves knowledge',
+            link: path('app_pvp_index')
+        } %}
+    </div>
+{% endblock %}

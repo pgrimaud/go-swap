@@ -14,9 +14,9 @@
 /.php-cs-fixer.cache
 ###< friendsofphp/php-cs-fixer ###
 
-public/pictures/*
-!public/pictures/normal/.gitkeep
-!public/pictures/shiny/.gitkeep
+public/pictures/pokemon/
+!public/pictures/pokemon/normal/.gitkeep
+!public/pictures/pokemon/shiny/.gitkeep
 
 ###> symfony/asset-mapper ###
 /public/assets/
