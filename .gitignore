@@ -14,11 +14,15 @@
 /.php-cs-fixer.cache
 ###< friendsofphp/php-cs-fixer ###
 
-public/pictures/pokemon/
-!public/pictures/pokemon/normal/.gitkeep
-!public/pictures/pokemon/shiny/.gitkeep
+public/images/pokemon/
+!public/images/pokemon/normal/.gitkeep
+!public/images/pokemon/shiny/.gitkeep
+public/images/type/
+!public/images/type/.gitkeep
 
 ###> symfony/asset-mapper ###
 /public/assets/
 /assets/vendor/
 ###< symfony/asset-mapper ###
+
+.phpstan-cache

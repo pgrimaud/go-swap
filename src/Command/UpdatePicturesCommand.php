@@ -73,11 +73,36 @@ class UpdatePicturesCommand extends Command
                 ],
             ]);
 
-            $picturePath = 'pictures/pokemon/' . $type . '/' . $pokemonSlug . '.png';
+            $picturePath = 'images/pokemon/' . $type . '/' . $pokemonSlug . '.png';
 
             file_put_contents(__DIR__ . '/../../public/' . $picturePath, $content->getContent());
 
-            return $picturePath;
+            $fullPath = __DIR__ . '/../../public/' . $picturePath;
+            $imageData = file_get_contents($fullPath);
+            $srcImage = @imagecreatefromstring((string) $imageData);
+            if ($srcImage !== false) {
+                $srcWidth = imagesx($srcImage);
+                $srcHeight = imagesy($srcImage);
+                $dstSize = 150;
+                $ratio = min($dstSize / $srcWidth, $dstSize / $srcHeight);
+                $newWidth = (int) ($srcWidth * $ratio);
+                $newHeight = (int) ($srcHeight * $ratio);
+                $dstImage = imagecreatetruecolor($dstSize, $dstSize);
+                imagealphablending($dstImage, false);
+                imagesavealpha($dstImage, true);
+                $transparent = imagecolorallocatealpha($dstImage, 0, 0, 0, 127);
+                imagefilledrectangle($dstImage, 0, 0, $dstSize, $dstSize, (int) $transparent);
+                $dstX = (int) (($dstSize - $newWidth) / 2);
+                $dstY = (int) (($dstSize - $newHeight) / 2);
+                imagecopyresampled($dstImage, $srcImage, $dstX, $dstY, 0, 0, $newWidth, $newHeight, $srcWidth, $srcHeight);
+                imagepng($dstImage, $fullPath);
+                imagedestroy($srcImage);
+                imagedestroy($dstImage);
+            } else {
+                $io->warning('Error resizing image for ' . $pokemonSlug);
+            }
+
+            return $pokemonSlug . '.png';
         } catch (\Exception $e) {
             $io->error($e->getMessage());
             exit;

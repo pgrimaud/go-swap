@@ -2,6 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\UserPvPPokemon;
+use App\Enum\League;
+use App\Enum\Type;
+use App\Repository\PokemonRepository;
+use App\Repository\UserPvPPokemonRepository;
+use App\Repository\TypeRepository;
+use App\Repository\TypeEffectivenessRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -12,5 +20,84 @@ final class PvPController extends AbstractController
     public function index(): Response
     {
         return $this->render('pvp/index.html.twig');
+    }
+
+    #[Route('/pvp/pokemon', name: 'app_pvp_pokemon')]
+    public function pokemon(
+        PokemonRepository $pokemonRepository,
+        UserPvPPokemonRepository $userPvPPokemonRepository,
+    ): Response
+    {
+        $pokemon = $pokemonRepository->findAll();
+        $userPokemon = $userPvPPokemonRepository->findBy(['user' => $this->getUser()]);
+
+        return $this->render('pvp/pokemon.html.twig', [
+            'allPokemon' => $pokemon,
+            'userPokemon' => $userPokemon,
+            'leagues' => [
+                League::LITTLE_CUP => 'Little Cup',
+                League::GREAT_LEAGUE => 'Great League',
+                League::ULTRA_LEAGUE => 'Ultra League',
+            ],
+            'types' => [
+                Type::TYPE_NORMAL => 'Normal',
+                Type::TYPE_SHADOW => 'Shadow',
+                Type::TYPE_PURIFIED => 'Purified',
+            ],
+        ]);
+    }
+
+    #[Route('/pvp/pokemon/delete/{id}', name: 'app_pvp_pokemon_delete')]
+    public function deletePokemon(UserPvPPokemon $pokemon, EntityManagerInterface $entityManager): Response
+    {
+        $entityManager->remove($pokemon);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_pvp_pokemon');
+    }
+
+    #[Route('/pvp/types', name: 'app_pvp_types')]
+    public function types(
+        TypeRepository $typeRepository,
+        TypeEffectivenessRepository $typeEffectivenessRepository
+    ): Response
+    {
+        $types = $typeRepository->findAll();
+        $effectiveness = $typeEffectivenessRepository->findAll();
+
+        $typeData = [];
+        foreach ($types as $type) {
+            $strongAgainst = [];
+            $weakAgainst = [];
+            $resistantTo = [];
+            $vulnerableTo = [];
+            foreach ($effectiveness as $eff) {
+                if ($eff->getSourceType() === $type) {
+                    if ($eff->getMultiplier() > 1) {
+                        $strongAgainst[] = $eff->getTargetType();
+                    } elseif ($eff->getMultiplier() < 1) {
+                        $weakAgainst[] = $eff->getTargetType();
+                    }
+                }
+                if ($eff->getTargetType() === $type) {
+                    if ($eff->getMultiplier() < 1) {
+                        $resistantTo[] = $eff->getSourceType();
+                    } elseif ($eff->getMultiplier() > 1) {
+                        $vulnerableTo[] = $eff->getSourceType();
+                    }
+                }
+            }
+            $typeData[] = [
+                'type' => $type,
+                'strongAgainst' => $strongAgainst,
+                'weakAgainst' => $weakAgainst,
+                'resistantTo' => $resistantTo,
+                'vulnerableTo' => $vulnerableTo,
+            ];
+        }
+
+        return $this->render('pvp/types.html.twig', [
+            'typeData' => $typeData,
+        ]);
     }
 }

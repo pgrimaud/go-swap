@@ -1,0 +1,238 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Go Swap - PvP - Pokémon{% endblock %}
+
+{% block body %}
+    {% include 'partials/header.html.twig' %}
+
+    {% include 'partials/breadcrumb.html.twig' with {
+        'links': [
+            {'name': 'PvP', 'url': path('app_pvp_index')},
+            {'name': 'PvP Pokémon', 'url': path('app_pvp_pokemon')},
+        ]
+    } %}
+
+<div class="container px-6 py-5 mx-auto text-center">
+    <section class="container px-4 mx-auto">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div class="mx-auto sm:mx-0 inline-flex flex-wrap items-center bg-white rounded-lg dark:bg-gray-900 rtl:flex-row-reverse overflow-hidden border dark:border-gray-700">
+                <button class="league-filter px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 bg-gray-100 sm:text-sm dark:bg-gray-800 dark:text-gray-300 border-0 border-r border-gray-200 dark:border-gray-700 first:rounded-l-lg last:rounded-r-lg last:border-0" data-league="">
+                    All
+                </button>
+                <button class="league-filter px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100 border-0 border-r border-gray-200 dark:border-gray-700 last:border-0" data-league="great_league">
+                    <img src="{{ asset('images/league/great_league.png') }}" class="w-[20px]">
+                </button>
+                <button class="league-filter px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100 border-0 border-r border-gray-200 dark:border-gray-700 last:border-0" data-league="ultra_league">
+                    <img src="{{ asset('images/league/ultra_league.png') }}" class="w-[20px]">
+                </button>
+                <button class="league-filter px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100 border-0 last:rounded-r-lg last:border-0" data-league="little_cup">
+                    <img src="{{ asset('images/league/little_cup.png') }}" class="w-[20px]">
+                </button>
+            </div>
+
+            <div class="flex items-center gap-2 mt-4 sm:mt-0">
+                <div class="relative flex items-center">
+                    <span class="absolute">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mx-3 text-gray-400 dark:text-gray-600">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                        </svg>
+                    </span>
+
+                    <input type="text" placeholder="Search" class="block w-full py-1.5 pr-5 text-gray-700 bg-white border border-gray-200 rounded-lg md:w-80 placeholder-gray-400/70 pl-11 rtl:pr-11 rtl:pl-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40">
+                </div>
+                <div x-data="{ isOpen: false }" x-cloak class="relative flex justify-center">
+                    <button  @click="isOpen = true" class="flex items-center justify-center px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+
+                        <span>Add</span>
+                    </button>
+
+                    <div x-show="isOpen"
+                         x-transition:enter="transition duration-300 ease-out"
+                         x-transition:enter-start="translate-y-4 opacity-0 sm:translate-y-0 sm:scale-95"
+                         x-transition:enter-end="translate-y-0 opacity-100 sm:scale-100"
+                         x-transition:leave="transition duration-150 ease-in"
+                         x-transition:leave-start="translate-y-0 opacity-100 sm:scale-100"
+                         x-transition:leave-end="translate-y-4 opacity-0 sm:translate-y-0 sm:scale-95"
+                         class="fixed inset-0 z-10 overflow-y-auto"
+                         aria-labelledby="modal-title" role="dialog" aria-modal="true"
+                    >
+                        <!-- Overlay -->
+                        <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" x-show="isOpen" x-transition.opacity></div>
+                        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                            <span class="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
+
+                            <div class="border border-solid border-gray-700 relative inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl dark:bg-gray-900 sm:my-8 w-full sm:max-w-sm sm:p-6 sm:align-middle">
+                                <form class="mt-4" action="#" id="add-pvp-pokemon">
+                                    <div class="mb-5 flex flex-col">
+                                        <label class="text-gray-700 dark:text-gray-200" for="pokemon">Pokémon</label>
+                                        <select name="pokemon" class="pl-2 mb-3 p-1 text-sm mt-1 block w-full rounded-md border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
+                                            <option value=""></option>
+                                            {% for pokemon in allPokemon %}
+                                                <option value="{{ pokemon.id }}">{{ pokemon.name }} (#{{ pokemon.number }})</option>
+                                            {% endfor %}
+                                        </select>
+
+                                        <label class="text-gray-700 dark:text-gray-200" for="league">League</label>
+                                        <select name="league" class="pl-2 mb-3 p-1 text-sm mt-1 block w-full rounded-md border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
+                                            {% for leagueValue, league in leagues %}
+                                                <option value="{{ leagueValue }}" {% if leagueValue == 'great_league' %}selected{% endif %}>{{ league }}</option>
+                                            {% endfor %}
+                                        </select>
+
+                                        <label class="text-gray-700 dark:text-gray-200">IVs</label>
+                                        <div class="grid grid-cols-3 gap-2 mt-1 mb-3">
+                                            <input type="number" value="0" max="15" min="0" name="attack" placeholder="Attack" class="p-1 pl-3 text-sm block w-full rounded-md border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
+                                            <input type="number" value="0" max="15" min="0" name="defense" placeholder="Defense" class="p-1 pl-3 text-sm block w-full rounded-md border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
+                                            <input type="number" value="0" max="15" min="0" name="stamina" placeholder="Stamina" class="p-1 pl-3 text-sm block w-full rounded-md border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
+                                        </div>
+
+                                        <label class="text-gray-700 dark:text-gray-200" for="league-rank">League Rank</label>
+                                        <input type="number" value="1" max="4096" min="1" name="league-rank" placeholder="League Rank" class=" pl-3 mt-1 mb-3 p-1 text-sm block w-full rounded-md border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
+
+                                        <label class="text-gray-700 dark:text-gray-200" for="fast-move">Fast Move</label>
+                                        <select name="fast-move" class="pl-2 mb-3 p-1 text-sm mt-1 block w-full rounded-md border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200" disabled>
+                                            <option value="">Select a Pokémon</option>
+                                        </select>
+
+                                        <label class="text-gray-700 dark:text-gray-200" for="charged-move1">Charged Move 1</label>
+                                        <select name="charged-move1" class="pl-2 mb-3 p-1 text-sm mt-1 block w-full rounded-md border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200" disabled>
+                                            <option value="">Select a Pokémon</option>
+                                        </select>
+
+                                        <label class="text-gray-700 dark:text-gray-200" for="charged-move2">Charged Move 2</label>
+                                        <select name="charged-move2" class="pl-2 mb-3 p-1 text-sm mt-1 block w-full rounded-md border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200" disabled>
+                                            <option value="">Select a Pokémon</option>
+                                        </select>
+
+                                        <label class="text-gray-700 dark:text-gray-200" for="type">Type</label>
+                                        <select name="type" class="pl-2 mb-3 p-1 text-sm mt-1 block w-full rounded-md border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
+                                            {% for typeValue, type in types %}
+                                                <option value="{{ typeValue }}">{{ type }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <div class="mt-5 flex items-center justify-center gap-2">
+                                        <button type="button" @click="isOpen = false" class="text-center px-4 sm:mx-2 w-full py-2.5 text-sm font-medium dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800 tracking-wide text-gray-700 capitalize transition-colors duration-300 transform border border-gray-200 rounded-md hover:bg-gray-100 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-40">
+                                            Cancel
+                                        </button>
+
+                                        <button name="confirm" type="button" class="px-4 sm:mx-2 w-full py-2.5 sm:mt-0 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40">
+                                            Confirm
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col mt-6">
+            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+                    <div class="overflow-hidden border border-gray-200 dark:border-gray-700 rounded-lg">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-800">
+                                <tr>
+                                    <th scope="col" class="py-3.5 px-4 text-sm font-normal text-center rtl:text-right text-gray-500 dark:text-gray-400 cursor-pointer sort-header" data-sort="name">
+                                        <span>Pokémon</span>
+                                        <span class="sort-indicator"></span>
+                                    </th>
+
+                                    <th scope="col" class="px-12 py-3.5 text-sm font-normal text-center rtl:text-right text-gray-500 dark:text-gray-400 cursor-pointer sort-header" data-sort="rank">
+                                        Rank
+                                        <span class="sort-indicator"></span>
+                                    </th>
+
+                                    <th scope="col" class="px-4 py-3.5 text-sm font-normal text-center rtl:text-right text-gray-500 dark:text-gray-400">
+                                        Stats
+                                    </th>
+
+                                    <th scope="col" class="px-4 py-3.5 text-sm font-normal text-center rtl:text-right text-gray-500 dark:text-gray-400">Moves</th>
+
+                                    <th scope="col" class="relative py-3.5 px-4">
+                                        <span class="sr-only">Edit</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
+                                {% for pokemon in userPokemon %}
+                                    <tr class="pokemon-row" data-league="{{ pokemon.league }}" data-number="{{ pokemon.pokemon.number }}">
+                                        <td class="px-4 py-4 text-sm font-medium whitespace-nowrap">
+                                            <div class="flex items-center gap-x-2">
+                                                <img class="object-cover w-10 h-10" src="{{ asset('/images/pokemon/normal/' ~ pokemon.pokemon.picture) }}" alt="">
+                                                <div class="flex items-center">
+                                                    <h2 class="font-medium text-gray-800 dark:text-white ">{{ pokemon.pokemon.name }}</h2>
+                                                    {% if pokemon.type == 'shadow' %}
+                                                        <img src="{{ asset('images/icons/shadow.png') }}" class="w-[20px] ml-1">
+                                                    {% endif %}
+                                                    {% if pokemon.type == 'purified' %}
+                                                        <img src="{{ asset('images/icons/purified.png') }}" class="w-[20px] ml-1">
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-12 py-4 text-sm font-medium whitespace-nowrap">
+                                            <img src="{{ asset('images/league/' ~ pokemon.league ~ '.png') }}" class="w-[20px] inline-block">
+                                            {% if pokemon.leagueRank == 1 %}
+                                                {% set classes = 'text-emerald-400 bg-emerald-100/60' %}
+                                            {% elseif pokemon.leagueRank <= 10 %}
+                                                {% set classes = 'text-yellow-400 bg-yellow-100/60' %}
+                                            {% elseif pokemon.leagueRank <= 30 %}
+                                                {% set classes = 'text-red-400 bg-red-100/60' %}
+                                            {% else %}
+                                                {% set classes = 'text-gray-400 bg-gray-100/60' %}
+                                            {% endif %}
+                                            <div class="inline px-3 py-1 text-sm font-normal rounded-full gap-x-2 bg-emerald-100/60 dark:bg-gray-800 {{ classes }}">
+                                                {{ pokemon.leagueRank }}
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-4 text-sm whitespace-nowrap">
+                                            <div>
+                                                <h4 class="text-gray-700 dark:text-gray-200">{{ pokemon.attack }} / {{ pokemon.defense }} / {{ pokemon.stamina }}</h4>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-4 text-sm whitespace-nowrap">
+                                            <div class="flex flex-col items-center">
+                                                <div class="flex flex-col gap-1">
+                                                    <div class="flex items-center">
+                                                        <img src="{{ asset('images/type/' ~ pokemon.fastMove.type.icon ) }}" class="w-[20px] mr-2">
+                                                        <span class="text-gray-700 dark:text-gray-200">{{ pokemon.fastMove.name }}</span>
+                                                    </div>
+                                                    <div class="flex items-center">
+                                                        <img src="{{ asset('images/type/' ~ pokemon.chargedMove1.type.icon ) }}" class="w-[20px] mr-2">
+                                                        <span class="text-gray-700 dark:text-gray-200">{{ pokemon.chargedMove1.name }}</span>
+                                                    </div>
+                                                    {% if pokemon.chargedMove2 %}
+                                                        <div class="flex items-center">
+                                                            <img src="{{ asset('images/type/' ~ pokemon.chargedMove2.type.icon ) }}" class="w-[20px] mr-2">
+                                                            <span class="text-gray-700 dark:text-gray-200">{{ pokemon.chargedMove2.name }}</span>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        <td class="px-4 py-4 text-sm whitespace-nowrap">
+                                            <button data-id="{{ pokemon.id }}" class="delete-pokemon text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                                </svg>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -50,6 +50,9 @@ class UserPvPPokemon
     #[ORM\Column]
     private int $stamina = 0;
 
+    #[ORM\Column]
+    private int $leagueRank = 0;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -171,5 +174,15 @@ class UserPvPPokemon
     public function setLeague(string $league): void
     {
         $this->league = $league;
+    }
+
+    public function getLeagueRank(): int
+    {
+        return $this->leagueRank;
+    }
+
+    public function setLeagueRank(int $leagueRank): void
+    {
+        $this->leagueRank = $leagueRank;
     }
 }
