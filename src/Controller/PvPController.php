@@ -26,8 +26,7 @@ final class PvPController extends AbstractController
     public function pokemon(
         PokemonRepository $pokemonRepository,
         UserPvPPokemonRepository $userPvPPokemonRepository,
-    ): Response
-    {
+    ): Response {
         $pokemon = $pokemonRepository->findAll();
         $userPokemon = $userPvPPokemonRepository->findBy(['user' => $this->getUser()]);
 
@@ -59,9 +58,8 @@ final class PvPController extends AbstractController
     #[Route('/pvp/types', name: 'app_pvp_types')]
     public function types(
         TypeRepository $typeRepository,
-        TypeEffectivenessRepository $typeEffectivenessRepository
-    ): Response
-    {
+        TypeEffectivenessRepository $typeEffectivenessRepository,
+    ): Response {
         $types = $typeRepository->findAll();
         $effectiveness = $typeEffectivenessRepository->findAll();
 

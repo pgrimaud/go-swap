@@ -25,8 +25,7 @@ class UpdateTypesCommand extends Command
         private readonly TypeRepository $typeRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly HttpClientInterface $httpClient,
-    )
-    {
+    ) {
         parent::__construct();
     }
 
@@ -80,7 +79,10 @@ class UpdateTypesCommand extends Command
 
         $response = $this->httpClient->request('GET', 'https://pogoapi.net/api/v1/type_effectiveness.json');
 
-        foreach ($response->toArray() as $source => $effectiveness) {
+        /** @var array<string, array<string, float>> $types */
+        $types = $response->toArray();
+
+        foreach ($types as $source => $effectiveness) {
             $sourceType = $this->typeRepository->findOneBy(['name' => $source]);
 
             foreach ($effectiveness as $target => $multiplier) {
