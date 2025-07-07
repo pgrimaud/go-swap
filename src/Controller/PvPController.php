@@ -17,9 +17,11 @@ use Symfony\Component\Routing\Attribute\Route;
 final class PvPController extends AbstractController
 {
     #[Route('/pvp', name: 'app_pvp_index')]
-    public function index(): Response
+    public function index( UserPvPPokemonRepository $userPvPPokemonRepository): Response
     {
-        return $this->render('pvp/index.html.twig');
+        return $this->render('pvp/index.html.twig', [
+            'totalUserPokemon' => count($userPvPPokemonRepository->findBy(['user' => $this->getUser()])),
+        ]);
     }
 
     #[Route('/pvp/pokemon', name: 'app_pvp_pokemon')]
@@ -43,6 +45,7 @@ final class PvPController extends AbstractController
                 Type::TYPE_SHADOW => 'Shadow',
                 Type::TYPE_PURIFIED => 'Purified',
             ],
+            'totalUserPokemon' => count($userPokemon),
         ]);
     }
 
