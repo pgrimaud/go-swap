@@ -5,7 +5,8 @@
  * which should already be in your base.html.twig.
  */
 import './styles/app.css';
-import './js/pvp/pokemon.js'
+import './js/pvp/pokemon.js';
+import './vendor/choices.js/choices.js.index.js';
 
 import Alpine from 'alpinejs';
 window.Alpine = Alpine;

@@ -2,4 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
+/* alpinejs */
 [x-cloak] { display: none !important; }
+
+/* choices.js dark mode - compatible with Tailwind's .dark class */
+:root.dark {
+    --choice-bg: #2d333b;
+    --choice-fg: #adbac7;
+    --choice-item-bg: #373e47;
+    --choice-item-hover-bg: #444c56;
+    --choice-border: #444c56;
+}
+
+.dark .choices__inner,
+.dark .choices__list--dropdown,
+.dark .choices__list--single,
+.dark .choices__list--multiple {
+    background: var(--choice-bg) !important;
+    color: var(--choice-fg) !important;
+    border-color: var(--choice-border) !important;
+}
+
+.dark .choices__item {
+    background: var(--choice-item-bg) !important;
+    color: var(--choice-fg) !important;
+}
+
+.dark .choices__item--selectable.is-highlighted,
+.dark .choices__item--choice.is-highlighted {
+    background: var(--choice-item-hover-bg) !important;
+    color: var(--choice-fg) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --choice-bg: #2d333b;
+        --choice-fg: #adbac7;
+        --choice-item-bg: #373e47;
+        --choice-item-hover-bg: #444c56;
+        --choice-border: #444c56;
+    }
+
+    .choices__inner,
+    .choices__list--dropdown,
+    .choices__list--single,
+    .choices__list--multiple {
+        background: var(--choice-bg) !important;
+        color: var(--choice-fg) !important;
+        border-color: var(--choice-border) !important;
+    }
+
+    .choices__item {
+        background: var(--choice-item-bg) !important;
+        color: var(--choice-fg) !important;
+    }
+
+    .choices__item--selectable.is-highlighted,
+    .choices__item--choice.is-highlighted {
+        background: var(--choice-item-hover-bg) !important;
+        color: var(--choice-fg) !important;
+    }
+}

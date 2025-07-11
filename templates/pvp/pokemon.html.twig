@@ -72,7 +72,7 @@
                                 <form class="mt-4" action="#" id="add-pvp-pokemon">
                                     <div class="mb-5 flex flex-col">
                                         <label class="text-gray-700 dark:text-gray-200" for="pokemon">Pokémon</label>
-                                        <select name="pokemon" class="pl-2 mb-3 p-1 text-sm mt-1 block w-full rounded-md border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
+                                        <select name="pokemon" id="select-pokemon" class="pl-2 mb-3 p-1 text-sm mt-1 block w-full rounded-md border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
                                             <option value=""></option>
                                             {% for pokemon in allPokemon %}
                                                 <option value="{{ pokemon.id }}">{{ pokemon.name }} (#{{ pokemon.number }})</option>

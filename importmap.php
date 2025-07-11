@@ -19,4 +19,7 @@ return [
     'alpinejs' => [
         'version' => '3.14.9',
     ],
+    'choices.js' => [
+        'version' => '11.1.0',
+    ],
 ];

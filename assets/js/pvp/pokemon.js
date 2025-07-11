@@ -1,3 +1,5 @@
+import Choices from 'choices.js';
+
 if (document.querySelector('#add-pvp-pokemon')) {
     document.querySelector('#add-pvp-pokemon select[name=pokemon]').addEventListener('change', function () {
         fetch('/api/pokemon/moves/' + this.value, {
@@ -18,6 +20,8 @@ if (document.querySelector('#add-pvp-pokemon')) {
             console.error('There was a problem with the fetch operation:', error);
         });
     })
+
+    const choices = new Choices('#select-pokemon');
 
     document.querySelector('#add-pvp-pokemon button[name="confirm"]').addEventListener('click', function () {
         // Vérification des champs obligatoires
