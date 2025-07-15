@@ -28,26 +28,39 @@ final class PokemonController extends AbstractController
             fn (PokemonMove $move) => $move->getMove()?->getClass() === Move::FAST_MOVE
         );
 
-
         $chargedMoves = $pokemon->getPokemonMoves()->filter(
             fn (PokemonMove $move) => $move->getMove()?->getClass() === Move::CHARGED_MOVE
         );
 
+        // Sort fastMoves by name
+        $fastMoves = $fastMoves->toArray();
+        usort($fastMoves, function (PokemonMove $a, PokemonMove $b) {
+            return strcmp($a->getMove()?->getName() ?? '', $b->getMove()?->getName() ?? '');
+        });
+
+        // Sort chargedMoves by name
+        $chargedMoves = $chargedMoves->toArray();
+        usort($chargedMoves, function (PokemonMove $a, PokemonMove $b) {
+            return strcmp($a->getMove()?->getName() ?? '', $b->getMove()?->getName() ?? '');
+        });
+
         return $this->json([
-            'fastMoves' => array_values($fastMoves->map(
+            'fastMoves' => array_map(
                 fn (PokemonMove $move) => [
                     'id' => $move->getMove()?->getId(),
                     'name' => $move->getMove()?->getName(),
                     'isElite' => $move->isElite(),
-                ]
-            )->toArray()),
-            'chargedMoves' => array_values($chargedMoves->map(
+                ],
+                $fastMoves
+            ),
+            'chargedMoves' => array_map(
                 fn (PokemonMove $move) => [
                     'id' => $move->getMove()?->getId(),
                     'name' => $move->getMove()?->getName(),
                     'isElite' => $move->isElite(),
-                ]
-            )->toArray()),
+                ],
+                $chargedMoves
+            ),
         ]);
     }
 
