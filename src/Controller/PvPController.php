@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class PvPController extends AbstractController
 {
     #[Route('/pvp', name: 'app_pvp_index')]
-    public function index( UserPvPPokemonRepository $userPvPPokemonRepository): Response
+    public function index(UserPvPPokemonRepository $userPvPPokemonRepository): Response
     {
         return $this->render('pvp/index.html.twig', [
             'totalUserPokemon' => count($userPvPPokemonRepository->findBy(['user' => $this->getUser()])),
