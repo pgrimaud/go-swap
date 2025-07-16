@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Entity\UserPvPPokemon;
 use App\Enum\League;
 use App\Enum\Type;
@@ -29,8 +30,11 @@ final class PvPController extends AbstractController
         PokemonRepository $pokemonRepository,
         UserPvPPokemonRepository $userPvPPokemonRepository,
     ): Response {
+        /** @var User $user */
+        $user = $this->getUser();
+        $userPokemon = $userPvPPokemonRepository->findForUserOrderedByNumber($user);
+
         $pokemon = $pokemonRepository->findAll();
-        $userPokemon = $userPvPPokemonRepository->findBy(['user' => $this->getUser()]);
 
         return $this->render('pvp/pokemon.html.twig', [
             'allPokemon' => $pokemon,
