@@ -50,6 +50,11 @@ final class PvPController extends AbstractController
                 Type::TYPE_PURIFIED => 'Purified',
             ],
             'totalUserPokemon' => count($userPokemon),
+            'totalUserPokemonByLeague' => [
+                League::LITTLE_CUP => count($userPvPPokemonRepository->findBy(['user' => $user, 'league' => League::LITTLE_CUP])),
+                League::GREAT_LEAGUE => count($userPvPPokemonRepository->findBy(['user' => $user, 'league' => League::GREAT_LEAGUE])),
+                League::ULTRA_LEAGUE => count($userPvPPokemonRepository->findBy(['user' => $user, 'league' => League::ULTRA_LEAGUE])),
+            ],
         ]);
     }
 
