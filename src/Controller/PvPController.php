@@ -110,4 +110,16 @@ final class PvPController extends AbstractController
             'typeData' => $typeData,
         ]);
     }
+
+    #[Route('/pvp/pokemon/details', name: 'app_pvp_pokemon_details')]
+    public function pokemonDetails(UserPvPPokemonRepository $userPvPPokemonRepository): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $userPokemon = $userPvPPokemonRepository->findForUserOrderedByNumber($user);
+
+        return $this->render('pvp/pokemon/details.html.twig', [
+            'totalUserPokemon' => count($userPokemon),
+        ]);
+    }
 }

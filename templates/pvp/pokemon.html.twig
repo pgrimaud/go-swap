@@ -56,6 +56,10 @@
                         <span>Add</span>
                     </button>
 
+                    <a href="{{ path('app_pvp_pokemon_details') }}" class="hidden ml-2 sm:flex items-center justify-center px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-900 rounded-lg gap-x-2 hover:bg-blue-700 dark:hover:bg-blue-700 dark:bg-blue-900">
+                        <span>Details</span>
+                    </a>
+
                     <div x-show="isOpen"
                          x-transition:enter="transition duration-300 ease-out"
                          x-transition:enter-start="translate-y-4 opacity-0 sm:translate-y-0 sm:scale-95"
