@@ -116,10 +116,19 @@ final class PvPController extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
+        $userPokemonRank1 = $userPvPPokemonRepository->findForUserOrderedByNumber($user, 1, 1);
+        $userPokemonTop10 = $userPvPPokemonRepository->findForUserOrderedByNumber($user, 1, 10);
+        $userPokemonTop30 = $userPvPPokemonRepository->findForUserOrderedByNumber($user, 1, 30);
+        $userPokemonTop100 = $userPvPPokemonRepository->findForUserOrderedByNumber($user, 1, 100);
         $userPokemon = $userPvPPokemonRepository->findForUserOrderedByNumber($user);
 
         return $this->render('pvp/pokemon/details.html.twig', [
             'totalUserPokemon' => count($userPokemon),
+            'userPokemonRank1' => $userPokemonRank1,
+            'userPokemonTop10' => $userPokemonTop10,
+            'userPokemonTop30' => $userPokemonTop30,
+            'userPokemonTop100' => $userPokemonTop100,
+            'userPokemon' => $userPokemon,
         ]);
     }
 }

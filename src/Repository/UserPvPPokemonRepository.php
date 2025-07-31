@@ -20,16 +20,22 @@ class UserPvPPokemonRepository extends ServiceEntityRepository
     /**
      * @return UserPvPPokemon[]
      */
-    public function findForUserOrderedByNumber(User $user): array
+    public function findForUserOrderedByNumber(User $user, ?int $minRank = null, ?int $maxRank = null): array
     {
-        /** @var UserPvPPokemon[] $result */
-        $result = $this->createQueryBuilder('p')
+        $queryBuilder = $this->createQueryBuilder('p')
             ->join('p.pokemon', 'pokemon')
             ->andWhere('p.user = :user')
             ->setParameter('user', $user)
             ->orderBy('pokemon.number', 'ASC')
-            ->addOrderBy('p.leagueRank', 'ASC')
-            ->getQuery()
+            ->addOrderBy('p.leagueRank', 'ASC');
+
+        if ($minRank !== null && $maxRank !== null) {
+            $queryBuilder->andWhere('p.leagueRank >= :minRank')->setParameter('minRank', $minRank);
+            $queryBuilder->andWhere('p.leagueRank <= :maxRank')->setParameter('maxRank', $maxRank);
+        }
+
+        /** @var UserPvPPokemon[] $result */
+        $result = $queryBuilder->getQuery()
             ->getResult();
 
         return $result;

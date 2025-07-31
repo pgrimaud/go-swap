@@ -18,19 +18,22 @@ class GenerationHelper
     public const string GENERATION_PALDEA = 'paldea';
     public const string GENERATION_UNIDENTIFIED = 'unidentified';
 
-    // public const array GENERATIONS = [
-    //    self::GENERATION_KANTO,
-    //    self::GENERATION_JOHTO,
-    //    self::GENERATION_HOENN,
-    //    self::GENERATION_SINNOH,
-    //    self::GENERATION_UNOVA,
-    //    self::GENERATION_KALOS,
-    //    self::GENERATION_ALOLA,
-    //    self::GENERATION_GALAR,
-    //    self::GENERATION_HISUI,
-    //    self::GENERATION_PALDEA,
-    //    self::GENERATION_UNIDENTIFIED,
-    // ];
+    /**
+     * @var string[]
+     */
+    public const array GENERATIONS = [
+        self::GENERATION_KANTO,
+        self::GENERATION_JOHTO,
+        self::GENERATION_HOENN,
+        self::GENERATION_SINNOH,
+        self::GENERATION_UNOVA,
+        self::GENERATION_KALOS,
+        self::GENERATION_ALOLA,
+        self::GENERATION_GALAR,
+        self::GENERATION_HISUI,
+        self::GENERATION_PALDEA,
+        self::GENERATION_UNIDENTIFIED,
+    ];
 
     public static function get(int $number): string
     {
