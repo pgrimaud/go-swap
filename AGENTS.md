@@ -234,11 +234,12 @@ Le workflow CI est configuré dans `.github/workflows/ci.yml` et s'exécute auto
 **Étapes du CI** :
 1. ✅ Setup PHP 8.4
 2. ✅ Install dependencies (`composer install`)
-3. ✅ Audit dependencies (`composer audit`)
-4. ✅ Run PHPStan (`composer phpstan`)
-5. ✅ Run PHP CS Fixer (`composer cs-check`)
-6. ✅ Setup test database (MySQL)
-7. ✅ Run PHPUnit tests (`php bin/phpunit`)
+3. ✅ Build Tailwind CSS (`php bin/console tailwind:build`)
+4. ✅ Audit dependencies (`composer audit`)
+5. ✅ Run PHPStan (`composer phpstan`)
+6. ✅ Run PHP CS Fixer (`composer cs-check`)
+7. ✅ Setup test database (MySQL)
+8. ✅ Run PHPUnit tests (`composer test`)
 
 **Résultat** : Si toutes les étapes passent, le code est prêt pour le merge/deploy.
 
