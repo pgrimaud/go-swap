@@ -50,6 +50,13 @@ go-swap/
 │   ├── base.html.twig
 │   ├── registration/
 │   └── security/
+├── tests/
+│   ├── Controller/          # Tests fonctionnels des controllers
+│   │   ├── SecurityControllerTest.php
+│   │   └── RegistrationControllerTest.php
+│   ├── Entity/              # Tests unitaires des entités
+│   │   └── UserTest.php
+│   └── bootstrap.php
 ├── _archive_v2/           # Code V2 (référence)
 ├── .env                   # Config versionnée (SQLite par défaut)
 ├── .env.local             # Config locale non versionnée (MySQL)
@@ -103,6 +110,26 @@ declare(strict_types=1);
 
 ## 📝 Commandes Utiles
 
+### Qualité du Code
+
+```bash
+# PHP CS Fixer (fix coding standards)
+composer cs-fix
+
+# PHPStan (analyse statique)
+composer phpstan
+
+# PHPUnit (tests)
+composer test
+# ou
+php bin/phpunit
+
+# Lancer tout
+composer cs-fix && composer phpstan && composer test
+```
+
+**⚠️ Important** : Toujours vérifier la qualité du code avant de commit !
+
 ### Développement
 
 ```bash
@@ -141,9 +168,83 @@ php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate --no-interaction
 ```
 
+### Fixtures
+
+```bash
+# Load fixtures (users de test)
+php bin/console doctrine:fixtures:load --no-interaction
+
+# Append fixtures (sans purge)
+php bin/console doctrine:fixtures:load --append
+```
+
+**Users créés par les fixtures :**
+- `admin@go-swap.com` / `admin123` (ROLE_ADMIN)
+
+### Tests
+
+**Organisation des tests** :
+- `tests/Controller/` - Tests fonctionnels (WebTestCase)
+- `tests/Entity/` - Tests unitaires (TestCase)
+
+```bash
+# Préparer la base de test (première fois)
+php bin/console doctrine:database:create --env=test
+php bin/console doctrine:schema:create --env=test
+php bin/console doctrine:fixtures:load --env=test --no-interaction
+
+# Reset complet de la base de test
+php bin/console doctrine:database:drop --force --env=test --if-exists
+php bin/console doctrine:database:create --env=test
+php bin/console doctrine:schema:create --env=test
+php bin/console doctrine:fixtures:load --env=test --no-interaction
+
+# Lancer tous les tests
+composer test
+# ou
+php bin/phpunit
+
+# Lancer avec détails
+composer test -- --testdox
+# ou
+php bin/phpunit --testdox
+
+# Lancer un test spécifique
+php bin/phpunit tests/Controller/SecurityControllerTest.php
+php bin/phpunit tests/Controller/RegistrationControllerTest.php
+php bin/phpunit tests/Entity/UserTest.php
+```
+
+**Base de données de test** : 
+- Local : MySQL `go-swap-v3_test` (via `.env.test.local` non versionné)
+- CI/CD : MySQL `go-swap-v3_test` (via service container GitHub Actions)
+
+**Note** : Le fichier `.env.test.local` doit être créé localement avec les credentials MySQL :
+```env
+DATABASE_URL="mysql://root:sezane@127.0.0.1:3307/go-swap-v3_test?serverVersion=8.0.32&charset=utf8mb4"
+```
+
+### CI/CD - GitHub Actions
+
+Le workflow CI est configuré dans `.github/workflows/ci.yml` et s'exécute automatiquement sur la branche `v3`.
+
+**Services** :
+- MySQL 8.0 (container Docker)
+
+**Étapes du CI** :
+1. ✅ Setup PHP 8.4
+2. ✅ Install dependencies (`composer install`)
+3. ✅ Audit dependencies (`composer audit`)
+4. ✅ Run PHPStan (`composer phpstan`)
+5. ✅ Run PHP CS Fixer (`composer cs-check`)
+6. ✅ Setup test database (MySQL)
+7. ✅ Run PHPUnit tests (`php bin/phpunit`)
+
+**Résultat** : Si toutes les étapes passent, le code est prêt pour le merge/deploy.
+
 ---
 
-## 🚧 État Actuel du Projet (Phase 1.1)
+## 🚧 État Actuel du Projet (Phase 1)
 
 ### ✅ Complété
 
@@ -153,10 +254,17 @@ php bin/console doctrine:migrations:migrate --no-interaction
 - [x] Base de données MySQL configurée
 - [x] Authentification (User, Login, Register)
 - [x] Migration User avec `created_at`
+- [x] Protection par authentification (tout le site)
+- [x] Dashboard avec Tailwind CSS
+- [x] UserFixtures (1 user admin)
+- [x] PHPUnit + Tests (Authentication + Entity User)
+- [x] PHPStan niveau max sans erreurs
+- [x] PHP CS Fixer configuré
+- [x] CI/CD GitHub Actions avec tests automatiques
 
 ### 🔄 En cours
 
-- Phase 1.2 Authentification terminée
+- Phase 1 terminée ✅
 - Prochaine étape : **Phase 2 - Data Import**
 
 ### 📋 Voir TODO_V3.md pour la roadmap complète
@@ -207,6 +315,25 @@ php bin/console doctrine:migrations:migrate --no-interaction
 
 ---
 
+## ⛔ Règles Importantes
+
+### ❌ Ne JAMAIS faire :
+
+1. **Ne JAMAIS éditer `README.md`** - Ce fichier est géré manuellement par le propriétaire du projet
+2. **Ne JAMAIS commiter de credentials** - Utiliser `.env.local` (non versionné)
+3. **Ne JAMAIS créer de branches** - Travailler uniquement sur la branche actuelle
+4. **Ne JAMAIS utiliser Webpack/Encore** - Le projet utilise AssetMapper
+5. **Ne JAMAIS ignorer PHPStan/CS-Fixer** - Toujours lancer avant de terminer
+
+### ⚠️ Fichiers à ne pas modifier (sauf demande explicite) :
+
+- `README.md` - Documentation principale
+- `composer.json` - Sauf ajout de dépendances
+- `.gitignore` - Déjà configuré
+- `symfony.lock` - Géré par Symfony Flex
+
+---
+
 ## 🤝 Workflow Agent
 
 ### Avant chaque modification
@@ -225,7 +352,13 @@ php bin/console doctrine:migrations:migrate --no-interaction
 
 1. **Clear cache** si nécessaire
 2. **Vérifier** : routes, schema Doctrine, etc.
-3. **Commit message clair** : `feat:`, `fix:`, `chore:`
+3. **Lancer les tests de qualité** :
+   ```bash
+   composer cs-fix
+   composer phpstan
+   composer test
+   ```
+4. **Commit message clair** : `feat:`, `fix:`, `chore:`
 
 ---
 
@@ -236,6 +369,69 @@ php bin/console doctrine:migrations:migrate --no-interaction
 - Préférer les **Turbo Frames** aux recharges de page complètes
 - Utiliser **Stimulus** pour les interactions JavaScript
 - Le projet vise la **simplicité** : pas de sur-engineering
+
+---
+
+## 🗄️ Fixtures & Données de Test
+
+### Créer une Fixture
+
+Les fixtures permettent de charger des données de test en base.
+
+**Exemple : UserFixtures.php**
+```php
+<?php
+
+namespace App\DataFixtures;
+
+use App\Entity\User;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+
+class UserFixtures extends Fixture
+{
+    public function __construct(
+        private UserPasswordHasherInterface $passwordHasher
+    ) {
+    }
+
+    public function load(ObjectManager $manager): void
+    {
+        $admin = new User();
+        $admin->setEmail('admin@go-swap.com');
+        $admin->setRoles(['ROLE_USER', 'ROLE_ADMIN']);
+        $admin->setPassword(
+            $this->passwordHasher->hashPassword($admin, 'admin123')
+        );
+        $manager->persist($admin);
+        $manager->flush();
+    }
+}
+```
+
+### Charger les Fixtures
+
+```bash
+# Purge DB + charge fixtures
+php bin/console doctrine:fixtures:load --no-interaction
+
+# Ajoute sans purger
+php bin/console doctrine:fixtures:load --append
+```
+
+### Reset complet de la DB
+
+```bash
+# Script complet pour repartir à zéro
+php bin/console doctrine:database:drop --force
+php bin/console doctrine:database:create
+php bin/console doctrine:migrations:migrate --no-interaction
+php bin/console doctrine:fixtures:load --no-interaction
+```
+
+**⚠️ Users de test disponibles :**
+- `admin@go-swap.com` / `admin123` (ROLE_ADMIN)
 
 ---
 
