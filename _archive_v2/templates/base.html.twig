@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
+        <title>{% block title %}Go Swap{% endblock %}</title>
+        <link rel="icon" href="{{ asset('images/icon.png') }}">
+        <link rel="apple-touch-icon" href="{{ asset('images/icon.png') }}">
+        <meta name="description" content="Swap, unlock & complete">
+        <meta name="theme-color" content="#1f2d3d" />
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:title" content="Go Swap">
+        <meta name="twitter:description" content="Swap, unlock & complete">
+        <meta name="twitter:creator" content="@pgrimaud">
+        <meta name="twitter:image" content="{{ asset('images/icon.png') }}">
+        <meta property="og:title" content="Go Swap" />
+        <meta property="og:description" content="Swap, unlock & complete." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://go-swap.com" />
+        <meta property="og:image" content="{{ asset('images/icon.png') }}" />
+        <meta property="og:locale" content="fr_FR" />
+        <meta property="og:site_name" content="Go Swap" />
+
+        {% block stylesheets %}
+        {% endblock %}
+        <link
+                rel="stylesheet"
+                href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"
+        />
+
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
+    </head>
+    <body class="flex flex-col min-h-screen bg-white dark:bg-gray-900 font-roboto">
+        {% block body %}{% endblock %}
+    </body>
+</html>
+

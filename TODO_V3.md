@@ -1,0 +1,851 @@
+# 📋 TODO V3 - Go Swap
+
+> **Objectif** : Application Pokémon GO pour tracker TOUS mes Pokémon (Pokédex complet avec variants) + Collection PvP optimisée  
+> **Stack** : Symfony 8.0 + PHP 8.4 + Hotwire (Turbo/Stimulus) + TailwindCSS
+
+---
+
+## 🎯 **Fonctionnalités Core**
+
+### 1. **Pokédex Complet** (comme dans Pokémon GO)
+Pour chaque Pokémon, je dois pouvoir marquer :
+- ✅ **Normal** - Version standard
+- ✅ **Shiny** - Version chromatique
+- ✅ **Shadow** - Version obscur
+- ✅ **Purified** - Version purifiée
+- ✅ **Lucky** - Pokémon chanceux (trade)
+- ✅ **XXL** - Taille XXL
+- ✅ **XXS** - Taille XXS
+- ✅ **100%** - IVs 15/15/15 parfait
+
+### 2. **Collection PvP**
+Pour mes Pokémon optimisés PvP :
+- Pokémon + Ligue (Great/Ultra/Little)
+- IVs (Attack/Defense/Stamina)
+- Rank dans la ligue (1-4096)
+- Moves (Fast + Charged1 + Charged2)
+- Type (Normal/Shadow/Purified)
+
+### 3. **Listes Personnalisées**
+Créer des listes custom pour organiser mes Pokémon :
+- Nom de la liste (ex: "À transférer", "Favourites", "Trade List")
+- Associer N Pokémon à une liste
+- 1 Pokémon peut être dans plusieurs listes
+- Partage public optionnel (URL unique)
+
+---
+
+## 🏗️ **Phase 1 : Setup & Infrastructure**
+
+### 1.1 Projet de base
+- [ ] Créer branche `v3` depuis `main` (fresh start)
+- [ ] **Installer Symfony 8.0** (nouveau projet)
+  ```bash
+  composer create-project symfony/skeleton:"8.0.*" .
+  composer require webapp
+  ```
+- [ ] Setup PHP 8.4 (déjà installé ✓)
+- [ ] Installer **Symfony UX Bundle** (Turbo + Stimulus)
+  ```bash
+  composer require symfony/ux-turbo symfony/stimulus-bundle
+  php bin/console importmap:require @hotwired/turbo @hotwired/stimulus
+  ```
+- [ ] Setup TailwindCSS
+  ```bash
+  composer require symfonycasts/tailwind-bundle
+  php bin/console tailwind:init
+  ```
+- [ ] Créer DB + .env config
+  ```bash
+  php bin/console doctrine:database:create
+  ```
+
+### 1.2 Authentification
+- [ ] Entité `User` (id, email, password, roles, created_at)
+  ```bash
+  php bin/console make:user
+  ```
+- [ ] Login/Register forms
+  ```bash
+  php bin/console make:auth
+  php bin/console make:registration-form
+  ```
+- [ ] SecurityController + templates
+- [ ] Tester auth flow
+
+---
+
+## 📦 **Phase 2 : Data Import (Foundation)**
+
+### 2.1 Commands d'import
+**Ref : `_archive_v2/src/Command/`** - À récupérer et adapter pour Symfony 8.0
+
+- [ ] `UpdateTypesCommand` - Import types Pokémon depuis Gamemaster
+- [ ] `UpdatePokemonCommand` - Import tous les Pokémon depuis Gamemaster
+- [ ] `UpdateMovesCommand` - Import attaques PvP (fast + charged)
+- [ ] `UpdatePicturesCommand` - Download images Pokémon
+
+**Note** : Les Commands v2 utilisent Symfony 7.x, vérifier compatibilité annotations/attributes PHP 8.4
+
+### 2.2 Entities de base
+- [ ] **`Type`** (id, name, icon)
+  ```bash
+  php bin/console make:entity Type
+  ```
+- [ ] **`TypeEffectiveness`** (attacking_type_id, defending_type_id, multiplier)
+- [ ] **`Pokemon`** 
+  - id, number, name, picture
+  - types (ManyToMany avec Type)
+  - generation (1-9)
+- [ ] **`Move`** 
+  - id, name, type_id
+  - move_type (fast/charged)
+  - power, energy, duration
+- [ ] **`PokemonMove`** (relation Pokemon ↔ Move - quels moves un Pokémon peut apprendre)
+- [ ] **`CustomList`** (nouvelles listes perso)
+  - id, user_id, name, description (nullable)
+  - is_public (bool), slug (pour partage)
+  - created_at, updated_at
+- [ ] **`CustomListPokemon`** (relation ManyToMany)
+  - list_id, pokemon_id
+  - added_at
+
+**Note** : Utiliser les **PHP 8.4 attributes** au lieu d'annotations Doctrine
+
+### 2.3 Import initial des données
+```bash
+php bin/console app:update-types
+php bin/console app:update-pokemon
+php bin/console app:update-moves
+php bin/console app:update-pictures
+```
+
+---
+
+## 📚 **Phase 3 : Pokédex Complet (comme Pokémon GO)**
+
+### 3.1 Entity UserPokemon
+**Structure** : Table qui stocke TOUS les variants possédés par user
+```php
+UserPokemon:
+- user_id (relation User)
+- pokemon_id (relation Pokemon)
+- has_normal (bool)
+- has_shiny (bool)
+- has_shadow (bool)
+- has_purified (bool)
+- has_lucky (bool)
+- has_xxl (bool)
+- has_xxs (bool)
+- has_hundo (bool) // 100% IVs
+- first_caught_at (datetime)
+- updated_at (datetime)
+```
+
+### 3.2 Page Pokédex - Listing
+- [ ] Route `/pokedex`
+- [ ] Controller `PokedexController::index()`
+- [ ] Template : **Grille de cartes Pokémon**
+
+**Design carte** :
+```
+┌─────────────────┐
+│   [Image]       │
+│                 │
+│  #001 Bulbizarre│
+│  🌿 ☠️          │  <- Badges types
+│                 │
+│  [8 badges]     │  <- Normal/Shiny/Shadow/etc.
+│  ✅✅❌❌        │     Vert si possédé, gris sinon
+│  ❌❌❌❌        │
+└─────────────────┘
+```
+
+**Badges à afficher** (icônes cliquables) :
+- 🔵 Normal
+- ✨ Shiny
+- 👤 Shadow
+- 🕊️ Purified
+- ⭐ Lucky
+- 📏 XXL
+- 📐 XXS
+- 💯 Hundo (100%)
+
+### 3.3 Filtres
+- [ ] Par génération (Gen 1-9) - Boutons horizontaux
+- [ ] Par type (dropdown multi-select)
+- [ ] Filtres variants :
+  - Tous
+  - Pokémon avec au moins 1 variant possédé
+  - Pokémon complets (les 8 variants)
+  - Pokémon manquants (0 variant)
+- [ ] Search bar (nom/numéro)
+- [ ] **Turbo Frame** pour filtrage AJAX
+
+### 3.4 Modal Détails + Toggle Variants
+Au clic sur une carte :
+- [ ] Modal avec image grande + nom + numéro + types
+- [ ] **8 checkboxes interactives** pour toggle chaque variant
+  - Clic checkbox → AJAX `POST /pokedex/{pokemon_id}/toggle/{variant}`
+  - Update en temps réel (Turbo Stream)
+- [ ] Afficher date de première capture si variant possédé
+- [ ] Bouton "Marquer tout" / "Tout effacer" (bulk)
+
+### 3.5 Dashboard / Stats
+- [ ] Route `/pokedex/stats`
+- [ ] **Compteurs globaux** :
+  - X / Y Pokémon possédés (au moins 1 variant)
+  - X / Y Pokémon complets (8/8 variants)
+  - Total variants : X / (Y × 8)
+- [ ] **Par génération** :
+  - Progress bar avec %
+  - Compteur par gen
+- [ ] **Par variant** (combien de chaque type) :
+  - Normal : 450/1000
+  - Shiny : 120/1000
+  - Shadow : 80/1000
+  - etc.
+- [ ] **Top missing** : Pokémon les plus recherchés (0 variant)
+
+---
+
+## ⚔️ **Phase 4 : Collection PvP Optimisée**
+
+### 4.1 Entity UserPvPPokemon
+**Structure** : Pokémon optimisés pour le PvP
+```php
+UserPvPPokemon:
+- user_id (relation User)
+- pokemon_id (relation Pokemon)
+- league (enum: great_league, ultra_league, little_cup)
+- iv_attack (0-15)
+- iv_defense (0-15)
+- iv_stamina (0-15)
+- league_rank (1-4096) // Position dans le classement
+- fast_move_id (relation Move)
+- charged_move_1_id (relation Move)
+- charged_move_2_id (relation Move, nullable)
+- variant_type (enum: normal, shadow, purified)
+- created_at
+- updated_at
+```
+
+### 4.2 Page Collection PvP - Grille de cartes
+- [ ] Route `/pvp/pokemon`
+- [ ] Controller `PvPController::pokemon()`
+- [ ] Template : **Grille de cartes moderne**
+
+**Design carte** :
+```
+┌─────────────────┐
+│ 🏆 [League]     │ <- Badge ligue coin haut gauche
+│                 │    👤 [Shadow] <- Badge variant coin haut droit
+│   [Image XXL]   │
+│                 │
+│  Pokémon Name   │
+│                 │
+│    [#1]         │ <- Badge rank (couleur selon position)
+└─────────────────┘
+```
+
+**Couleurs rank** :
+- #1 → 🟢 Vert (emerald-500)
+- #2-10 → 🟡 Jaune (yellow-500)
+- #11-30 → 🟠 Orange (orange-500)
+- #31+ → ⚪ Gris (gray-400)
+
+### 4.3 Filtres & Search
+- [ ] **Boutons filtres ligues** :
+  - All (X)
+  - Great League 🏆 (X)
+  - Ultra League 🏆 (X)
+  - Little Cup 🏆 (X)
+- [ ] **Search bar** (nom/numéro)
+- [ ] **Tri** (dropdown) :
+  - Rank (croissant/décroissant)
+  - Nom (A-Z)
+  - Récemment ajouté
+- [ ] **Empty state** si aucun résultat
+- [ ] Turbo Frame pour filtrage temps réel
+
+### 4.4 Modal Détails Pokémon PvP
+Au clic sur carte :
+- [ ] **Header** : Image + Nom + #Numéro
+- [ ] **Ligue + Rank** : Grande badge coloré
+- [ ] **Variant** : Normal/Shadow/Purified
+- [ ] **IVs** en gros :
+  - 🔴 Attack : 15
+  - 🔵 Defense : 14
+  - 🟢 Stamina : 13
+- [ ] **Moves** avec icône type :
+  - ⚡ Fast : Thunder Shock
+  - 💧 Charged1 : Surf
+  - 🔥 Charged2 : Flamethrower (optionnel)
+- [ ] **Actions** :
+  - Bouton **Edit** → ouvre form édition
+  - Bouton **Delete** → confirmation + suppression
+
+### 4.5 Form Ajout Pokémon PvP
+- [ ] Bouton "Add" dans header → ouvre modal
+- [ ] **Form avec Stimulus controller** (`pokemon-form_controller.js`)
+
+**Champs** :
+1. **Select Pokémon** (autocomplete avec choices.js)
+   - Liste tous les Pokémon
+   - Search par nom/numéro
+2. **Select Ligue** (radio buttons visuels)
+   - Great / Ultra / Little
+3. **IVs** (3 inputs number 0-15)
+   - Attack, Defense, Stamina
+   - Validation min/max
+4. **League Rank** (input number 1-4096)
+5. **Variant Type** (radio buttons)
+   - Normal, Shadow, Purified
+6. **Moves** (AJAX dynamique) :
+   - Au changement Pokémon → fetch moves disponibles
+   - **Fast Move** (select)
+   - **Charged Move 1** (select)
+   - **Charged Move 2** (select, optionnel)
+
+**Actions** :
+- [ ] Submit → `POST /pvp/pokemon/add` (Turbo Stream)
+- [ ] Validation :
+  - Tous champs requis sauf charged2
+  - Pas de doublon exact (même Pokémon + ligue + IVs + moves)
+- [ ] Success : ferme modal + refresh liste (Turbo)
+- [ ] Error : affiche messages validation
+
+### 4.6 Form Édition
+- [ ] Bouton Edit dans modal détails
+- [ ] Même form que Add, pré-rempli
+- [ ] `PUT /pvp/pokemon/{id}/edit`
+- [ ] Success : update carte en place (Turbo Stream)
+
+### 4.7 Suppression
+- [ ] Bouton Delete dans modal détails
+- [ ] Confirmation : "Supprimer ce Pokémon PvP ?"
+- [ ] `DELETE /pvp/pokemon/{id}`
+- [ ] Success : retire carte de la grille (Turbo Stream)
+
+### 4.8 Endpoint AJAX Moves
+- [ ] Route API : `GET /api/pokemon/{id}/moves`
+- [ ] Retourne JSON :
+```json
+{
+  "fast_moves": [
+    {"id": 1, "name": "Thunder Shock", "type": "electric"},
+    ...
+  ],
+  "charged_moves": [
+    {"id": 10, "name": "Surf", "type": "water"},
+    ...
+  ]
+}
+```
+- [ ] Utilisé par Stimulus pour populate selects dynamiquement
+
+---
+
+## 📝 **Phase 5 : Listes Personnalisées**
+
+### 5.1 Entities (déjà créées en Phase 2)
+- [x] `CustomList` (nom, user, public/privé, slug)
+- [x] `CustomListPokemon` (ManyToMany List ↔ Pokemon)
+
+### 9.2 Page Mes Listes
+- [ ] Route `/lists`
+- [ ] Controller `CustomListController::index()`
+- [ ] Template : **Grille de cartes listes**
+
+**Design carte liste** :
+```
+┌─────────────────────┐
+│ 📋 Nom de la liste  │
+│                     │
+│ [3 mini Pokémon]    │  <- Aperçu des premiers Pokémon
+│                     │
+│ 12 Pokémon          │  <- Compteur
+│ 🔒 Privée           │  <- Badge public/privé
+└─────────────────────┘
+```
+
+### 9.3 Créer une Liste
+- [ ] Bouton "Nouvelle liste" → modal
+- [ ] Form :
+  - Nom (requis, max 50 chars)
+  - Description (optionnel, textarea)
+  - Public/Privé (toggle)
+- [ ] Submit → `POST /lists/create`
+- [ ] Validation : nom unique par user
+
+### 9.4 Vue Détails d'une Liste
+- [ ] Route `/lists/{id}`
+- [ ] Afficher :
+  - Header : Nom + Description + Badge privé/public
+  - Compteur : X Pokémon dans la liste
+  - **Grille cartes Pokémon** (comme Pokédex)
+  - Bouton "Ajouter Pokémon" → modal search
+  - Bouton "Partager" (si publique)
+- [ ] Actions par Pokémon :
+  - Retirer de la liste (icône trash)
+
+### 5.5 Ajouter des Pokémon à une Liste
+- [ ] Modal "Ajouter Pokémon" :
+  - Search bar (autocomplete)
+  - Liste tous les Pokémon disponibles
+  - Checkbox sélection multiple
+  - Bouton "Ajouter (X sélectionnés)"
+- [ ] Submit → `POST /lists/{id}/add-pokemon`
+- [ ] Validation : pas de doublons
+
+### 5.6 Retirer Pokémon d'une Liste
+- [ ] Bouton trash sur chaque carte
+- [ ] Confirmation : "Retirer ce Pokémon de la liste ?"
+- [ ] `DELETE /lists/{id}/pokemon/{pokemon_id}`
+- [ ] Update grille (Turbo Stream)
+
+### 5.7 Éditer une Liste
+- [ ] Bouton "Éditer" dans header
+- [ ] Modal form pré-rempli
+- [ ] `PUT /lists/{id}/edit`
+- [ ] Update nom/description/visibilité
+
+### 5.8 Supprimer une Liste
+- [ ] Bouton "Supprimer la liste" (danger zone)
+- [ ] Confirmation : "Supprimer définitivement cette liste ?"
+- [ ] `DELETE /lists/{id}`
+- [ ] Redirect vers `/lists`
+
+### 5.9 Partage Public (bonus)
+- [ ] Si liste publique → générer slug unique
+- [ ] Route publique : `/lists/public/{slug}`
+- [ ] Page visible sans login :
+  - Nom + Description
+  - Grille Pokémon (read-only)
+  - "Créé par {username}"
+- [ ] Bouton "Copier lien" (clipboard)
+
+### 5.10 Associer Pokémon depuis Pokédex
+- [ ] Dans page Pokédex, sur modal détails Pokémon :
+  - Bouton "Ajouter à une liste"
+  - Dropdown : sélection liste existante
+  - Ou "Créer nouvelle liste"
+- [ ] AJAX : ajout rapide sans recharger
+
+---
+
+## 🛠️ **Phase 6 : Outils & Features Additionnelles**
+
+### 9.1 Type Effectiveness Chart
+- [ ] Route `/pvp/types`
+- [ ] Tableau interactif (Ref: `_archive_v2/templates/pvp/types.html.twig`)
+- [ ] Design : matrice types attaquants vs défenseurs
+- [ ] Couleurs :
+  - Vert : Super efficace (x2)
+  - Rouge : Peu efficace (x0.5)
+  - Noir : Inefficace (x0)
+  - Blanc : Normal (x1)
+- [ ] Clic sur type → highlight row/column
+- [ ] Responsive mobile (scroll horizontal)
+
+### 9.2 Page Détails PvP Avancée
+- [ ] Route `/pvp/pokemon/details`
+- [ ] Table détaillée avec tous les Pokémon PvP
+- [ ] Colonnes :
+  - Pokémon + Image
+  - Ligue
+  - Rank
+  - IVs (A/D/S)
+  - Moves
+  - Actions
+- [ ] Sortable par colonne (Stimulus)
+- [ ] Export CSV (bonus)
+
+### 9.3 Dashboard Global
+- [ ] Route `/dashboard` (homepage après login)
+- [ ] **Widgets** :
+  - 📚 Pokédex : X% completion
+  - ⚔️ PvP Collection : X Pokémon
+  - 📝 Listes Perso : X listes créées
+  - 🏆 Par ligue : Great (X), Ultra (Y), Little (Z)
+- [ ] **Quick stats** :
+  - Dernier Pokémon ajouté (Pokédex)
+  - Top 5 PvP par rank
+  - Dernière liste modifiée
+- [ ] **Quick links** :
+  - Ajouter Pokémon PvP
+  - Voir Pokédex complet
+  - Créer nouvelle liste
+  - Type Chart
+
+### 9.4 Profile & Settings (bonus)
+- [ ] Route `/profile`
+- [ ] Afficher stats user :
+  - Membre depuis X
+  - Total Pokémon Pokédex
+  - Total Pokémon PvP
+- [ ] Settings :
+  - Changer email/password
+  - Dark mode toggle (save preference)
+- [ ] Export data (JSON backup complet)
+
+---
+
+## 🎨 **Phase 7 : Design & UX Polish**
+
+### 9.1 Layout Global
+- [ ] **Header** :
+  - Logo Go Swap (lien vers dashboard)
+  - Menu : Pokédex | PvP | Tools
+  - User dropdown : Profile | Logout
+  - Dark mode toggle
+- [ ] **Breadcrumbs** sur toutes les pages
+- [ ] **Footer** :
+  - GitHub link
+  - Version v3.x
+  - Copyright
+
+### 9.2 Design System
+- [ ] **Couleurs cohérentes** :
+  - Primary : blue-600
+  - Success : green-500
+  - Warning : yellow-500
+  - Danger : red-600
+- [ ] **Dark mode** :
+  - Toggle dans header
+  - Persister choix (localStorage + cookie)
+  - Toutes les pages compatibles
+- [ ] **Responsive** :
+  - Mobile-first
+  - Tester sur iPhone/Android
+  - Burger menu si besoin
+
+### 9.3 Animations & Transitions
+- [ ] Turbo page transitions (fade)
+- [ ] Modal open/close animations
+- [ ] Card hover effects (scale + shadow)
+- [ ] Loading states :
+  - Spinner pendant AJAX
+  - Skeleton loaders pour listes
+- [ ] Toast notifications (succès/erreur)
+  - Stimulus controller `toast_controller.js`
+
+### 9.4 Accessibilité
+- [ ] Contraste couleurs WCAG AA
+- [ ] Alt text sur toutes images
+- [ ] Labels sur tous inputs
+- [ ] Keyboard navigation (Tab, Escape, Enter)
+- [ ] ARIA labels sur modals
+
+### 7.5 Performance
+- [ ] Lazy loading images Pokémon
+- [ ] Pagination si > 100 résultats
+- [ ] Cache HTTP pour images statiques
+- [ ] Minify CSS/JS en prod
+
+---
+
+## 🚀 **Phase 8 : Déploiement & CI/CD**
+
+### 9.1 Tests & Quality
+- [ ] PHPStan niveau max OK
+- [ ] PHP CS Fixer OK
+- [ ] Tests fonctionnels (optionnel) :
+  - Login/Register
+  - Ajout Pokémon PvP
+  - Toggle Pokédex variants
+
+### 9.2 GitHub Actions CI/CD
+- [ ] Créer workflow `.github/workflows/v3.yml`
+- [ ] **Triggers** : push sur branche `v3`
+- [ ] **Steps CI** :
+  - Checkout code
+  - Setup PHP 8.4
+  - Composer install
+  - PHPStan analyze (niveau max)
+  - PHP CS Fixer check (compatible PHP 8.4)
+- [ ] **Steps CD** (si CI OK) :
+  - SSH deploy sur serveur
+  - Script deploy :
+    ```bash
+    git pull origin v3
+    composer install --no-dev --optimize-autoloader
+    php bin/console doctrine:migrations:migrate --no-interaction
+    php bin/console cache:clear --env=prod
+    php bin/console tailwind:build --minify
+    php bin/console importmap:install
+    ```
+  - Cloudflare cache purge
+
+### 9.3 Production Setup
+- [ ] Serveur config :
+  - **PHP 8.4** + Extensions (gd, pdo_mysql, opcache, etc.)
+  - MySQL 8.0+
+  - Nginx/Apache + HTTPS (Let's Encrypt)
+- [ ] Environment variables (.env.prod)
+  - `APP_ENV=prod`
+  - `APP_SECRET=...`
+  - `DATABASE_URL=...`
+- [ ] Cron jobs (si besoin) :
+  - Update Pokémon data (hebdomadaire)
+- [ ] Monitoring :
+  - Logs Symfony
+  - Alertes erreurs
+- [ ] **OPcache** activé (performance PHP 8.4)
+
+### 9.4 Migration v2 → v3 (si data existante)
+- [ ] Script SQL pour migrer :
+  - Users (garder)
+  - UserPvPPokemon (adapter colonnes)
+  - Pokédex v2 → UserPokemon v3 (si existait)
+- [ ] Backup DB avant migration
+- [ ] Tester migration en local
+- [ ] Rollback plan si problème
+
+---
+
+## 💎 **Phase 9 : Nice to Have (Future)**
+
+### 9.1 PWA (Progressive Web App)
+- [ ] Manifest.json
+- [ ] Service Worker (cache offline)
+- [ ] Icônes app (512x512, 192x192)
+- [ ] Installable sur mobile (Add to Home Screen)
+
+### 9.2 API REST
+- [ ] Endpoints JSON pour app mobile future
+- [ ] Auth JWT
+- [ ] API Platform ou controllers custom
+- [ ] Rate limiting
+
+### 9.3 Features Communauté
+- [ ] System de "friends" (ajouter amis)
+- [ ] Comparer collections (qui a quoi)
+- [ ] Trading suggestions (basé sur manquants)
+- [ ] Leaderboard : top collectors
+
+### 9.4 Features Avancées
+- [ ] Intégration PvPoke API (ranks automatiques)
+- [ ] Notifications :
+  - Nouveau meta PvP (email)
+  - Nouveau Pokémon released
+- [ ] Import/Export :
+  - CSV import bulk
+  - JSON export backup
+- [ ] Team Builder PvP (composer équipe de 3)
+- [ ] Type coverage analyzer
+
+### 9.5 Analytics
+- [ ] Track usage (pages vues, features utilisées)
+- [ ] Stats admin : users actifs, Pokémon les plus trackés
+- [ ] Insights : Pokémon les plus populaires en PvP
+
+---
+
+## 🔥 **Quick Wins (Priorité Immédiate)**
+
+### Sprint 1 (Setup)
+1. [ ] Créer branche v3
+2. [ ] Setup Turbo/Stimulus
+3. [ ] Auth (login/register)
+4. [ ] Layout de base (header/footer)
+
+### Sprint 2 (Data)
+5. [ ] Copier Commands v2 → v3
+6. [ ] Entities : Pokemon, Move, Type, User
+7. [ ] Run import data
+8. [ ] Vérifier images OK
+
+### Sprint 3 (Pokédex)
+9. [ ] Entity UserPokemon (8 variants)
+10. [ ] Page listing grille cartes
+11. [ ] Modal + toggle variants (AJAX)
+12. [ ] Filtres basiques (gen, type, search)
+
+### Sprint 4 (PvP)
+13. [ ] Entity UserPvPPokemon
+14. [ ] Page grille cartes PvP
+15. [ ] Form ajout (avec moves AJAX)
+16. [ ] Modal détails + edit/delete
+
+### Sprint 5 (Listes Perso)
+17. [ ] Entities CustomList + CustomListPokemon
+18. [ ] Page mes listes (grille)
+19. [ ] Créer/éditer/supprimer liste
+20. [ ] Ajouter/retirer Pokémon
+
+### Sprint 6 (Polish)
+21. [ ] Dashboard avec stats
+22. [ ] Type effectiveness chart
+23. [ ] Dark mode
+24. [ ] Deploy v3 en prod 🚀
+
+---
+
+## 📁 **Structure Projet V3 (Finale)**
+
+```
+go-swap/
+├── .github/
+│   └── workflows/
+│       └── v3.yml                  # CI/CD
+├── assets/
+│   ├── controllers/                # Stimulus controllers
+│   │   ├── pokemon-form_controller.js
+│   │   ├── filter_controller.js
+│   │   ├── modal_controller.js
+│   │   └── toast_controller.js
+│   ├── styles/
+│   │   └── app.css                 # TailwindCSS
+│   └── app.js
+├── config/
+│   ├── packages/
+│   ├── routes.yaml
+│   └── services.yaml
+├── migrations/                      # Doctrine migrations
+├── public/
+│   ├── images/
+│   │   ├── pokemon/
+│   │   ├── league/
+│   │   ├── type/
+│   │   └── icons/
+│   └── index.php
+├── src/
+│   ├── Command/
+│   │   ├── UpdateTypesCommand.php
+│   │   ├── UpdatePokemonCommand.php
+│   │   ├── UpdateMovesCommand.php
+│   │   └── UpdatePicturesCommand.php
+│   ├── Controller/
+│   │   ├── DashboardController.php
+│   │   ├── PokedexController.php
+│   │   ├── PvPController.php
+│   │   ├── SecurityController.php
+│   │   └── API/
+│   │       └── PokemonController.php
+│   ├── Entity/
+│   │   ├── User.php
+│   │   ├── Pokemon.php
+│   │   ├── Move.php
+│   │   ├── Type.php
+│   │   ├── TypeEffectiveness.php
+│   │   ├── PokemonMove.php
+│   │   ├── UserPokemon.php          # Pokédex variants
+│   │   └── UserPvPPokemon.php       # Collection PvP
+│   ├── Repository/
+│   ├── Service/                     # Helpers
+│   │   └── PokemonDataService.php
+│   └── Kernel.php
+├── templates/
+│   ├── base.html.twig               # Layout principal
+│   ├── dashboard/
+│   │   └── index.html.twig
+│   ├── pokedex/
+│   │   ├── index.html.twig          # Grille + filtres
+│   │   ├── _card.html.twig          # Partial carte
+│   │   ├── _modal.html.twig         # Partial modal
+│   │   └── stats.html.twig          # Dashboard stats
+│   ├── pvp/
+│   │   ├── pokemon.html.twig        # Grille collection
+│   │   ├── types.html.twig          # Effectiveness chart
+│   │   └── details.html.twig        # Table détaillée
+│   ├── security/
+│   │   ├── login.html.twig
+│   │   └── register.html.twig
+│   └── partials/
+│       ├── header.html.twig
+│       ├── footer.html.twig
+│       └── breadcrumb.html.twig
+├── _archive_v2/                     # Ref code v2
+├── .env
+├── .gitignore
+├── composer.json
+├── phpstan.neon
+├── tailwind.config.js
+└── TODO_V3.md                       # Ce fichier
+```
+
+---
+
+## 📝 **Notes de Développement**
+
+### Référence V2
+Le dossier `_archive_v2/` contient :
+- Controllers : logique métier à extraire
+- Templates : composants à adapter
+- JS : filtres, selects dynamiques
+
+### Conventions Code
+- **Controllers** : 1 action = 1 méthode claire
+- **Entities** : annotations Doctrine standard
+- **Templates** : composants réutilisables (_partials)
+- **Stimulus** : 1 controller = 1 fonctionnalité isolée
+- **CSS** : classes TailwindCSS, pas de CSS custom sauf exception
+
+### Commandes Utiles
+```bash
+# Entities
+php bin/console make:entity Pokemon
+php bin/console make:migration
+php bin/console doctrine:migrations:migrate
+
+# Controllers
+php bin/console make:controller PokedexController
+
+# Stimulus
+php bin/console make:stimulus-controller filter
+
+# Assets
+php bin/console tailwind:build --watch
+php bin/console importmap:install
+
+# Import data
+php bin/console app:update-types
+php bin/console app:update-pokemon
+php bin/console app:update-moves
+php bin/console app:update-pictures
+
+# Quality
+vendor/bin/phpstan analyze src --level=max
+vendor/bin/php-cs-fixer fix
+
+# Deploy
+git push origin v3  # Trigger CI/CD
+```
+
+---
+
+## 🎯 **Definition of Done**
+
+Une feature est complète quand :
+- [ ] Code écrit et testé manuellement
+- [ ] PHPStan niveau max : aucune erreur
+- [ ] PHP CS Fixer : code formaté
+- [ ] Responsive : testé mobile + desktop
+- [ ] Dark mode : fonctionne dans les 2 thèmes
+- [ ] Turbo : pas de rechargement full page
+- [ ] Commit : message clair (feat/fix/refactor)
+- [ ] Push : code sur branche v3
+
+---
+
+## 🚦 **Statut Global**
+
+| Phase | Status | Priorité |
+|-------|--------|----------|
+| Phase 1 - Setup | 🔄 TODO | P0 (maintenant) |
+| Phase 2 - Data | 🔄 TODO | P0 (maintenant) |
+| Phase 3 - Pokédex | 🔄 TODO | P1 (ensuite) |
+| Phase 4 - PvP | 🔄 TODO | P1 (ensuite) |
+| Phase 5 - Listes Perso | 🔄 TODO | P1 (ensuite) |
+| Phase 6 - Tools | 📅 LATER | P2 |
+| Phase 7 - Polish | 📅 LATER | P2 |
+| Phase 8 - Deploy | 📅 LATER | P3 |
+| Phase 9 - Future | 💡 IDEAS | P4 |
+
+---
+
+**Dernière mise à jour** : 2025-12-19  
+**Auteur** : @pgrimaud  
+**Version** : V3 Roadmap Complete - Symfony 8.0 + PHP 8.4  
+**Rien n'est fait - Tout est à construire** ✨

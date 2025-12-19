@@ -36,7 +36,7 @@ final class PvPController extends AbstractController
 
         $pokemon = $pokemonRepository->findAll();
 
-        return $this->render('pvp/pokemon.html.twig', [
+        return $this->render('pvp/pokemon_cards.html.twig', [
             'allPokemon' => $pokemon,
             'userPokemon' => $userPokemon,
             'leagues' => [
