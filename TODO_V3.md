@@ -50,12 +50,12 @@ Créer des listes custom pour organiser mes Pokémon :
   composer require symfony/ux-turbo symfony/stimulus-bundle
   php bin/console importmap:require @hotwired/turbo @hotwired/stimulus
   ```
-- [ ] Setup TailwindCSS
+- [x] Setup TailwindCSS
   ```bash
   composer require symfonycasts/tailwind-bundle
   php bin/console tailwind:init
   ```
-- [ ] Créer DB + .env config
+- [x] Créer DB + .env config
   ```bash
   php bin/console doctrine:database:create
   ```
