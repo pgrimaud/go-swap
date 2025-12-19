@@ -61,17 +61,17 @@ Créer des listes custom pour organiser mes Pokémon :
   ```
 
 ### 1.2 Authentification
-- [ ] Entité `User` (id, email, password, roles, created_at)
+- [x] Entité `User` (id, email, password, roles, created_at)
   ```bash
   php bin/console make:user
   ```
-- [ ] Login/Register forms
+- [x] Login/Register forms
   ```bash
   php bin/console make:auth
   php bin/console make:registration-form
   ```
-- [ ] SecurityController + templates
-- [ ] Tester auth flow
+- [x] SecurityController + templates
+- [x] Tester auth flow
 
 ---
 
