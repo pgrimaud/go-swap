@@ -25,11 +25,11 @@ final class PokemonController extends AbstractController
     public function moves(Pokemon $pokemon): Response
     {
         $fastMoves = $pokemon->getPokemonMoves()->filter(
-            fn (PokemonMove $move) => $move->getMove()?->getClass() === Move::FAST_MOVE
+            fn (PokemonMove $move) => Move::FAST_MOVE === $move->getMove()?->getClass()
         );
 
         $chargedMoves = $pokemon->getPokemonMoves()->filter(
-            fn (PokemonMove $move) => $move->getMove()?->getClass() === Move::CHARGED_MOVE
+            fn (PokemonMove $move) => Move::CHARGED_MOVE === $move->getMove()?->getClass()
         );
 
         // Sort fastMoves by name

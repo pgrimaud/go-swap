@@ -29,7 +29,7 @@ class UserPvPPokemonRepository extends ServiceEntityRepository
             ->orderBy('pokemon.number', 'ASC')
             ->addOrderBy('p.leagueRank', 'ASC');
 
-        if ($minRank !== null && $maxRank !== null) {
+        if (null !== $minRank && null !== $maxRank) {
             $queryBuilder->andWhere('p.leagueRank >= :minRank')->setParameter('minRank', $minRank);
             $queryBuilder->andWhere('p.leagueRank <= :maxRank')->setParameter('maxRank', $maxRank);
         }

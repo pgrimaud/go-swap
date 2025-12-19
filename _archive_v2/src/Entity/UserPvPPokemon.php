@@ -3,9 +3,9 @@
 namespace App\Entity;
 
 use App\Enum\League;
+use App\Enum\Type;
 use App\Repository\UserPvPPokemonRepository;
 use Doctrine\ORM\Mapping as ORM;
-use App\Enum\Type;
 
 #[ORM\Entity(repositoryClass: UserPvPPokemonRepository::class)]
 #[ORM\Table(name: 'user_pvp_pokemon')]

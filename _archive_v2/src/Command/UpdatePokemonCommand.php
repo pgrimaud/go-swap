@@ -49,7 +49,7 @@ class UpdatePokemonCommand extends AbstractSuggestCommand
 
         foreach ($this->gameMasterService->getPokemons() as $pokemon) {
             // avoid unreleased pokémon
-            if ($pokemon['released'] === false && !in_array($pokemon['speciesId'], [
+            if (false === $pokemon['released'] && !in_array($pokemon['speciesId'], [
                 'spewpa', 'ditto', 'shedinja', 'mudbray', 'mudsdale', 'cosmog', 'cosmoem',
             ])) {
                 continue;
@@ -84,7 +84,7 @@ class UpdatePokemonCommand extends AbstractSuggestCommand
 
                 // manage types
                 foreach ($pokemon['types'] as $type) {
-                    if ($type === 'none') {
+                    if ('none' === $type) {
                         continue;
                     }
                     $pokemonEntity->addType($this->getType($io, $type, $pokemon['speciesName']));

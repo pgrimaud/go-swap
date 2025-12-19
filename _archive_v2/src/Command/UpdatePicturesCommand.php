@@ -80,7 +80,7 @@ class UpdatePicturesCommand extends Command
             $fullPath = __DIR__ . '/../../public/' . $picturePath;
             $imageData = file_get_contents($fullPath);
             $srcImage = @imagecreatefromstring((string) $imageData);
-            if ($srcImage !== false) {
+            if (false !== $srcImage) {
                 $srcWidth = imagesx($srcImage);
                 $srcHeight = imagesy($srcImage);
                 $dstSize = 150;
@@ -118,15 +118,15 @@ class UpdatePicturesCommand extends Command
             throw new \Exception('Pokémon slug is empty for ' . $pokemon->getName());
         }
 
-        if ($pokemon->getNumber() === 201) {
+        if (201 === $pokemon->getNumber()) {
             return 'https://www.media.pokekalos.fr/img/pokemon/pokego/zarbi-lettre-f.png';
         }
 
-        if ($pokemon->getNumber() === 327) {
+        if (327 === $pokemon->getNumber()) {
             return 'https://www.media.pokekalos.fr/img/pokemon/pokego/spinda-1.png';
         }
 
-        if ($pokemon->getNumber() === 412) {
+        if (412 === $pokemon->getNumber()) {
             return match (true) {
                 str_contains($pokemon->getSlug(), '_plant') => 'https://www.media.pokekalos.fr/img/pokemon/pokego/cheniti-forme-plante.png',
                 str_contains($pokemon->getSlug(), '_trash') => 'https://www.media.pokekalos.fr/img/pokemon/pokego/cheniti-forme-dechet.png',
@@ -135,7 +135,7 @@ class UpdatePicturesCommand extends Command
             };
         }
 
-        if ($pokemon->getNumber() === 413) {
+        if (413 === $pokemon->getNumber()) {
             return match (true) {
                 str_contains($pokemon->getSlug(), '_plant') => 'https://www.media.pokekalos.fr/img/pokemon/pokego/cheniselle-forme-plante.png',
                 str_contains($pokemon->getSlug(), '_trash') => 'https://www.media.pokekalos.fr/img/pokemon/pokego/cheniselle-forme-dechet.png',
@@ -144,75 +144,75 @@ class UpdatePicturesCommand extends Command
             };
         }
 
-        if ($pokemon->getNumber() === 550) {
+        if (550 === $pokemon->getNumber()) {
             return 'https://db.pokemongohub.net/images/ingame/normal/pm550.fBLUE_STRIPED.icon.png';
         }
 
-        if ($pokemon->getSlug() === 'darmanitan_standard') {
+        if ('darmanitan_standard' === $pokemon->getSlug()) {
             return 'https://www.media.pokekalos.fr/img/pokemon/pokego/darumacho.png';
         }
 
-        if ($pokemon->getSlug() === 'darmanitan_galarian_standard') {
+        if ('darmanitan_galarian_standard' === $pokemon->getSlug()) {
             return 'https://www.media.pokekalos.fr/img/pokemon/pokego/darumacho-g.png';
         }
 
-        if ($pokemon->getNumber() === 585) {
+        if (585 === $pokemon->getNumber()) {
             return 'https://db.pokemongohub.net/images/ingame/normal/pm585.fAUTUMN.icon.png';
         }
 
-        if ($pokemon->getNumber() === 586) {
+        if (586 === $pokemon->getNumber()) {
             return 'https://db.pokemongohub.net/images/ingame/normal/pm586.fAUTUMN.icon.png';
         }
 
-        if ($pokemon->getSlug() === 'kyurem') {
+        if ('kyurem' === $pokemon->getSlug()) {
             return 'https://www.media.pokekalos.fr/img/pokemon/pokego/kyurem.png';
         }
 
-        if ($pokemon->getNumber() === 666) {
+        if (666 === $pokemon->getNumber()) {
             return 'https://www.media.pokekalos.fr/img/pokemon/pokego/prismillon.png';
         }
 
-        if ($pokemon->getNumber() === 669) {
+        if (669 === $pokemon->getNumber()) {
             return 'https://www.media.pokekalos.fr/img/pokemon/pokego/flabebe-fleur-rouge.png';
         }
 
-        if ($pokemon->getNumber() === 670) {
+        if (670 === $pokemon->getNumber()) {
             return 'https://www.media.pokekalos.fr/img/pokemon/pokego/floette-fleur-rouge.png';
         }
 
-        if ($pokemon->getNumber() === 671) {
+        if (671 === $pokemon->getNumber()) {
             return 'https://www.media.pokekalos.fr/img/pokemon/pokego/florges-fleur-rouge.png';
         }
 
-        if ($pokemon->getNumber() === 676) {
+        if (676 === $pokemon->getNumber()) {
             return 'https://www.media.pokekalos.fr/img/pokemon/pokego/couafarel-forme-sauvage.png';
         }
 
-        if ($pokemon->getNumber() === 710) {
+        if (710 === $pokemon->getNumber()) {
             return match (true) {
-                $pokemon->getSlug() === 'pumpkaboo_small' => 'https://www.media.pokekalos.fr/img/pokemon/pokego/pitrouille-taille-mini.png',
-                $pokemon->getSlug() === 'pumpkaboo_average' => 'https://www.media.pokekalos.fr/img/pokemon/pokego/pitrouille-taille-normale.png',
-                $pokemon->getSlug() === 'pumpkaboo_large' => 'https://www.media.pokekalos.fr/img/pokemon/pokego/pitrouille-taille-maxi.png',
-                $pokemon->getSlug() === 'pumpkaboo_super' => 'https://www.media.pokekalos.fr/img/pokemon/pokego/pitrouille-taille-ultra.png',
+                'pumpkaboo_small' === $pokemon->getSlug() => 'https://www.media.pokekalos.fr/img/pokemon/pokego/pitrouille-taille-mini.png',
+                'pumpkaboo_average' === $pokemon->getSlug() => 'https://www.media.pokekalos.fr/img/pokemon/pokego/pitrouille-taille-normale.png',
+                'pumpkaboo_large' === $pokemon->getSlug() => 'https://www.media.pokekalos.fr/img/pokemon/pokego/pitrouille-taille-maxi.png',
+                'pumpkaboo_super' === $pokemon->getSlug() => 'https://www.media.pokekalos.fr/img/pokemon/pokego/pitrouille-taille-ultra.png',
                 default => throw new \Exception('Error'),
             };
         }
 
-        if ($pokemon->getNumber() === 711) {
+        if (711 === $pokemon->getNumber()) {
             return match (true) {
-                $pokemon->getSlug() === 'gourgeist_small' => 'https://www.media.pokekalos.fr/img/pokemon/pokego/banshitrouye-taille-mini.png',
-                $pokemon->getSlug() === 'gourgeist_average' => 'https://www.media.pokekalos.fr/img/pokemon/pokego/banshitrouye-taille-normale.png',
-                $pokemon->getSlug() === 'gourgeist_large' => 'https://www.media.pokekalos.fr/img/pokemon/pokego/banshitrouye-taille-maxi.png',
-                $pokemon->getSlug() === 'gourgeist_super' => 'https://www.media.pokekalos.fr/img/pokemon/pokego/banshitrouye-taille-ultra.png',
+                'gourgeist_small' === $pokemon->getSlug() => 'https://www.media.pokekalos.fr/img/pokemon/pokego/banshitrouye-taille-mini.png',
+                'gourgeist_average' === $pokemon->getSlug() => 'https://www.media.pokekalos.fr/img/pokemon/pokego/banshitrouye-taille-normale.png',
+                'gourgeist_large' === $pokemon->getSlug() => 'https://www.media.pokekalos.fr/img/pokemon/pokego/banshitrouye-taille-maxi.png',
+                'gourgeist_super' === $pokemon->getSlug() => 'https://www.media.pokekalos.fr/img/pokemon/pokego/banshitrouye-taille-ultra.png',
                 default => throw new \Exception('Error'),
             };
         }
 
-        if ($pokemon->getNumber() === 745) {
+        if (745 === $pokemon->getNumber()) {
             return match (true) {
-                $pokemon->getSlug() === 'lycanroc_midday' => 'https://www.media.pokekalos.fr/img/pokemon/pokego/lougaroc-forme-diurne.png',
-                $pokemon->getSlug() === 'lycanroc_dusk' => 'https://www.media.pokekalos.fr/img/pokemon/pokego/lougaroc-forme-crepusculaire.png',
-                $pokemon->getSlug() === 'lycanroc_midnight' => 'https://www.media.pokekalos.fr/img/pokemon/pokego/lougaroc-forme-nocturne.png',
+                'lycanroc_midday' === $pokemon->getSlug() => 'https://www.media.pokekalos.fr/img/pokemon/pokego/lougaroc-forme-diurne.png',
+                'lycanroc_dusk' === $pokemon->getSlug() => 'https://www.media.pokekalos.fr/img/pokemon/pokego/lougaroc-forme-crepusculaire.png',
+                'lycanroc_midnight' === $pokemon->getSlug() => 'https://www.media.pokekalos.fr/img/pokemon/pokego/lougaroc-forme-nocturne.png',
                 default => throw new \Exception('Error'),
             };
         }
@@ -248,14 +248,14 @@ class UpdatePicturesCommand extends Command
             str_contains($pokemon->getSlug(), '_black') => $pokemon->getNumber() . '.fBLACK',
             str_contains($pokemon->getSlug(), '_white') => $pokemon->getNumber() . '.fWHITE',
             str_contains($pokemon->getSlug(), '_ordinary') => $pokemon->getNumber() . '.fORDINARY',
-            $pokemon->getSlug() === 'genesect' => $pokemon->getNumber() . '.fNORMAL',
+            'genesect' === $pokemon->getSlug() => $pokemon->getNumber() . '.fNORMAL',
             str_contains($pokemon->getSlug(), '_burn') => $pokemon->getNumber() . '.fBURN',
             str_contains($pokemon->getSlug(), '_chill') => $pokemon->getNumber() . '.fCHILL',
             str_contains($pokemon->getSlug(), '_douse') => $pokemon->getNumber() . '.fDOUSE',
             str_contains($pokemon->getSlug(), '_shock') => $pokemon->getNumber() . '.fSHOCK',
             str_contains($pokemon->getSlug(), 'meowstic_female') => $pokemon->getNumber() . '.fFEMALE',
             str_contains($pokemon->getSlug(), 'zygarde_10') => $pokemon->getNumber() . '.fTEN_PERCENT',
-            $pokemon->getSlug() === 'zygarde' => $pokemon->getNumber() . '.fFIFTY_PERCENT',
+            'zygarde' === $pokemon->getSlug() => $pokemon->getNumber() . '.fFIFTY_PERCENT',
             str_contains($pokemon->getSlug(), 'zygarde_complete') => $pokemon->getNumber() . '.fCOMPLETE',
             str_contains($pokemon->getSlug(), '_unbound') => $pokemon->getNumber() . '.fUNBOUND',
             str_contains($pokemon->getSlug(), 'oricorio_baile') => $pokemon->getNumber() . '.fBAILE',
@@ -264,13 +264,13 @@ class UpdatePicturesCommand extends Command
             str_contains($pokemon->getSlug(), 'oricorio_sensu') => $pokemon->getNumber() . '.fSENSU',
             str_contains($pokemon->getSlug(), '_dawn_wings') => $pokemon->getNumber() . '.fDAWN_WINGS',
             str_contains($pokemon->getSlug(), '_dusk_mane') => $pokemon->getNumber() . '.fDUSK_MANE',
-            $pokemon->getSlug() === 'toxtricity' => $pokemon->getNumber() . '.fAMPED',
+            'toxtricity' === $pokemon->getSlug() => $pokemon->getNumber() . '.fAMPED',
             str_contains($pokemon->getSlug(), '_crowned_sword') => $pokemon->getNumber() . '.fCROWNED_SWORD',
             str_contains($pokemon->getSlug(), '_crowned_shield') => $pokemon->getNumber() . '.fCROWNED_SHIELD',
             str_contains($pokemon->getSlug(), '_rapid_strike') => $pokemon->getNumber() . '.fRAPID_STRIKE',
             str_contains($pokemon->getSlug(), '_single_strike') => $pokemon->getNumber() . '.fSINGLE_STRIKE',
             str_contains($pokemon->getSlug(), 'oinkologne_female') => $pokemon->getNumber() . '.fFEMALE',
-            $pokemon->getSlug() === 'maushold' => $pokemon->getNumber() . '.fFAMILY_OF_FOUR',
+            'maushold' === $pokemon->getSlug() => $pokemon->getNumber() . '.fFAMILY_OF_FOUR',
             default => (string) $pokemon->getNumber(),
         };
 

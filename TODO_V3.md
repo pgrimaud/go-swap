@@ -38,14 +38,14 @@ Créer des listes custom pour organiser mes Pokémon :
 ## 🏗️ **Phase 1 : Setup & Infrastructure**
 
 ### 1.1 Projet de base
-- [ ] Créer branche `v3` depuis `main` (fresh start)
-- [ ] **Installer Symfony 8.0** (nouveau projet)
+- [x] Créer branche `v3` depuis `main` (fresh start)
+- [x] **Installer Symfony 8.0** (nouveau projet)
   ```bash
   composer create-project symfony/skeleton:"8.0.*" .
   composer require webapp
   ```
-- [ ] Setup PHP 8.4 (déjà installé ✓)
-- [ ] Installer **Symfony UX Bundle** (Turbo + Stimulus)
+- [x] Setup PHP 8.4 (déjà installé ✓)
+- [x] Installer **Symfony UX Bundle** (Turbo + Stimulus)
   ```bash
   composer require symfony/ux-turbo symfony/stimulus-bundle
   php bin/console importmap:require @hotwired/turbo @hotwired/stimulus
