@@ -80,28 +80,32 @@ Créer des listes custom pour organiser mes Pokémon :
 ### 2.1 Commands d'import
 **Ref : `_archive_v2/src/Command/`** - À récupérer et adapter pour Symfony 8.0
 
-- [ ] `UpdateTypesCommand` - Import types Pokémon depuis Gamemaster
-- [ ] `UpdatePokemonCommand` - Import tous les Pokémon depuis Gamemaster
-- [ ] `UpdateMovesCommand` - Import attaques PvP (fast + charged)
+- [x] `UpdateTypesCommand` - Import types Pokémon depuis Gamemaster
+- [x] `UpdatePokemonCommand` - Import tous les Pokémon depuis Gamemaster
+- [x] `UpdateMovesCommand` - Import attaques PvP (fast + charged)
 - [ ] `UpdatePicturesCommand` - Download images Pokémon
 
-**Note** : Les Commands v2 utilisent Symfony 7.x, vérifier compatibilité annotations/attributes PHP 8.4
+**Note** : ✅ Commands migrées avec PHP 8.4 attributes
 
 ### 2.2 Entities de base
-- [ ] **`Type`** (id, name, icon)
-  ```bash
-  php bin/console make:entity Type
-  ```
-- [ ] **`TypeEffectiveness`** (attacking_type_id, defending_type_id, multiplier)
-- [ ] **`Pokemon`** 
-  - id, number, name, picture
-  - types (ManyToMany avec Type)
-  - generation (1-9)
-- [ ] **`Move`** 
-  - id, name, type_id
-  - move_type (fast/charged)
-  - power, energy, duration
-- [ ] **`PokemonMove`** (relation Pokemon ↔ Move - quels moves un Pokémon peut apprendre)
+- [x] **`Type`** (id, name, slug, icon, timestamps)
+  - ✅ Migration `Version20251220165952`
+- [x] **`TypeEffectiveness`** (source_type_id, target_type_id, multiplier)
+  - ✅ Migration `Version20251220165952`
+- [x] **`Pokemon`** 
+  - ✅ id, number, name, picture, shiny_picture
+  - ✅ types (ManyToMany avec Type)
+  - ✅ generation, attack, defense, stamina
+  - ✅ hash, shadow, slug, timestamps
+  - ✅ Migration `Version20251220171029`
+- [x] **`Move`** 
+  - ✅ id, name, slug, type_id
+  - ✅ move_type (fast/charged), power, energy, duration
+  - ✅ buff_target, buff_activation_chance
+  - ✅ Migration `Version20251220170531`
+- [x] **`PokemonMove`** (relation Pokemon ↔ Move - quels moves un Pokémon peut apprendre)
+  - ✅ pokemon_id, move_id, elite
+  - ✅ Migration `Version20251220171029`
 - [ ] **`CustomList`** (nouvelles listes perso)
   - id, user_id, name, description (nullable)
   - is_public (bool), slug (pour partage)
@@ -110,14 +114,20 @@ Créer des listes custom pour organiser mes Pokémon :
   - list_id, pokemon_id
   - added_at
 
-**Note** : Utiliser les **PHP 8.4 attributes** au lieu d'annotations Doctrine
+**Note** : ✅ Entities utilisent PHP 8.4 attributes + TimestampTrait
 
-### 2.3 Import initial des données
+### 2.3 Helpers & Services
+- [x] `TimestampTrait` - Gestion automatique created_at/updated_at
+- [x] `GameMasterService` - Service de récupération des données Gamemaster
+- [x] `HashHelper` - Génération de hash pour Pokémon
+- [x] `GenerationHelper` - Détection génération par numéro
+
+### 2.4 Import initial des données
 ```bash
-php bin/console app:update-types
-php bin/console app:update-pokemon
-php bin/console app:update-moves
-php bin/console app:update-pictures
+php bin/console app:update:types
+php bin/console app:update:pokemon
+php bin/console app:update:moves
+php bin/console app:update:pictures  # TODO
 ```
 
 ---
@@ -645,14 +655,14 @@ Au clic sur carte :
 ## 🔥 **Quick Wins (Priorité Immédiate)**
 
 ### Sprint 1 (Setup)
-1. [ ] Créer branche v3
-2. [ ] Setup Turbo/Stimulus
-3. [ ] Auth (login/register)
-4. [ ] Layout de base (header/footer)
+1. [x] Créer branche v3
+2. [x] Setup Turbo/Stimulus
+3. [x] Auth (login/register)
+4. [x] Layout de base (header/footer)
 
 ### Sprint 2 (Data)
-5. [ ] Copier Commands v2 → v3
-6. [ ] Entities : Pokemon, Move, Type, User
+5. [x] Copier Commands v2 → v3
+6. [x] Entities : Pokemon, Move, Type, User
 7. [ ] Run import data
 8. [ ] Vérifier images OK
 
@@ -833,8 +843,8 @@ Une feature est complète quand :
 
 | Phase | Status | Priorité |
 |-------|--------|----------|
-| Phase 1 - Setup | 🔄 TODO | P0 (maintenant) |
-| Phase 2 - Data | 🔄 TODO | P0 (maintenant) |
+| Phase 1 - Setup | ✅ DONE | P0 |
+| Phase 2 - Data | 🔄 IN PROGRESS (90%) | P0 (maintenant) |
 | Phase 3 - Pokédex | 🔄 TODO | P1 (ensuite) |
 | Phase 4 - PvP | 🔄 TODO | P1 (ensuite) |
 | Phase 5 - Listes Perso | 🔄 TODO | P1 (ensuite) |
@@ -845,7 +855,7 @@ Une feature est complète quand :
 
 ---
 
-**Dernière mise à jour** : 2025-12-19  
+**Dernière mise à jour** : 2025-12-20  
 **Auteur** : @pgrimaud  
 **Version** : V3 Roadmap Complete - Symfony 8.0 + PHP 8.4  
-**Rien n'est fait - Tout est à construire** ✨
+**Phase 1 complète ✅ - Phase 2 en cours 🔄 (90%)**
