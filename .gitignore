@@ -27,3 +27,10 @@
 /phpunit.xml
 /.phpunit.cache/
 ###< phpunit/phpunit ###
+
+public/images/pokemon/
+!public/images/pokemon/normal/.gitkeep
+!public/images/pokemon/shiny/.gitkeep
+
+public/images/type/
+!public/images/type/.gitkeep
