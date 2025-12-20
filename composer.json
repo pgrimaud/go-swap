@@ -27,6 +27,7 @@
         "symfonycasts/tailwind-bundle": "^0.12.0"
     },
     "require-dev": {
+        "dama/doctrine-test-bundle": "^8.4",
         "doctrine/doctrine-fixtures-bundle": "^4.3",
         "friendsofphp/php-cs-fixer": "^3.92",
         "phpstan/phpstan": "^2.1",
@@ -87,7 +88,8 @@
         "phpstan": "vendor/bin/phpstan analyze src --level=max",
         "cs-check": "vendor/bin/php-cs-fixer check --diff",
         "cs-fix": "vendor/bin/php-cs-fixer fix",
-        "test": "php bin/phpunit"
+        "test": "php bin/phpunit",
+        "qa": "composer cs-check && composer phpstan && composer test"
     },
     "conflict": {
         "symfony/symfony": "*"

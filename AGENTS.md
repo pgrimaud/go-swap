@@ -2,7 +2,7 @@
 
 > **Documentation pour les AI Agents** travaillant sur le projet Go Swap V3  
 > Date de création : 2025-12-19  
-> Dernière mise à jour : 2025-12-19
+> Dernière mise à jour : 2025-12-20
 
 ---
 
@@ -12,6 +12,27 @@
 - **Pokédex complet** : Track tous les variants possibles (Normal, Shiny, Shadow, Purified, Lucky, XXL, XXS, Hundo)
 - **Collection PvP** : Pokémon optimisés pour les ligues Great/Ultra/Little Cup
 - **Listes personnalisées** : Créer des listes custom pour organiser sa collection
+
+---
+
+## 🌐 Langue de l'application
+
+**⚠️ IMPORTANT : L'application doit être ENTIÈREMENT en ANGLAIS**
+
+- **Interface** : Tous les textes, boutons, labels en anglais
+- **Base de données** : Colonnes et données en anglais
+- **Code** : Variables, méthodes, commentaires en anglais
+- **Exception** : Noms des Pokémon stockés en **FR et EN** (colonnes `name_fr` et `name_en`)
+
+### Exemples de traduction :
+- ❌ "Pokédex" → ✅ "Pokédex" (nom propre, reste tel quel)
+- ❌ "Mes Listes" → ✅ "My Lists"
+- ❌ "Se déconnecter" → ✅ "Logout"
+- ❌ "Collection PvP" → ✅ "PvP Collection"
+- ❌ "Chromatique" → ✅ "Shiny"
+- ❌ "Obscur" → ✅ "Shadow"
+- ❌ "Purifié" → ✅ "Purified"
+- ❌ "Chanceux" → ✅ "Lucky"
 
 ---
 

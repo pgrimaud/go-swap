@@ -12,7 +12,7 @@ class SecurityControllerTest extends WebTestCase
         $client->request('GET', '/login');
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', 'Please sign in');
+        $this->assertSelectorTextContains('h2', 'Welcome back');
     }
 
     public function testDashboardRequiresAuthentication(): void
@@ -56,7 +56,7 @@ class SecurityControllerTest extends WebTestCase
         $this->assertResponseRedirects('/login');
         $client->followRedirect();
 
-        $this->assertSelectorExists('.alert-danger');
+        $this->assertSelectorExists('.bg-red-50');
     }
 
     public function testLogout(): void
