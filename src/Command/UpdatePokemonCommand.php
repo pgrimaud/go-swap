@@ -47,9 +47,17 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
     {
         $io = new SymfonyStyle($input, $output);
 
-        $io->writeln('Updating pokémon data...');
+        $io->writeln('');
+        $io->writeln('<fg=cyan>═══════════════════════════════════════</>');
+        $io->writeln('<fg=cyan;options=bold>  🦕 Updating Pokémon</>');
+        $io->writeln('<fg=cyan>═══════════════════════════════════════</>');
+        $io->writeln('');
 
-        foreach ($this->gameMasterService->getPokemons() as $pokemon) {
+        $pokemons = $this->gameMasterService->getPokemons();
+        $progressBar = $io->createProgressBar(count($pokemons));
+        $progressBar->start();
+
+        foreach ($pokemons as $pokemon) {
             // avoid unreleased pokémon
             if (false === $pokemon['released'] && !in_array($pokemon['speciesId'], [
                 'spewpa', 'ditto', 'shedinja', 'mudbray', 'mudsdale', 'cosmog', 'cosmoem',
@@ -117,7 +125,12 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
                 $this->entityManager->persist($pokemonEntity);
                 $this->entityManager->flush();
             }
+
+            $progressBar->advance();
         }
+
+        $progressBar->finish();
+        $io->newLine(2);
 
         $io->success('Pokémon data updated successfully.');
 
@@ -134,7 +147,7 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
 
         if (!$type instanceof Type) {
             $io->error(sprintf(
-                'Type not found in %s : %s',
+                'Type not found in %s: %s',
                 $pokemonName,
                 $typeAsString
             ));
@@ -156,7 +169,7 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
 
         if (!$move instanceof Move) {
             $io->error(sprintf(
-                'Type not found in %s : %s',
+                'Move not found in %s: %s',
                 $pokemonName,
                 $moveAsString
             ));

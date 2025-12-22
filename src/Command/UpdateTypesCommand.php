@@ -35,6 +35,12 @@ final class UpdateTypesCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
+        $io->writeln('');
+        $io->writeln('<fg=cyan>═══════════════════════════════════════</>');
+        $io->writeln('<fg=cyan;options=bold>  🔄 Updating Types</>');
+        $io->writeln('<fg=cyan>═══════════════════════════════════════</>');
+        $io->writeln('');
+
         $this->updateTypes($io);
         $this->updateTypesEffectiveness($io);
 
@@ -43,9 +49,12 @@ final class UpdateTypesCommand extends Command
 
     private function updateTypes(SymfonyStyle $io): void
     {
-        $io->writeln('Updating types data...');
+        $io->writeln('<fg=yellow>→ Types data...</>');
 
         $moves = $this->gameMasterService->getMoves();
+        $io->newLine();
+        $progressBar = $io->createProgressBar(count($moves));
+        $progressBar->start();
 
         foreach ($moves as $move) {
             $type = $move['type'];
@@ -60,9 +69,14 @@ final class UpdateTypesCommand extends Command
                 $this->entityManager->persist($typeEntity);
                 $this->entityManager->flush();
             }
+
+            $progressBar->advance();
         }
 
-        $io->success('Pokémon types updated successfully!');
+        $progressBar->finish();
+        $io->newLine(2);
+
+        $io->success('Types updated successfully.');
     }
 
     private function resetTable(): void
@@ -75,7 +89,7 @@ final class UpdateTypesCommand extends Command
 
     private function updateTypesEffectiveness(SymfonyStyle $io): void
     {
-        $io->writeln('Updating types effectiveness data...');
+        $io->writeln('<fg=yellow>→ Types effectiveness data...</>');
 
         $this->resetTable();
 
@@ -83,6 +97,10 @@ final class UpdateTypesCommand extends Command
 
         /** @var array<string, array<string, float>> $types */
         $types = $response->toArray();
+
+        $io->newLine();
+        $progressBar = $io->createProgressBar(count($types));
+        $progressBar->start();
 
         foreach ($types as $source => $effectiveness) {
             $sourceType = $this->typeRepository->findOneBy(['name' => $source]);
@@ -97,10 +115,14 @@ final class UpdateTypesCommand extends Command
 
                 $this->entityManager->persist($typeEffectiveness);
             }
+
+            $progressBar->advance();
         }
 
         $this->entityManager->flush();
+        $progressBar->finish();
+        $io->newLine(2);
 
-        $io->success('Types effectiveness updated successfully!');
+        $io->success('Types effectiveness updated successfully.');
     }
 }

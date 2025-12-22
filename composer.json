@@ -91,7 +91,8 @@
         "cs-check": "vendor/bin/php-cs-fixer check --diff",
         "cs-fix": "vendor/bin/php-cs-fixer fix",
         "test": "php bin/phpunit",
-        "qa": "composer cs-check && composer phpstan && composer test"
+        "qa": "composer cs-check && composer phpstan && composer test",
+        "reset": "php bin/console doctrine:database:drop --force --if-exists && php bin/console doctrine:database:create && php bin/console doctrine:migrations:migrate --no-interaction && php bin/console doctrine:fixtures:load --no-interaction"
     },
     "conflict": {
         "symfony/symfony": "*"

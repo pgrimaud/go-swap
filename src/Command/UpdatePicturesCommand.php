@@ -9,7 +9,6 @@ use App\Service\PokemonImageService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -45,7 +44,11 @@ final class UpdatePicturesCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $io->title('Updating Pokémon Pictures');
+        $io->writeln('');
+        $io->writeln('<fg=cyan>═══════════════════════════════════════</>');
+        $io->writeln('<fg=cyan;options=bold>  📸 Updating Pictures</>');
+        $io->writeln('<fg=cyan>═══════════════════════════════════════</>');
+        $io->writeln('');
 
         $pokemon = $this->pokemonRepository->findAllWithoutPictures();
 
@@ -55,14 +58,15 @@ final class UpdatePicturesCommand extends Command
             return Command::SUCCESS;
         }
 
-        $io->note(sprintf('Found %d Pokémon without pictures', count($pokemon)));
+        $io->writeln(sprintf('Found %d Pokémon without pictures.', count($pokemon)));
 
         $strictMode = (bool) $input->getOption('strict');
         if ($strictMode) {
             $io->warning('Strict mode enabled: will stop on first error');
         }
 
-        $progressBar = new ProgressBar($output, count($pokemon));
+        $io->newLine();
+        $progressBar = $io->createProgressBar(count($pokemon));
         $progressBar->start();
 
         $processed = 0;
@@ -99,10 +103,10 @@ final class UpdatePicturesCommand extends Command
 
         $this->entityManager->flush();
         $progressBar->finish();
-
         $io->newLine(2);
+
         $io->success(sprintf(
-            'Pictures imported: %d successful, %d failed',
+            'Pictures updated successfully: %d successful, %d failed.',
             $processed,
             $failed
         ));

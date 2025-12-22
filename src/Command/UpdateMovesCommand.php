@@ -39,9 +39,15 @@ final class UpdateMovesCommand extends AbstractSuggestCommand
     {
         $io = new SymfonyStyle($input, $output);
 
-        $io->writeln('Updating moves data...');
+        $io->writeln('');
+        $io->writeln('<fg=cyan>═══════════════════════════════════════</>');
+        $io->writeln('<fg=cyan;options=bold>  ⚔️  Updating Moves</>');
+        $io->writeln('<fg=cyan>═══════════════════════════════════════</>');
+        $io->writeln('');
 
         $moves = $this->gameMasterService->getMoves();
+        $progressBar = $io->createProgressBar(count($moves));
+        $progressBar->start();
 
         foreach ($moves as $move) {
             $moveEntity = $this->moveRepository->findOneBy(['slug' => strtolower($move['moveId'])]);
@@ -66,9 +72,14 @@ final class UpdateMovesCommand extends AbstractSuggestCommand
                 $this->entityManager->persist($moveEntity);
                 $this->entityManager->flush();
             }
+
+            $progressBar->advance();
         }
 
-        $io->success('Pokémon moves updated successfully!');
+        $progressBar->finish();
+        $io->newLine(2);
+
+        $io->success('Moves updated successfully.');
 
         return Command::SUCCESS;
     }
@@ -82,7 +93,7 @@ final class UpdateMovesCommand extends AbstractSuggestCommand
         $type = $this->typeRepository->findOneBy(['slug' => $typeAsString]);
 
         if (!$type instanceof Type) {
-            $io->error('Type not found : ' . $typeAsString);
+            $io->error(sprintf('Type not found: %s', $typeAsString));
             $this->runParentCommand($io, 'app:update:types');
 
             return $this->getType($io, $typeAsString);
