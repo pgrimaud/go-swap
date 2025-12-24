@@ -13,6 +13,7 @@ use App\Service\GameMasterService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -56,7 +57,7 @@ final class UpdateMovesCommand extends AbstractSuggestCommand
                 $moveEntity = $moveEntity ?? new Move();
                 $moveEntity->setName($move['name']);
                 $moveEntity->setSlug(strtolower($move['moveId']));
-                $moveEntity->setType($this->getType($io, (string) $move['type']));
+                $moveEntity->setType($this->getType($io, (string) $move['type'], $progressBar));
                 $moveEntity->setPower($move['power']);
                 $moveEntity->setEnergy($move['energy']);
                 $moveEntity->setEnergyGain($move['energyGain']);
@@ -84,7 +85,7 @@ final class UpdateMovesCommand extends AbstractSuggestCommand
         return Command::SUCCESS;
     }
 
-    private function getType(SymfonyStyle $io, string $typeAsString): Type
+    private function getType(SymfonyStyle $io, string $typeAsString, ProgressBar $progressBar): Type
     {
         if (array_key_exists($typeAsString, $this->types)) {
             return $this->types[$typeAsString];
@@ -93,10 +94,12 @@ final class UpdateMovesCommand extends AbstractSuggestCommand
         $type = $this->typeRepository->findOneBy(['slug' => $typeAsString]);
 
         if (!$type instanceof Type) {
+            $progressBar->clear();
             $io->error(sprintf('Type not found: %s', $typeAsString));
+
             $this->runParentCommand($io, 'app:update:types');
 
-            return $this->getType($io, $typeAsString);
+            return $this->getType($io, $typeAsString, $progressBar);
         }
 
         return $type;

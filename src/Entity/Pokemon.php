@@ -68,6 +68,9 @@ class Pokemon
     #[ORM\Column(length: 255)]
     private ?string $generation = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $form = null;
+
     public function __construct()
     {
         $this->types = new ArrayCollection();
@@ -261,6 +264,18 @@ class Pokemon
     public function setGeneration(string $generation): static
     {
         $this->generation = $generation;
+
+        return $this;
+    }
+
+    public function getForm(): ?string
+    {
+        return $this->form;
+    }
+
+    public function setForm(?string $form): static
+    {
+        $this->form = $form;
 
         return $this;
     }

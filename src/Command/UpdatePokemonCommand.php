@@ -17,6 +17,7 @@ use App\Service\GameMasterService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -27,6 +28,170 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 final class UpdatePokemonCommand extends AbstractSuggestCommand
 {
+    private const array FORM_MAPPING = [
+        // Unown
+        'unown' => 'fUNOWN_A',
+
+        // Spinda
+        'spinda' => 'f01',
+
+        // Darmanitan (BEFORE generic galarian pattern!)
+        'darmanitan_galarian_standard' => 'fGALARIAN_STANDARD',
+        'darmanitan_standard' => 'fSTANDARD',
+
+        // Alolan forms
+        'alolan' => 'fALOLA',
+
+        // Galarian forms (generic - must be AFTER specific cases)
+        'galarian' => 'fGALARIAN',
+
+        // Hisuian forms
+        'hisuian' => 'fHISUIAN',
+
+        // Paldean forms
+        'tauros_aqua' => 'fPALDEA_AQUA',
+        'tauros_blaze' => 'fPALDEA_BLAZE',
+        'tauros_combat' => 'fPALDEA_COMBAT',
+        'paldean' => 'fPALDEA',
+
+        // Armored
+        'armored' => 'fA',
+
+        // Castform
+        'castform_rainy' => 'fRAINY',
+        'castform_snowy' => 'fSNOWY',
+        'castform_sunny' => 'fSUNNY',
+
+        // Deoxys
+        'deoxys_attack' => 'fATTACK',
+        'deoxys_defense' => 'fDEFENSE',
+        'deoxys_speed' => 'fSPEED',
+
+        // Cherrim
+        'cherrim_overcast' => 'fOVERCAST',
+        'cherrim_sunny' => 'fSUNNY',
+
+        // Shellos/Gastrodon
+        'shellos' => 'fEAST_SEA',
+        'gastrodon' => 'fEAST_SEA',
+
+        // Rotom
+        'rotom_frost' => 'fFROST',
+        'rotom_heat' => 'fHEAT',
+        'rotom_mow' => 'fMOW',
+        'rotom_wash' => 'fWASH',
+
+        // Giratina
+        'origin' => 'fORIGIN',
+        'altered' => 'fALTERED',
+
+        // Shaymin
+        'shaymin_sky' => 'fSKY',
+
+        // Therian forms
+        'incarnate' => 'fINCARNATE',
+        'therian' => 'fTHERIAN',
+
+        // Kyurem
+        'kyurem_black' => 'fBLACK',
+        'kyurem_white' => 'fWHITE',
+        'kyurem' => 'fNORMAL',
+
+        // Keldeo
+        'keldeo_ordinary' => 'fORDINARY',
+        'keldeo_resolute' => 'fRESOLUTE',
+
+        // Genesect
+        'genesect' => 'fNORMAL',
+        'burn' => 'fBURN',
+        'chill' => 'fCHILL',
+        'douse' => 'fDOUSE',
+        'shock' => 'fSHOCK',
+
+        // Meowstic
+        'meowstic_female' => 'fFEMALE',
+
+        // Zygarde
+        'zygarde_10' => 'fTEN_PERCENT',
+        'zygarde' => 'fFIFTY_PERCENT',
+        'zygarde_complete' => 'fCOMPLETE',
+
+        // Vivillon
+        'vivillon' => 'fMEADOW',
+
+        // Flabébé, Floette, Florges (Red flower)
+        'flabebe' => 'fRED',
+        'floette' => 'fRED',
+        'florges' => 'fRED',
+
+        // Furfrou
+        'furfrou' => 'fNATURAL',
+
+        // Hoopa
+        'unbound' => 'fUNBOUND',
+
+        // Oricorio
+        'oricorio_baile' => 'fBAILE',
+        'oricorio_pau' => 'fPAU',
+        'oricorio_pom_pom' => 'fPOMPOM',
+        'oricorio_sensu' => 'fSENSU',
+
+        // Necrozma
+        'dawn_wings' => 'fDAWN_WINGS',
+        'dusk_mane' => 'fDUSK_MANE',
+
+        // Lycanroc
+        'lycanroc_midday' => 'fMIDDAY',
+        'lycanroc_dusk' => 'fDUSK',
+        'lycanroc_midnight' => 'fMIDNIGHT',
+
+        // Toxtricity
+        'toxtricity' => 'fAMPED',
+
+        // Zacian/Zamazenta
+        'crowned_sword' => 'fCROWNED_SWORD',
+        'crowned_shield' => 'fCROWNED_SHIELD',
+
+        // Urshifu
+        'rapid_strike' => 'fRAPID_STRIKE',
+        'single_strike' => 'fSINGLE_STRIKE',
+
+        // Oinkologne
+        'oinkologne_female' => 'fFEMALE',
+
+        // Maushold
+        'maushold' => 'fFAMILY_OF_FOUR',
+
+        // Basculin
+        'basculin' => 'fBLUE_STRIPED',
+
+        // Burmy
+        'burmy_plant' => 'fBURMY_PLANT',
+        'burmy_sandy' => 'fBURMY_SANDY',
+        'burmy_trash' => 'fBURMY_TRASH',
+
+        // Wormadam
+        'wormadam_plant' => 'fWORMADAM_PLANT',
+        'wormadam_sandy' => 'fWORMADAM_SANDY',
+        'wormadam_trash' => 'fWORMADAM_TRASH',
+
+        // Deerling/Sawsbuck
+        'deerling' => 'fAUTUMN',
+        'sawsbuck' => 'fAUTUMN',
+
+        // Aegislash
+        'aegislash_shield' => 'fSHIELD',
+
+        // Indeedee
+        'indeedee_male' => 'fMALE',
+        'indeedee_female' => 'fFEMALE',
+
+        // Tatsugiri
+        'tatsugiri_curly' => 'fCURLY',
+        'tatsugiri_droopy' => 'fDROOPY',
+        'tatsugiri_stretchy' => 'fSTRETCHY',
+    ];
+
     /** @var array<Type> */
     private array $types = [];
 
@@ -90,6 +255,7 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
                 $pokemonEntity->setStamina($pokemon['baseStats']['hp']);
                 $pokemonEntity->setShadow(in_array('shadoweligible', $pokemon['tags'] ?? []));
                 $pokemonEntity->setGeneration(GenerationHelper::get($pokemon['dex']));
+                $pokemonEntity->setForm($this->extractForm($slug));
                 $pokemonEntity->setHash(HashHelper::fromPokemon($pokemon));
 
                 // manage types
@@ -97,7 +263,7 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
                     if ('none' === $type) {
                         continue;
                     }
-                    $pokemonEntity->addType($this->getType($io, $type, $pokemon['speciesName']));
+                    $pokemonEntity->addType($this->getType($io, $progressBar, $type, $pokemon['speciesName']));
                 }
 
                 // manage fast moves
@@ -112,7 +278,7 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
                         continue;
                     }
 
-                    $moveEntity = $this->getMove($io, mb_strtolower($move), $pokemon['speciesName']);
+                    $moveEntity = $this->getMove($io, $progressBar, mb_strtolower($move), $pokemon['speciesName']);
 
                     $pokemonMove = new PokemonMove();
                     $pokemonMove->setMove($moveEntity);
@@ -137,8 +303,23 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
         return Command::SUCCESS;
     }
 
-    private function getType(SymfonyStyle $io, string $typeAsString, string $pokemonName): Type
+    private function extractForm(string $slug): ?string
     {
+        foreach (self::FORM_MAPPING as $pattern => $suffix) {
+            if (str_contains($slug, $pattern)) {
+                return $suffix;
+            }
+        }
+
+        return null;
+    }
+
+    private function getType(
+        SymfonyStyle $io,
+        ProgressBar $progressBar,
+        string $typeAsString,
+        string $pokemonName,
+    ): Type {
         if (array_key_exists($typeAsString, $this->types)) {
             return $this->types[$typeAsString];
         }
@@ -146,6 +327,8 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
         $type = $this->typeRepository->findOneBy(['slug' => $typeAsString]);
 
         if (!$type instanceof Type) {
+            $progressBar->clear();
+
             $io->error(sprintf(
                 'Type not found in %s: %s',
                 $pokemonName,
@@ -153,14 +336,18 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
             ));
             $this->runParentCommand($io, 'app:update:types');
 
-            return $this->getType($io, $typeAsString, $pokemonName);
+            return $this->getType($io, $progressBar, $typeAsString, $pokemonName);
         }
 
         return $type;
     }
 
-    private function getMove(SymfonyStyle $io, string $moveAsString, string $pokemonName): Move
-    {
+    private function getMove(
+        SymfonyStyle $io,
+        ProgressBar $progressBar,
+        string $moveAsString,
+        string $pokemonName,
+    ): Move {
         if (array_key_exists($moveAsString, $this->moves)) {
             return $this->moves[$moveAsString];
         }
@@ -168,6 +355,8 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
         $move = $this->moveRepository->findOneBy(['slug' => $moveAsString]);
 
         if (!$move instanceof Move) {
+            $progressBar->clear();
+
             $io->error(sprintf(
                 'Move not found in %s: %s',
                 $pokemonName,
@@ -175,7 +364,7 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
             ));
             $this->runParentCommand($io, 'app:update:moves');
 
-            return $this->getMove($io, $moveAsString, $pokemonName);
+            return $this->getMove($io, $progressBar, $moveAsString, $pokemonName);
         }
 
         return $move;
