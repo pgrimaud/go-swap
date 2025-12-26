@@ -13,7 +13,7 @@ class HashHelper
     /**
      * @param Pokemon $pokemon
      */
-    public static function fromPokemon(array $pokemon): string
+    public static function fromPokemon(array $pokemon, bool $isShiny, bool $isShadow): string
     {
         return md5(serialize([
             $pokemon['dex'],
@@ -22,7 +22,8 @@ class HashHelper
             $pokemon['baseStats']['atk'],
             $pokemon['baseStats']['def'],
             $pokemon['baseStats']['hp'],
-            in_array('shadoweligible', $pokemon['tags'] ?? []),
+            $isShiny,
+            $isShadow,
             serialize(array_merge($pokemon['chargedMoves'], $pokemon['fastMoves'], $pokemon['eliteMoves'] ?? [])),
         ]));
     }

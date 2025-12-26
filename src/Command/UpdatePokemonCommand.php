@@ -251,9 +251,18 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
         $io->writeln('<fg=cyan>═══════════════════════════════════════</>');
         $io->writeln('');
 
+        // Fetch shiny Pokémon from PogoAPI
+        $io->writeln('<info>Fetching shiny Pokémon from PogoAPI...</info>');
+        $shinyPokemonIds = $this->fetchShinyPokemon($io);
+        $io->writeln(sprintf('<info>Found %d shiny Pokémon</info>', count($shinyPokemonIds)));
+        $io->writeln('');
+
         $pokemons = $this->gameMasterService->getPokemons();
         $progressBar = $io->createProgressBar(count($pokemons));
         $progressBar->start();
+
+        $batchSize = 50;
+        $counter = 0;
 
         foreach ($pokemons as $pokemon) {
             // avoid unreleased pokémon
@@ -275,10 +284,12 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
             }
 
             $slug = $pokemon['speciesId'];
+            $isShiny = in_array($pokemon['dex'], $shinyPokemonIds);
+            $isShadow = in_array('shadoweligible', $pokemon['tags'] ?? []);
 
             $pokemonEntity = $this->pokemonRepository->findOneBy(['slug' => $slug]);
 
-            if (!$pokemonEntity instanceof Pokemon || $pokemonEntity->getHash() !== HashHelper::fromPokemon($pokemon)) {
+            if (!$pokemonEntity instanceof Pokemon || $pokemonEntity->getHash() !== HashHelper::fromPokemon($pokemon, $isShiny, $isShadow)) {
                 $pokemonEntity = $pokemonEntity ?? new Pokemon();
                 $pokemonEntity->setNumber($pokemon['dex']);
                 $pokemonEntity->setName($pokemon['speciesName']);
@@ -286,12 +297,12 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
                 $pokemonEntity->setAttack($pokemon['baseStats']['atk']);
                 $pokemonEntity->setDefense($pokemon['baseStats']['def']);
                 $pokemonEntity->setStamina($pokemon['baseStats']['hp']);
-                $pokemonEntity->setShadow(in_array('shadoweligible', $pokemon['tags'] ?? []));
-                $pokemonEntity->setShiny(in_array('shinyeligible', $pokemon['tags'] ?? []));
+                $pokemonEntity->setShadow($isShadow);
+                $pokemonEntity->setShiny($isShiny);
                 $pokemonEntity->setLucky(!in_array($slug, self::UNTRADABLE_POKEMON));
                 $pokemonEntity->setGeneration(GenerationHelper::get($pokemon['dex']));
                 $pokemonEntity->setForm($this->extractForm($slug));
-                $pokemonEntity->setHash(HashHelper::fromPokemon($pokemon));
+                $pokemonEntity->setHash(HashHelper::fromPokemon($pokemon, $isShiny, $isShadow));
 
                 // manage types
                 foreach ($pokemon['types'] as $type) {
@@ -325,10 +336,22 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
 
                 $this->entityManager->persist($pokemonEntity);
                 $this->entityManager->flush();
+
+                ++$counter;
+                if (0 === $counter % $batchSize) {
+                    $this->entityManager->clear();
+                    // Reload types and moves cache after clear
+                    $this->types = [];
+                    $this->moves = [];
+                }
             }
 
             $progressBar->advance();
         }
+
+        // Final flush and clear
+        $this->entityManager->flush();
+        $this->entityManager->clear();
 
         $progressBar->finish();
         $io->newLine(2);
@@ -403,5 +426,42 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
         }
 
         return $move;
+    }
+
+    /**
+     * Fetch shiny Pokémon IDs from PogoAPI.
+     *
+     * @return array<int>
+     */
+    private function fetchShinyPokemon(SymfonyStyle $io): array
+    {
+        try {
+            $response = file_get_contents('https://pogoapi.net/api/v1/shiny_pokemon.json');
+            if (false === $response) {
+                $io->warning('Failed to fetch shiny Pokémon from PogoAPI');
+
+                return [];
+            }
+
+            $data = json_decode($response, true);
+            if (!is_array($data)) {
+                $io->warning('Invalid JSON response from PogoAPI');
+
+                return [];
+            }
+
+            $shinyIds = [];
+            foreach ($data as $pokemon) {
+                if (is_array($pokemon) && isset($pokemon['id']) && is_int($pokemon['id'])) {
+                    $shinyIds[] = $pokemon['id'];
+                }
+            }
+
+            return $shinyIds;
+        } catch (\Exception $e) {
+            $io->error(sprintf('Error fetching shiny Pokémon: %s', $e->getMessage()));
+
+            return [];
+        }
     }
 }
