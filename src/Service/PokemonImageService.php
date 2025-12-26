@@ -21,7 +21,7 @@ class PokemonImageService
     ) {
     }
 
-    public function downloadAndSavePicture(Pokemon $pokemon, SymfonyStyle $io, bool $strictMode = false): ?string
+    public function downloadAndSavePicture(Pokemon $pokemon, SymfonyStyle $io): ?string
     {
         $slug = $pokemon->getSlug();
         if (null === $slug) {
@@ -30,7 +30,7 @@ class PokemonImageService
             return null;
         }
 
-        $url = $this->getImageUrl($pokemon, $strictMode);
+        $url = $this->getImageUrl($pokemon);
 
         try {
             $content = $this->downloadImage($url);
@@ -44,10 +44,9 @@ class PokemonImageService
         }
     }
 
-    private function getImageUrl(Pokemon $pokemon, bool $strictMode = false): string
+    private function getImageUrl(Pokemon $pokemon): string
     {
-        $formSuffix = $pokemon->getForm() ?? '';
-        $identifier = $pokemon->getNumber() . $formSuffix;
+        $identifier = $pokemon->getNumber() . ($pokemon->getForm() ? '.' . $pokemon->getForm() : '');
 
         return sprintf(self::BASE_URL, $identifier);
     }

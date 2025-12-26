@@ -10,7 +10,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -32,12 +31,6 @@ final class UpdatePicturesCommand extends Command
 
     protected function configure(): void
     {
-        $this->addOption(
-            'strict',
-            null,
-            InputOption::VALUE_NONE,
-            'Stop on first error (no fallback to Pokekalos)'
-        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -60,11 +53,6 @@ final class UpdatePicturesCommand extends Command
 
         $io->writeln(sprintf('Found %d Pokémon without pictures.', count($pokemon)));
 
-        $strictMode = (bool) $input->getOption('strict');
-        if ($strictMode) {
-            $io->warning('Strict mode enabled: will stop on first error');
-        }
-
         $io->newLine();
         $progressBar = $io->createProgressBar(count($pokemon));
         $progressBar->start();
@@ -73,25 +61,13 @@ final class UpdatePicturesCommand extends Command
         $failed = 0;
 
         foreach ($pokemon as $pkmn) {
-            $filename = $this->imageService->downloadAndSavePicture($pkmn, $io, $strictMode);
+            $filename = $this->imageService->downloadAndSavePicture($pkmn, $io);
 
             if (null !== $filename) {
                 $pkmn->setPicture($filename);
                 ++$processed;
             } else {
                 ++$failed;
-
-                if ($strictMode) {
-                    $progressBar->finish();
-                    $io->newLine(2);
-                    $io->error(sprintf(
-                        'Strict mode: Stopped after failing to download image for %s (#%d)',
-                        $pkmn->getName(),
-                        $pkmn->getNumber()
-                    ));
-
-                    return Command::FAILURE;
-                }
             }
 
             if (0 === ($processed % self::BATCH_SIZE)) {

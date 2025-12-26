@@ -44,6 +44,12 @@ class Pokemon
     #[ORM\Column]
     private bool $shadow = false;
 
+    #[ORM\Column]
+    private bool $shiny = false;
+
+    #[ORM\Column]
+    private bool $lucky = false;
+
     #[ORM\Column(length: 255)]
     private ?string $slug = null;
 
@@ -162,6 +168,30 @@ class Pokemon
     public function setShadow(bool $shadow): static
     {
         $this->shadow = $shadow;
+
+        return $this;
+    }
+
+    public function isShiny(): bool
+    {
+        return $this->shiny;
+    }
+
+    public function setShiny(bool $shiny): static
+    {
+        $this->shiny = $shiny;
+
+        return $this;
+    }
+
+    public function isLucky(): bool
+    {
+        return $this->lucky;
+    }
+
+    public function setLucky(bool $lucky): static
+    {
+        $this->lucky = $lucky;
 
         return $this;
     }

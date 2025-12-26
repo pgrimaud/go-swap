@@ -28,6 +28,39 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 final class UpdatePokemonCommand extends AbstractSuggestCommand
 {
+    private const array UNTRADABLE_POKEMON = [
+        'celebi',
+        'darkrai',
+        'deoxys',
+        'deoxys_attack',
+        'deoxys_defense',
+        'deoxys_speed',
+        'diancie',
+        'eternatus',
+        'genesect',
+        'genesect_burn',
+        'genesect_chill',
+        'genesect_douse',
+        'genesect_shock',
+        'hoopa',
+        'hoopa_unbound',
+        'jirachi',
+        'keldeo',
+        'keldeo_ordinary',
+        'keldeo_resolute',
+        'marshadow',
+        'meloetta',
+        'mew',
+        'shaymin',
+        'shaymin_sky',
+        'victini',
+        'volcanion',
+        'zarude',
+        'zygarde',
+        'zygarde_10',
+        'zygarde_complete',
+    ];
+
     private const array FORM_MAPPING = [
         // Unown
         'unown' => 'fUNOWN_A',
@@ -254,6 +287,8 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
                 $pokemonEntity->setDefense($pokemon['baseStats']['def']);
                 $pokemonEntity->setStamina($pokemon['baseStats']['hp']);
                 $pokemonEntity->setShadow(in_array('shadoweligible', $pokemon['tags'] ?? []));
+                $pokemonEntity->setShiny(in_array('shinyeligible', $pokemon['tags'] ?? []));
+                $pokemonEntity->setLucky(!in_array($slug, self::UNTRADABLE_POKEMON));
                 $pokemonEntity->setGeneration(GenerationHelper::get($pokemon['dex']));
                 $pokemonEntity->setForm($this->extractForm($slug));
                 $pokemonEntity->setHash(HashHelper::fromPokemon($pokemon));
