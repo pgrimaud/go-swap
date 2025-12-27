@@ -34,8 +34,13 @@
                     {# Variant Filters - Responsive: icons on mobile, text+icons on desktop #}
                     <div class="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
                         <div class="flex gap-2 items-center sm:flex-wrap">
+                            <button type="submit" name="variant" value="" 
+                                    class="flex-shrink-0 p-2 sm:px-4 sm:py-2 rounded-lg text-sm font-medium transition inline-flex items-center justify-center cursor-pointer {{ currentVariant == '' ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' }}"
+                                    title="All variants">
+                                All
+                            </button>
                             <button type="submit" name="variant" value="normal" 
-                                    class="flex-shrink-0 p-2 sm:px-4 sm:py-2 rounded-lg transition inline-flex items-center gap-1.5 text-sm font-medium cursor-pointer {{ currentVariant == '' or currentVariant == 'normal' ? 'bg-indigo-600 text-white shadow-md ring-2 ring-indigo-400' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' }}"
+                                    class="flex-shrink-0 p-2 sm:px-4 sm:py-2 rounded-lg transition inline-flex items-center gap-1.5 text-sm font-medium cursor-pointer {{ currentVariant == 'normal' ? 'bg-indigo-600 text-white shadow-md ring-2 ring-indigo-400' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' }}"
                                     title="Normal">
                                 <img src="{{ asset('images/pokedex/normal.png') }}" alt="Normal" class="w-6 h-6 sm:w-4 sm:h-4">
                                 <span class="hidden sm:inline">Normal</span>
@@ -86,22 +91,24 @@
                     </div>
                 </form>
 
-                {# Stats Bar #}
-                <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <div class="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
-                        <span class="font-medium">
-                            Showing: <span class="text-blue-600 dark:text-blue-400">{{ allPokemon|length }}</span> Pokémon
-                        </span>
-                        <span class="text-gray-400">|</span>
-                        <span>
-                            Owned: <span class="text-green-600 dark:text-green-400 font-medium">0</span> / {{ allPokemon|length }}
-                        </span>
-                        <span class="text-gray-400">|</span>
-                        <span>
-                            Complete (8/8): <span class="text-purple-600 dark:text-purple-400 font-medium">0</span>
-                        </span>
+                {# Stats Bar - Only show when All filter is active #}
+                {% if currentVariant == '' %}
+                    <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <div class="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
+                            <span class="font-medium">
+                                Showing: <span class="text-blue-600 dark:text-blue-400">{{ allPokemon|length }}</span> Pokémon
+                            </span>
+                            <span class="text-gray-400">|</span>
+                            <span>
+                                Owned: <span class="text-green-600 dark:text-green-400 font-medium">0</span> / {{ allPokemon|length }}
+                            </span>
+                            <span class="text-gray-400">|</span>
+                            <span>
+                                Complete (8/8): <span class="text-purple-600 dark:text-purple-400 font-medium">0</span>
+                            </span>
+                        </div>
                     </div>
-                </div>
+                {% endif %}
             </div>
         </div>
 
