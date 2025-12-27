@@ -119,6 +119,7 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
         'altered' => 'fALTERED',
 
         // Shaymin
+        'shaymin_land' => 'fLAND',
         'shaymin_sky' => 'fSKY',
 
         // Therian forms
@@ -129,6 +130,9 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
         'kyurem_black' => 'fBLACK',
         'kyurem_white' => 'fWHITE',
         'kyurem' => 'fNORMAL',
+
+        // Meloetta
+        'meloetta_aria' => 'fARIA',
 
         // Keldeo
         'keldeo_ordinary' => 'fORDINARY',
@@ -184,6 +188,8 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
         // Zacian/Zamazenta
         'crowned_sword' => 'fCROWNED_SWORD',
         'crowned_shield' => 'fCROWNED_SHIELD',
+        'zacian_hero' => 'fHERO',
+        'zamazenta_hero' => 'fHERO',
 
         // Urshifu
         'rapid_strike' => 'fRAPID_STRIKE',
