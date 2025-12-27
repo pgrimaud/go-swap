@@ -1,0 +1,185 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pokédex - Go Swap{% endblock %}
+
+{% block body %}
+    <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+        {% include 'partials/header.html.twig' %}
+
+        {# Filters Section #}
+        <div class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-16 z-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <form method="get" action="{{ path('app_pokedex') }}" class="space-y-4">
+                    {# Search Bar #}
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <div class="flex-1">
+                            <input 
+                                type="text" 
+                                name="search" 
+                                value="{{ currentSearch }}"
+                                placeholder="🔍 Search by name or number..."
+                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                            >
+                        </div>
+                        <button type="submit" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition">
+                            Search
+                        </button>
+                        <a href="{{ path('app_pokedex') }}" class="px-6 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg transition text-center">
+                            Clear
+                        </a>
+                    </div>
+
+                    {# Generation Filters #}
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">Generation:</span>
+                        <button type="submit" name="generation" value="0" 
+                                class="px-4 py-1.5 rounded-full text-sm font-medium transition {{ currentGeneration == 0 ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600' }}">
+                            All
+                        </button>
+                        {% for gen in 1..9 %}
+                            <button type="submit" name="generation" value="{{ gen }}" 
+                                    class="px-4 py-1.5 rounded-full text-sm font-medium transition {{ currentGeneration == gen ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600' }}">
+                                Gen {{ gen }}
+                            </button>
+                        {% endfor %}
+                    </div>
+
+                    {# Type Filter #}
+                    <div class="flex flex-wrap gap-2 items-center">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Type:</span>
+                        <button type="submit" name="type" value="0" 
+                                class="px-4 py-1.5 rounded-full text-sm font-medium transition {{ currentType == 0 ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600' }}">
+                            All Types
+                        </button>
+                        {% for type in types %}
+                            <button type="submit" name="type" value="{{ type.id }}" 
+                                    class="px-4 py-1.5 rounded-full text-sm font-medium transition {{ currentType == type.id ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600' }}">
+                                <img src="{{ asset('images/type/' ~ type.slug ~ '.png') }}" alt="{{ type.name }}" class="inline w-4 h-4 mr-1">
+                                {{ type.name }}
+                            </button>
+                        {% endfor %}
+                    </div>
+                </form>
+
+                {# Stats Bar #}
+                <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <div class="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
+                        <span class="font-medium">
+                            Showing: <span class="text-blue-600 dark:text-blue-400">{{ allPokemon|length }}</span> Pokémon
+                        </span>
+                        <span class="text-gray-400">|</span>
+                        <span>
+                            Owned: <span class="text-green-600 dark:text-green-400 font-medium">0</span> / {{ allPokemon|length }}
+                        </span>
+                        <span class="text-gray-400">|</span>
+                        <span>
+                            Complete (8/8): <span class="text-purple-600 dark:text-purple-400 font-medium">0</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Pokémon Grid #}
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {% if allPokemon is empty %}
+                <div class="text-center py-12">
+                    <div class="text-6xl mb-4">🔍</div>
+                    <h3 class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">No Pokémon found</h3>
+                    <p class="text-gray-500 dark:text-gray-400">Try adjusting your filters or search term</p>
+                </div>
+            {% else %}
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    {% for pokemon in allPokemon %}
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-all duration-200 hover:scale-105 cursor-pointer overflow-hidden">
+                            {# Card Header #}
+                            <div class="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-750 px-3 py-2 flex justify-between items-center">
+                                <span class="text-xs font-bold text-gray-500 dark:text-gray-400">#{{ '%04d'|format(pokemon.number) }}</span>
+                                <span class="text-xs px-2 py-0.5 bg-white dark:bg-gray-800 rounded-full text-gray-600 dark:text-gray-300">
+                                    Gen {{ pokemon.generation }}
+                                </span>
+                            </div>
+
+                            {# Pokémon Image #}
+                            <div class="p-4 flex justify-center">
+                                <img 
+                                    src="{{ asset('images/pokemon/normal/' ~ pokemon.picture) }}" 
+                                    alt="{{ pokemon.name }}"
+                                    class="w-24 h-24 object-contain"
+                                >
+                            </div>
+
+                            {# Pokémon Name #}
+                            <div class="px-3 pb-2 text-center">
+                                <h3 class="font-semibold text-gray-800 dark:text-white text-sm mb-2">
+                                    {{ pokemon.name }}
+                                </h3>
+
+                                {# Types #}
+                                <div class="flex justify-center gap-1 mb-3">
+                                    {% for type in pokemon.types %}
+                                        <img 
+                                            src="{{ asset('images/type/' ~ type.slug ~ '.png') }}" 
+                                            alt="{{ type.name }}"
+                                            title="{{ type.name }}"
+                                            class="w-5 h-5"
+                                        >
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            {# Variants Grid - 8 badges in 4x2 #}
+                            <div class="px-3 pb-3">
+                                <div class="grid grid-cols-4 gap-1.5">
+                                    {# Normal #}
+                                    <div class="aspect-square bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition" title="Normal">
+                                        <img src="{{ asset('images/pokedex/normal.png') }}" alt="Normal" class="w-5 h-5 opacity-40">
+                                    </div>
+                                    {# Shiny #}
+                                    <div class="aspect-square bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition" title="Shiny">
+                                        <img src="{{ asset('images/pokedex/shiny.png') }}" alt="Shiny" class="w-5 h-5 opacity-40">
+                                    </div>
+                                    {# Shadow #}
+                                    <div class="aspect-square bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition" title="Shadow">
+                                        <img src="{{ asset('images/pokedex/shadow.png') }}" alt="Shadow" class="w-5 h-5 opacity-40">
+                                    </div>
+                                    {# Purified #}
+                                    <div class="aspect-square bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition" title="Purified">
+                                        <img src="{{ asset('images/pokedex/purified.png') }}" alt="Purified" class="w-5 h-5 opacity-40">
+                                    </div>
+                                    {# Lucky #}
+                                    <div class="aspect-square bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition" title="Lucky">
+                                        <img src="{{ asset('images/pokedex/lucky.png') }}" alt="Lucky" class="w-5 h-5 opacity-40">
+                                    </div>
+                                    {# XXL #}
+                                    <div class="aspect-square bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition" title="XXL">
+                                        <img src="{{ asset('images/pokedex/xxl.png') }}" alt="XXL" class="w-5 h-5 opacity-40">
+                                    </div>
+                                    {# XXS #}
+                                    <div class="aspect-square bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition" title="XXS">
+                                        <img src="{{ asset('images/pokedex/xxs.png') }}" alt="XXS" class="w-5 h-5 opacity-40">
+                                    </div>
+                                    {# Perfect #}
+                                    <div class="aspect-square bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition" title="Perfect">
+                                        <img src="{{ asset('images/pokedex/perfect.png') }}" alt="Perfect" class="w-5 h-5 opacity-40">
+                                    </div>
+                                </div>
+
+                                {# Progress Bar #}
+                                <div class="mt-2">
+                                    <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
+                                        <span>0/8</span>
+                                        <span>0%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                                        <div class="bg-blue-600 h-1.5 rounded-full" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </main>
+    </div>
+{% endblock %}

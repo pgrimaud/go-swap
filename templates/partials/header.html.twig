@@ -1,0 +1,75 @@
+<nav class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+            <!-- Logo -->
+            <div class="flex items-center">
+                <a href="{{ path('app_home') }}" class="flex items-center">
+                    <img src="{{ asset('images/logo.png') }}" alt="Go Swap" class="h-10 w-auto">
+                    <span class="ml-2 text-xl font-bold text-gray-900 dark:text-white hidden sm:block">Go Swap</span>
+                </a>
+            </div>
+
+            <!-- Navigation Links (Desktop) -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="{{ path('app_pokedex') }}" class="{{ app.request.attributes.get('_route') == 'app_pokedex' ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400' }} px-3 py-2 text-sm font-medium transition rounded-lg">
+                    📱 Pokédex
+                </a>
+                <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium transition">
+                    ⚔️ PvP
+                </a>
+                <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium transition">
+                    📝 My Lists
+                </a>
+            </div>
+
+            <!-- User Menu -->
+            <div class="flex items-center">
+                <!-- Desktop User Menu -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <span class="text-gray-600 dark:text-gray-400 text-sm">{{ app.user.email }}</span>
+                    <a href="{{ path('app_logout') }}"
+                       class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800 transition">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                        Logout
+                    </a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <button type="button"
+                        onclick="document.getElementById('mobile-menu').classList.toggle('hidden')"
+                        class="md:hidden inline-flex items-center justify-center p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 transition">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200 dark:border-gray-700">
+        <div class="px-2 pt-2 pb-3 space-y-1">
+            <a href="{{ path('app_pokedex') }}" class="{{ app.request.attributes.get('_route') == 'app_pokedex' ? 'block px-3 py-2 rounded-lg text-base font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30' : 'block px-3 py-2 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400 transition' }}">
+                📱 Pokédex
+            </a>
+            <a href="#" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                ⚔️ PvP
+            </a>
+            <a href="#" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                📝 My Lists
+            </a>
+        </div>
+        <div class="pt-4 pb-3 border-t border-gray-200 dark:border-gray-700">
+            <div class="px-2">
+                <div class="px-3 py-2 text-sm text-gray-600 dark:text-gray-400">
+                    {{ app.user.email }}
+                </div>
+                <a href="{{ path('app_logout') }}" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400 transition">
+                    🚪 Logout
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
