@@ -38,10 +38,9 @@ final class PokedexController extends AbstractController
         // TODO: Apply variant filter when UserPokemon entity is ready
         // This will filter based on owned variants
 
-        $allPokemon = $queryBuilder->getQuery()->getResult();
-
+        // Just render empty template, data will be loaded via AJAX
         return $this->render('pokedex/index.html.twig', [
-            'allPokemon' => $allPokemon,
+            'allPokemon' => [],
             'currentVariant' => $variant,
             'currentSearch' => $search,
         ]);

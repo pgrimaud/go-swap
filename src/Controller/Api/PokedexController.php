@@ -27,8 +27,6 @@ final class PokedexController extends AbstractController
 
         // Build query
         $queryBuilder = $pokemonRepository->createQueryBuilder('p')
-            ->leftJoin('p.types', 't')
-            ->addSelect('t')
             ->orderBy('p.number', 'ASC')
             ->setFirstResult(($page - 1) * $perPage)
             ->setMaxResults($perPage);

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\PhpStan\Types;
+namespace App\PHPStan\Types;
 
 /**
  * @phpstan-type Pokemon array{

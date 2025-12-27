@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Helper;
 
 /**
- * @phpstan-import-type Move from \App\PhpStan\Types\MoveTypes
- * @phpstan-import-type Pokemon from \App\PhpStan\Types\PokemonTypes
+ * @phpstan-import-type Move from \App\PHPStan\Types\MoveTypes
+ * @phpstan-import-type Pokemon from \App\PHPStan\Types\PokemonTypes
  */
 class HashHelper
 {

@@ -61,7 +61,6 @@ class Pokemon
      * @var Collection<int, Type>
      */
     #[ORM\ManyToMany(targetEntity: Type::class, inversedBy: 'pokemon')]
-    #[Groups(['pokemon:read'])]
     private Collection $types;
 
     /**

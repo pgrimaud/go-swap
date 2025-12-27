@@ -22,6 +22,7 @@ final class HomeController extends AbstractController
         $pokedexCategories = [
             [
                 'name' => 'Normal',
+                'slug' => '',
                 'icon' => 'normal.png',
                 'count' => 0,
                 'total' => $totalDistinct,
@@ -29,6 +30,7 @@ final class HomeController extends AbstractController
             ],
             [
                 'name' => 'Shiny',
+                'slug' => 'shiny',
                 'icon' => 'shiny.png',
                 'count' => 0,
                 'total' => $totalShinies,
@@ -36,6 +38,7 @@ final class HomeController extends AbstractController
             ],
             [
                 'name' => 'Shadow',
+                'slug' => 'shadow',
                 'icon' => 'shadow.png',
                 'count' => 0,
                 'total' => $totalShadows,
@@ -43,6 +46,7 @@ final class HomeController extends AbstractController
             ],
             [
                 'name' => 'Purified',
+                'slug' => 'purified',
                 'icon' => 'purified.png',
                 'count' => 0,
                 'total' => $totalShadows,
@@ -50,6 +54,7 @@ final class HomeController extends AbstractController
             ],
             [
                 'name' => 'Lucky',
+                'slug' => 'lucky',
                 'icon' => 'lucky.png',
                 'count' => 0,
                 'total' => $totalLuckies,
@@ -57,6 +62,7 @@ final class HomeController extends AbstractController
             ],
             [
                 'name' => 'XXL',
+                'slug' => 'xxl',
                 'icon' => 'xxl.png',
                 'count' => 0,
                 'total' => $totalDistinct,
@@ -64,6 +70,7 @@ final class HomeController extends AbstractController
             ],
             [
                 'name' => 'XXS',
+                'slug' => 'xxs',
                 'icon' => 'xxs.png',
                 'count' => 0,
                 'total' => $totalDistinct,
@@ -71,6 +78,7 @@ final class HomeController extends AbstractController
             ],
             [
                 'name' => 'Perfect',
+                'slug' => 'perfect',
                 'icon' => 'perfect.png',
                 'count' => 0,
                 'total' => $totalDistinct,
