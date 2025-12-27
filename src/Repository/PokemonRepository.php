@@ -31,4 +31,42 @@ class PokemonRepository extends ServiceEntityRepository
 
         return $results;
     }
+
+    public function countTotalDistinctPokemon(): int
+    {
+        return (int) $this->createQueryBuilder('p')
+            ->select('COUNT(DISTINCT p.number)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countDistinctShinies(): int
+    {
+        return (int) $this->createQueryBuilder('p')
+            ->select('COUNT(DISTINCT p.number)')
+            ->where('p.shiny = :shiny')
+            ->setParameter('shiny', true)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countDistinctShadows(): int
+    {
+        return (int) $this->createQueryBuilder('p')
+            ->select('COUNT(DISTINCT p.number)')
+            ->where('p.shadow = :shadow')
+            ->setParameter('shadow', true)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countDistinctLuckies(): int
+    {
+        return (int) $this->createQueryBuilder('p')
+            ->select('COUNT(DISTINCT p.number)')
+            ->where('p.lucky = :lucky')
+            ->setParameter('lucky', true)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

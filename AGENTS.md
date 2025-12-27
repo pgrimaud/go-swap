@@ -2,7 +2,7 @@
 
 > **Documentation pour les AI Agents** travaillant sur le projet Go Swap V3  
 > Date de création : 2025-12-19  
-> Dernière mise à jour : 2025-12-20
+> Dernière mise à jour : 2025-12-27
 
 ---
 
@@ -126,6 +126,7 @@ declare(strict_types=1);
 - Pas de fichier `tailwind.config.js` (Tailwind v4)
 - Import direct : `@import "tailwindcss";`
 - Classes Tailwind uniquement, éviter le CSS custom
+- **⚠️ IMPORTANT** : Après chaque ajout ou modification de classes CSS, lancer `php bin/console tailwind:build` pour compiler les styles
 
 ---
 
@@ -170,7 +171,10 @@ php bin/console make:controller ControllerName
 # Debug routes
 php bin/console debug:router
 
-# Build Tailwind
+# Build Tailwind (compile les classes CSS)
+php bin/console tailwind:build
+
+# Build Tailwind en mode watch (auto-recompile)
 php bin/console tailwind:build --watch
 ```
 
@@ -373,14 +377,15 @@ Le workflow CI est configuré dans `.github/workflows/ci.yml` et s'exécute auto
 ### Après modification
 
 1. **Clear cache** si nécessaire
-2. **Vérifier** : routes, schema Doctrine, etc.
-3. **Lancer les tests de qualité** :
+2. **Build Tailwind** si classes CSS ajoutées/modifiées : `php bin/console tailwind:build`
+3. **Vérifier** : routes, schema Doctrine, etc.
+4. **Lancer les tests de qualité** :
    ```bash
    composer cs-fix
    composer phpstan
    composer test
    ```
-4. **Commit message clair** : `feat:`, `fix:`, `chore:`
+5. **Commit message clair** : `feat:`, `fix:`, `chore:`
 
 ---
 
