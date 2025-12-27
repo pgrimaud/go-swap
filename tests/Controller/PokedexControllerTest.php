@@ -19,7 +19,7 @@ class PokedexControllerTest extends WebTestCase
     public function testPokedexPageIsAccessibleForAuthenticatedUser(): void
     {
         $client = static::createClient();
-        
+
         // Login first
         $crawler = $client->request('GET', '/login');
         $form = $crawler->selectButton('Sign in')->form([
@@ -38,7 +38,7 @@ class PokedexControllerTest extends WebTestCase
     public function testPokedexDisplaysPokemonCards(): void
     {
         $client = static::createClient();
-        
+
         // Login
         $crawler = $client->request('GET', '/login');
         $form = $crawler->selectButton('Sign in')->form([
