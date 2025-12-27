@@ -858,4 +858,154 @@ Use Panther or Cypress for testing Stimulus behavior
 
 ---
 
-**Ready to start? Let's go! 🚀**
+## 📝 Implementation Checklist
+
+> **Implementation Status**: Ready to start  
+> **Implementer**: AI Agent  
+> **Start Date**: 2025-12-27
+
+### Phase 1: Backend API Endpoint ✅
+- [ ] Create `/api/pokedex` route in `PokedexController`
+- [ ] Add pagination logic with `setFirstResult()` and `setMaxResults()`
+- [ ] Apply search filter
+- [ ] Return JSON response with metadata (pokemon, page, perPage, total, hasMore)
+- [ ] Test endpoint manually (`curl` or browser)
+- [ ] Verify JSON structure matches spec
+
+### Phase 2: Entity Serialization ✅
+- [ ] Add `#[Groups(['pokemon:read'])]` to Pokemon entity properties
+- [ ] Add serialization groups to: id, number, name, picture, generation
+- [ ] Serialize types relationship
+- [ ] Test serialization output (check JSON response)
+- [ ] Fix any circular reference issues
+
+### Phase 3: Stimulus Controller ✅
+- [ ] Create `assets/controllers/pokedex_controller.js`
+- [ ] Add static targets: grid, loader, searchInput, skeleton
+- [ ] Add static values: url, page, loading, hasMore, variant, search
+- [ ] Implement `connect()` method
+- [ ] Implement `disconnect()` method
+- [ ] Implement `readURLParams()` method
+- [ ] Implement `loadPokemon(append)` method
+- [ ] Implement `filter(event)` method
+- [ ] Implement `search(event)` with debounce
+- [ ] Implement `replacePokemon(data)` method
+- [ ] Implement `appendPokemon(data)` method
+- [ ] Implement `createPokemonCard(pokemon)` template
+- [ ] Implement `createVariantBadges()` template
+- [ ] Implement `emptyStateHTML()` method
+- [ ] Implement `setupIntersectionObserver()` method
+- [ ] Implement `updateURL()` method
+- [ ] Implement `showLoading()` / `hideLoading()` methods
+- [ ] Implement `showError()` method
+- [ ] Test in browser console
+
+### Phase 4: Template Refactoring ✅
+- [ ] Add `data-controller="pokedex"` to main wrapper
+- [ ] Add `data-pokedex-url-value="{{ path('api_pokedex') }}"`
+- [ ] Add `data-pokedex-variant-value="{{ currentVariant }}"`
+- [ ] Add `data-pokedex-search-value="{{ currentSearch }}"`
+- [ ] Add `data-pokedex-target="grid"` to grid container
+- [ ] Empty grid content (will be filled by JS)
+- [ ] Add `data-action="click->pokedex#filter"` to filter buttons
+- [ ] Add `data-variant` attribute to each filter button
+- [ ] Update search input with `data-pokedex-target="searchInput"`
+- [ ] Add `data-action="input->pokedex#search"` to search
+- [ ] Add loader element with `data-pokedex-target="loader"`
+- [ ] Keep stats bar conditional display logic
+
+### Phase 5: Home Page Links ✅
+- [ ] Update `HomeController` to pass `pokedexCategories` array
+- [ ] Add `slug` field to each category
+- [ ] Wrap category cards in `<a>` tags
+- [ ] Add `href="{{ path('app_pokedex', {variant: category.slug}) }}"`
+- [ ] Test links navigate to correct filtered page
+- [ ] Remove hover:border if inside link
+
+### Phase 6: UX Improvements ✅
+- [ ] Add skeleton loaders in template (hidden by default)
+- [ ] Show/hide skeleton during loading
+- [ ] Add empty state message in JS
+- [ ] Add "end of list" message in JS
+- [ ] Add back-to-top button (optional)
+- [ ] Test loading states
+- [ ] Test error states
+- [ ] Test on mobile viewport
+
+### Phase 7: Testing ✅
+- [ ] Create `testApiPokedexEndpoint()` test
+- [ ] Create `testApiPokedexPagination()` test
+- [ ] Create `testApiPokedexVariantFilter()` test
+- [ ] Create `testApiPokedexSearch()` test
+- [ ] Update existing `testPokedexPageIsAccessibleForAuthenticatedUser()`
+- [ ] Run all tests: `composer test`
+- [ ] Fix any failing tests
+
+### Phase 8: Quality & Performance ✅
+- [ ] Run `composer cs-fix`
+- [ ] Run `composer phpstan`
+- [ ] Test with Chrome DevTools (Network, Performance)
+- [ ] Verify images lazy load correctly
+- [ ] Check API response time (<200ms)
+- [ ] Test infinite scroll smoothness
+- [ ] Test on mobile device (real or emulated)
+- [ ] Verify memory usage is acceptable
+
+### Phase 9: Documentation ✅
+- [ ] Update `AGENTS.md` with new architecture
+- [ ] Add note about Stimulus controller usage
+- [ ] Update `TODO_V3.md` (mark Phase 1 complete, add Phase 2)
+- [ ] Add comments in Stimulus controller
+- [ ] Document any gotchas or known issues
+
+### Phase 10: Final Verification ✅
+- [ ] Test all filter buttons work without reload
+- [ ] Test search works with debounce
+- [ ] Test infinite scroll loads more Pokémon
+- [ ] Test URLs are shareable (copy/paste in new tab)
+- [ ] Test home page links work
+- [ ] Test back button works correctly
+- [ ] Test with no results (search "zzzz")
+- [ ] Test with slow network (DevTools throttling)
+- [ ] Verify no console errors
+- [ ] Verify no regressions (login, register still work)
+
+---
+
+### 🎯 Completion Criteria
+
+**Definition of Done**:
+- ✅ All checkboxes above are checked
+- ✅ All tests pass (`composer test`)
+- ✅ No CS violations (`composer cs-fix`)
+- ✅ No PHPStan errors (`composer phpstan`)
+- ✅ Page loads <500ms
+- ✅ Filtering works without page reload
+- ✅ Infinite scroll is smooth
+- ✅ URLs are shareable
+- ✅ Mobile tested and working
+- ✅ No console errors in browser
+- ✅ Documentation updated
+
+---
+
+### 📊 Progress Tracker
+
+| Phase | Status | Time Spent | Notes |
+|-------|--------|-----------|-------|
+| Phase 1: Backend API | ⏳ Not Started | 0h | - |
+| Phase 2: Serialization | ⏳ Not Started | 0h | - |
+| Phase 3: Stimulus Controller | ⏳ Not Started | 0h | - |
+| Phase 4: Template Refactor | ⏳ Not Started | 0h | - |
+| Phase 5: Home Links | ⏳ Not Started | 0h | - |
+| Phase 6: UX Improvements | ⏳ Not Started | 0h | - |
+| Phase 7: Testing | ⏳ Not Started | 0h | - |
+| Phase 8: Quality & Perf | ⏳ Not Started | 0h | - |
+| Phase 9: Documentation | ⏳ Not Started | 0h | - |
+| Phase 10: Final Verify | ⏳ Not Started | 0h | - |
+
+**Legend**: ⏳ Not Started | 🚧 In Progress | ✅ Complete | ❌ Blocked
+
+---
+
+**Ready to start implementation! Let's go! 🚀**
