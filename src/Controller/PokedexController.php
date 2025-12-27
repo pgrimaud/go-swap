@@ -19,7 +19,7 @@ final class PokedexController extends AbstractController
     public function index(
         Request $request,
         PokemonRepository $pokemonRepository,
-        TypeRepository $typeRepository
+        TypeRepository $typeRepository,
     ): Response {
         // Get filter parameters
         $generation = $request->query->getInt('generation');
