@@ -26,7 +26,6 @@
             <div class="flex items-center">
                 <!-- Desktop User Menu -->
                 <div class="hidden md:flex items-center space-x-4">
-                    <span class="text-gray-600 dark:text-gray-400 text-sm">{{ app.user.email }}</span>
                     <a href="{{ path('app_logout') }}"
                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800 transition">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -63,9 +62,6 @@
         </div>
         <div class="pt-4 pb-3 border-t border-gray-200 dark:border-gray-700">
             <div class="px-2">
-                <div class="px-3 py-2 text-sm text-gray-600 dark:text-gray-400">
-                    {{ app.user.email }}
-                </div>
                 <a href="{{ path('app_logout') }}" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400 transition">
                     🚪 Logout
                 </a>
