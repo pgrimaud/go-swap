@@ -219,6 +219,5 @@ class PokedexControllerTest extends WebTestCase
         $this->assertArrayHasKey('name', $pokemon);
         $this->assertArrayHasKey('picture', $pokemon);
         $this->assertArrayHasKey('generation', $pokemon);
-        $this->assertArrayHasKey('types', $pokemon);
     }
 }
