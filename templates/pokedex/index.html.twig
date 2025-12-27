@@ -127,8 +127,10 @@
                             {# Card Header #}
                             <div class="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-750 px-3 py-2 flex justify-between items-center">
                                 <span class="text-xs font-bold text-gray-500 dark:text-gray-400">#{{ '%04d'|format(pokemon.number) }}</span>
-                                <span class="text-xs px-2 py-0.5 bg-white dark:bg-gray-800 rounded-full text-gray-600 dark:text-gray-300">
-                                    Gen {{ pokemon.generation }}
+                                {# Completion status - TODO: Replace false with actual completion check #}
+                                {% set isCompleted = false %}
+                                <span class="text-lg" title="{{ isCompleted ? 'Completed' : 'Not completed' }}">
+                                    {{ isCompleted ? '✅' : '⬜' }}
                                 </span>
                             </div>
 
