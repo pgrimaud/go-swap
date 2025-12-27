@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Entity\Pokemon;
 use App\Repository\PokemonRepository;
 use App\Service\PokemonImageService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -43,16 +44,40 @@ final class UpdatePicturesCommand extends Command
         $io->writeln('<fg=cyan>═══════════════════════════════════════</>');
         $io->writeln('');
 
-        $pokemon = $this->pokemonRepository->findAllWithoutPictures();
+        // Download normal pictures
+        $normalPokemon = $this->pokemonRepository->findAllWithoutPictures();
+        $io->section('Normal Pictures');
 
-        if (0 === count($pokemon)) {
-            $io->success('All Pokémon already have pictures.');
-
-            return Command::SUCCESS;
+        if (0 === count($normalPokemon)) {
+            $io->writeln('All Pokémon already have normal pictures.');
+        } else {
+            $io->writeln(sprintf('Found %d Pokémon without normal pictures.', count($normalPokemon)));
+            $this->downloadPictures($normalPokemon, $io, false);
         }
 
-        $io->writeln(sprintf('Found %d Pokémon without pictures.', count($pokemon)));
+        // Download shiny pictures
+        $shinyPokemon = $this->pokemonRepository->findAllShinyWithoutPictures();
+        $io->newLine();
+        $io->section('Shiny Pictures');
 
+        if (0 === count($shinyPokemon)) {
+            $io->writeln('All shiny Pokémon already have pictures.');
+        } else {
+            $io->writeln(sprintf('Found %d shiny Pokémon without pictures.', count($shinyPokemon)));
+            $this->downloadPictures($shinyPokemon, $io, true);
+        }
+
+        $io->newLine();
+        $io->success('Pictures update completed!');
+
+        return Command::SUCCESS;
+    }
+
+    /**
+     * @param Pokemon[] $pokemon
+     */
+    private function downloadPictures(array $pokemon, SymfonyStyle $io, bool $shiny): void
+    {
         $io->newLine();
         $progressBar = $io->createProgressBar(count($pokemon));
         $progressBar->start();
@@ -61,10 +86,14 @@ final class UpdatePicturesCommand extends Command
         $failed = 0;
 
         foreach ($pokemon as $pkmn) {
-            $filename = $this->imageService->downloadAndSavePicture($pkmn, $io);
+            $filename = $this->imageService->downloadAndSavePicture($pkmn, $io, $shiny);
 
             if (null !== $filename) {
-                $pkmn->setPicture($filename);
+                if ($shiny) {
+                    $pkmn->setShinyPicture($filename);
+                } else {
+                    $pkmn->setPicture($filename);
+                }
                 ++$processed;
             } else {
                 ++$failed;
@@ -81,12 +110,11 @@ final class UpdatePicturesCommand extends Command
         $progressBar->finish();
         $io->newLine(2);
 
-        $io->success(sprintf(
-            'Pictures updated successfully: %d successful, %d failed.',
+        $io->writeln(sprintf(
+            '%s pictures: %d successful, %d failed.',
+            $shiny ? 'Shiny' : 'Normal',
             $processed,
             $failed
         ));
-
-        return Command::SUCCESS;
     }
 }

@@ -32,6 +32,22 @@ class PokemonRepository extends ServiceEntityRepository
         return $results;
     }
 
+    /**
+     * @return Pokemon[]
+     */
+    public function findAllShinyWithoutPictures(): array
+    {
+        /** @var Pokemon[] $results */
+        $results = $this->createQueryBuilder('p')
+            ->where('p.shinyPicture IS NULL')
+            ->andWhere('p.shiny = :shiny')
+            ->setParameter('shiny', true)
+            ->getQuery()
+            ->getResult();
+
+        return $results;
+    }
+
     public function countTotalDistinctPokemon(): int
     {
         return (int) $this->createQueryBuilder('p')
