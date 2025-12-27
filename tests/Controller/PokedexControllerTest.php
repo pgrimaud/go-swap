@@ -219,5 +219,18 @@ class PokedexControllerTest extends WebTestCase
         $this->assertArrayHasKey('name', $pokemon);
         $this->assertArrayHasKey('picture', $pokemon);
         $this->assertArrayHasKey('generation', $pokemon);
+        $this->assertArrayHasKey('userPokemon', $pokemon);
+
+        // If userPokemon is present, check structure
+        if ($pokemon['userPokemon'] !== null) {
+            $this->assertArrayHasKey('hasNormal', $pokemon['userPokemon']);
+            $this->assertArrayHasKey('hasShiny', $pokemon['userPokemon']);
+            $this->assertArrayHasKey('hasShadow', $pokemon['userPokemon']);
+            $this->assertArrayHasKey('hasPurified', $pokemon['userPokemon']);
+            $this->assertArrayHasKey('hasLucky', $pokemon['userPokemon']);
+            $this->assertArrayHasKey('hasXxl', $pokemon['userPokemon']);
+            $this->assertArrayHasKey('hasXxs', $pokemon['userPokemon']);
+            $this->assertArrayHasKey('hasPerfect', $pokemon['userPokemon']);
+        }
     }
 }

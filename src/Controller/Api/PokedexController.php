@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller\Api;
 
+use App\Entity\User;
 use App\Repository\PokemonRepository;
+use App\Repository\UserPokemonRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,17 +21,21 @@ final class PokedexController extends AbstractController
     public function index(
         Request $request,
         PokemonRepository $pokemonRepository,
+        UserPokemonRepository $userPokemonRepository,
     ): JsonResponse {
         $variant = $request->query->get('variant', '');
         $search = $request->query->get('search', '');
         $page = $request->query->getInt('page', 1);
         $perPage = $request->query->getInt('perPage', 50);
 
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            return $this->json(['error' => 'User not authenticated'], 401);
+        }
+
         // Build query
         $queryBuilder = $pokemonRepository->createQueryBuilder('p')
-            ->orderBy('p.number', 'ASC')
-            ->setFirstResult(($page - 1) * $perPage)
-            ->setMaxResults($perPage);
+            ->orderBy('p.number', 'ASC');
 
         // Apply search filter
         if ($search !== '') {
@@ -39,19 +45,102 @@ final class PokedexController extends AbstractController
                 ->setParameter('number', (int) $search);
         }
 
-        // TODO: Apply variant filter when UserPokemon entity is ready
+        // Apply variant filter
+        if ($variant !== '' && $variant !== 'all') {
+            $field = match ($variant) {
+                'normal' => 'hasNormal',
+                'shiny' => 'hasShiny',
+                'shadow' => 'hasShadow',
+                'purified' => 'hasPurified',
+                'lucky' => 'hasLucky',
+                'xxl' => 'hasXxl',
+                'xxs' => 'hasXxs',
+                'perfect' => 'hasPerfect',
+                default => null,
+            };
 
-        $pokemon = $queryBuilder->getQuery()->getResult();
-        $total = $pokemonRepository->count([]);
+            if ($field !== null) {
+                $queryBuilder
+                    ->innerJoin('App\Entity\UserPokemon', 'up', 'WITH', 'up.pokemon = p.id')
+                    ->andWhere('up.user = :user')
+                    ->andWhere(sprintf('up.%s = :true', $field))
+                    ->setParameter('user', $user)
+                    ->setParameter('true', true);
+            }
+        }
+
+        // Get total before pagination
+        $total = (int) $queryBuilder
+            ->select('COUNT(DISTINCT p.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        // Apply pagination
+        $queryBuilder
+            ->select('p')
+            ->setFirstResult(($page - 1) * $perPage)
+            ->setMaxResults($perPage);
+
+        $result = $queryBuilder->getQuery()->getResult();
+
+        if (!is_array($result)) {
+            $result = [];
+        }
+
+        // Get user's Pokemon collection
+        $userPokemonMap = [];
+        $userPokemonList = $userPokemonRepository->findAllByUser($user);
+        foreach ($userPokemonList as $userPokemon) {
+            $pokemonEntity = $userPokemon->getPokemon();
+            if ($pokemonEntity !== null) {
+                $pokemonId = $pokemonEntity->getId();
+                if ($pokemonId !== null) {
+                    $userPokemonMap[$pokemonId] = $userPokemon;
+                }
+            }
+        }
+
+        // Enrich Pokemon with user's collection data
+        $enrichedPokemon = [];
+        foreach ($result as $p) {
+            if (!$p instanceof \App\Entity\Pokemon) {
+                continue;
+            }
+
+            $pokemonId = $p->getId();
+            if ($pokemonId === null) {
+                continue;
+            }
+
+            $userPokemon = $userPokemonMap[$pokemonId] ?? null;
+
+            $enrichedPokemon[] = [
+                'id' => $pokemonId,
+                'number' => $p->getNumber(),
+                'name' => $p->getName(),
+                'picture' => $p->getPicture(),
+                'generation' => $p->getGeneration(),
+                'userPokemon' => $userPokemon ? [
+                    'hasNormal' => $userPokemon->hasNormal(),
+                    'hasShiny' => $userPokemon->hasShiny(),
+                    'hasShadow' => $userPokemon->hasShadow(),
+                    'hasPurified' => $userPokemon->hasPurified(),
+                    'hasLucky' => $userPokemon->hasLucky(),
+                    'hasXxl' => $userPokemon->hasXxl(),
+                    'hasXxs' => $userPokemon->hasXxs(),
+                    'hasPerfect' => $userPokemon->hasPerfect(),
+                ] : null,
+            ];
+        }
 
         return $this->json([
-            'pokemon' => $pokemon,
+            'pokemon' => $enrichedPokemon,
             'page' => $page,
             'perPage' => $perPage,
             'total' => $total,
             'hasMore' => ($page * $perPage) < $total,
             'variant' => $variant,
             'search' => $search,
-        ], 200, [], ['groups' => ['pokemon:read']]);
+        ]);
     }
 }
