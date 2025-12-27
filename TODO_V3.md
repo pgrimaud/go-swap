@@ -147,7 +147,7 @@ UserPokemon:
 - has_lucky (bool)
 - has_xxl (bool)
 - has_xxs (bool)
-- has_hundo (bool) // 100% IVs
+- has_perfect (bool) // 100% IVs
 - first_caught_at (datetime)
 - updated_at (datetime)
 ```
@@ -179,7 +179,7 @@ UserPokemon:
 - ⭐ Lucky
 - 📏 XXL
 - 📐 XXS
-- 💯 Hundo (100%)
+- 💯 Perfect (100%)
 
 ### 3.3 Filtres
 - [ ] Par génération (Gen 1-9) - Boutons horizontaux

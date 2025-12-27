@@ -9,7 +9,7 @@
 ## 📋 Contexte du Projet
 
 **Go Swap V3** est une application web Symfony 8.0 pour gérer une collection complète de Pokémon GO :
-- **Pokédex complet** : Track tous les variants possibles (Normal, Shiny, Shadow, Purified, Lucky, XXL, XXS, Hundo)
+- **Pokédex complet** : Track tous les variants possibles (Normal, Shiny, Shadow, Purified, Lucky, XXL, XXS, Perfect)
 - **Collection PvP** : Pokémon optimisés pour les ligues Great/Ultra/Little Cup
 - **Listes personnalisées** : Créer des listes custom pour organiser sa collection
 

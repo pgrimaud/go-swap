@@ -7,6 +7,7 @@ namespace App\Controller\Admin;
 use App\Entity\Pokemon;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -32,6 +33,9 @@ class PokemonCrudController extends AbstractCrudController
         return [
             IntegerField::new('number'),
             TextField::new('name'),
+            BooleanField::new('shiny'),
+            BooleanField::new('shadow'),
+            BooleanField::new('lucky'),
             TextField::new('form')->setHelp('Check forms <a target="_blank" href="https://pogoapi.net/api/v1/pokemon_types.json">here</a>')->onlyOnForms(),
             ImageField::new('picture')
                 ->setUploadDir('public/images/pokemon/normal')

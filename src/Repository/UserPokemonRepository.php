@@ -60,7 +60,7 @@ class UserPokemonRepository extends ServiceEntityRepository
             'lucky' => 'hasLucky',
             'xxl' => 'hasXxl',
             'xxs' => 'hasXxs',
-            'hundo' => 'hasHundo',
+            'perfect' => 'hasPerfect',
             default => throw new \InvalidArgumentException(sprintf('Invalid variant: %s', $variant)),
         };
 
@@ -79,7 +79,7 @@ class UserPokemonRepository extends ServiceEntityRepository
         return (int) $this->createQueryBuilder('up')
             ->select('COUNT(up.id)')
             ->where('up.user = :user')
-            ->andWhere('(up.hasNormal = :true OR up.hasShiny = :true OR up.hasShadow = :true OR up.hasPurified = :true OR up.hasLucky = :true OR up.hasXxl = :true OR up.hasXxs = :true OR up.hasHundo = :true)')
+            ->andWhere('(up.hasNormal = :true OR up.hasShiny = :true OR up.hasShadow = :true OR up.hasPurified = :true OR up.hasLucky = :true OR up.hasXxl = :true OR up.hasXxs = :true OR up.hasPerfect = :true)')
             ->setParameter('user', $user)
             ->setParameter('true', true)
             ->getQuery()
@@ -98,7 +98,7 @@ class UserPokemonRepository extends ServiceEntityRepository
             ->andWhere('up.hasLucky = :true')
             ->andWhere('up.hasXxl = :true')
             ->andWhere('up.hasXxs = :true')
-            ->andWhere('up.hasHundo = :true')
+            ->andWhere('up.hasPerfect = :true')
             ->setParameter('user', $user)
             ->setParameter('true', true)
             ->getQuery()

@@ -51,7 +51,7 @@ class UserPokemon
     private bool $hasXxs = false;
 
     #[ORM\Column(options: ['default' => false])]
-    private bool $hasHundo = false;
+    private bool $hasPerfect = false;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $firstCaughtAt = null;
@@ -169,14 +169,14 @@ class UserPokemon
         return $this;
     }
 
-    public function hasHundo(): bool
+    public function hasPerfect(): bool
     {
-        return $this->hasHundo;
+        return $this->hasPerfect;
     }
 
-    public function setHasHundo(bool $hasHundo): static
+    public function setHasPerfect(bool $hasPerfect): static
     {
-        $this->hasHundo = $hasHundo;
+        $this->hasPerfect = $hasPerfect;
 
         return $this;
     }
@@ -191,29 +191,5 @@ class UserPokemon
         $this->firstCaughtAt = $firstCaughtAt;
 
         return $this;
-    }
-
-    public function hasAnyVariant(): bool
-    {
-        return $this->hasNormal
-            || $this->hasShiny
-            || $this->hasShadow
-            || $this->hasPurified
-            || $this->hasLucky
-            || $this->hasXxl
-            || $this->hasXxs
-            || $this->hasHundo;
-    }
-
-    public function countVariants(): int
-    {
-        return (int) $this->hasNormal
-            + (int) $this->hasShiny
-            + (int) $this->hasShadow
-            + (int) $this->hasPurified
-            + (int) $this->hasLucky
-            + (int) $this->hasXxl
-            + (int) $this->hasXxs
-            + (int) $this->hasHundo;
     }
 }
