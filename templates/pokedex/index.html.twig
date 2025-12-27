@@ -123,6 +123,7 @@
                                 <img 
                                     src="{{ asset('images/pokemon/normal/' ~ pokemon.picture) }}" 
                                     alt="{{ pokemon.name }}"
+                                    loading="lazy"
                                     class="w-24 h-24 object-contain"
                                 >
                             </div>
@@ -140,6 +141,7 @@
                                             src="{{ asset('images/type/' ~ type.slug ~ '.png') }}" 
                                             alt="{{ type.name }}"
                                             title="{{ type.name }}"
+                                            loading="lazy"
                                             class="w-5 h-5"
                                         >
                                     {% endfor %}
@@ -151,35 +153,35 @@
                                 <div class="grid grid-cols-4 gap-1.5">
                                     {# Normal #}
                                     <div class="aspect-square bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition" title="Normal">
-                                        <img src="{{ asset('images/pokedex/normal.png') }}" alt="Normal" class="w-5 h-5 opacity-40">
+                                        <img src="{{ asset('images/pokedex/normal.png') }}" alt="Normal" loading="lazy" class="w-5 h-5 opacity-40">
                                     </div>
                                     {# Shiny #}
                                     <div class="aspect-square bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition" title="Shiny">
-                                        <img src="{{ asset('images/pokedex/shiny.png') }}" alt="Shiny" class="w-5 h-5 opacity-40">
+                                        <img src="{{ asset('images/pokedex/shiny.png') }}" alt="Shiny" loading="lazy" class="w-5 h-5 opacity-40">
                                     </div>
                                     {# Shadow #}
                                     <div class="aspect-square bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition" title="Shadow">
-                                        <img src="{{ asset('images/pokedex/shadow.png') }}" alt="Shadow" class="w-5 h-5 opacity-40">
+                                        <img src="{{ asset('images/pokedex/shadow.png') }}" alt="Shadow" loading="lazy" class="w-5 h-5 opacity-40">
                                     </div>
                                     {# Purified #}
                                     <div class="aspect-square bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition" title="Purified">
-                                        <img src="{{ asset('images/pokedex/purified.png') }}" alt="Purified" class="w-5 h-5 opacity-40">
+                                        <img src="{{ asset('images/pokedex/purified.png') }}" alt="Purified" loading="lazy" class="w-5 h-5 opacity-40">
                                     </div>
                                     {# Lucky #}
                                     <div class="aspect-square bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition" title="Lucky">
-                                        <img src="{{ asset('images/pokedex/lucky.png') }}" alt="Lucky" class="w-5 h-5 opacity-40">
+                                        <img src="{{ asset('images/pokedex/lucky.png') }}" alt="Lucky" loading="lazy" class="w-5 h-5 opacity-40">
                                     </div>
                                     {# XXL #}
                                     <div class="aspect-square bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition" title="XXL">
-                                        <img src="{{ asset('images/pokedex/xxl.png') }}" alt="XXL" class="w-5 h-5 opacity-40">
+                                        <img src="{{ asset('images/pokedex/xxl.png') }}" alt="XXL" loading="lazy" class="w-5 h-5 opacity-40">
                                     </div>
                                     {# XXS #}
                                     <div class="aspect-square bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition" title="XXS">
-                                        <img src="{{ asset('images/pokedex/xxs.png') }}" alt="XXS" class="w-5 h-5 opacity-40">
+                                        <img src="{{ asset('images/pokedex/xxs.png') }}" alt="XXS" loading="lazy" class="w-5 h-5 opacity-40">
                                     </div>
                                     {# Perfect #}
                                     <div class="aspect-square bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition" title="Perfect">
-                                        <img src="{{ asset('images/pokedex/perfect.png') }}" alt="Perfect" class="w-5 h-5 opacity-40">
+                                        <img src="{{ asset('images/pokedex/perfect.png') }}" alt="Perfect" loading="lazy" class="w-5 h-5 opacity-40">
                                     </div>
                                 </div>
 
