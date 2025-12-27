@@ -133,19 +133,6 @@
                                 <h3 class="font-semibold text-gray-800 dark:text-white text-sm mb-2">
                                     {{ pokemon.name }}
                                 </h3>
-
-                                {# Types #}
-                                <div class="flex justify-center gap-1 mb-3">
-                                    {% for type in pokemon.types %}
-                                        <img 
-                                            src="{{ asset('images/type/' ~ type.slug ~ '.png') }}" 
-                                            alt="{{ type.name }}"
-                                            title="{{ type.name }}"
-                                            loading="lazy"
-                                            class="w-5 h-5"
-                                        >
-                                    {% endfor %}
-                                </div>
                             </div>
 
                             {# Variants Grid - 8 badges in 4x2 #}
