@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller\Admin;
 
 use App\Entity\Type;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
+/**
+ * @extends AbstractCrudController<Type>
+ */
 class TypeCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
@@ -27,10 +30,10 @@ class TypeCrudController extends AbstractCrudController
                 ->setUploadedFileNamePattern('[slug]-[randomhash].[extension]')
                 ->setFormTypeOptions([
                     'attr' => [
-                        'accept' => 'image/*'
-                    ]
+                        'accept' => 'image/*',
+                    ],
                 ])
-                ->setHelp('Check "*BORDERED" pictures <a target="_blank" href="https://github.com/PokeMiners/pogo_assets/tree/master/Images/Types">here</a>'),
+                ->setHelp('Check "*_BORDERED.png" pictures <a target="_blank" href="https://github.com/PokeMiners/pogo_assets/tree/master/Images/Types">here</a>'),
         ];
     }
 }

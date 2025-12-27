@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Go Swap - PvP{% endblock %}
+
+{% block body %}
+    {% include 'partials/header.html.twig' %}
+
+    {% include 'partials/breadcrumb.html.twig' with {
+        'links': [
+            {'name': 'PvP', 'url': path('app_pvp_index')},
+        ]
+    } %}
+
+    <div class="flex flex-wrap justify-center items-center flex-grow gap-4">
+        {% include 'partials/card.html.twig' with {
+            title: 'Pokémon (' ~ totalUserPokemon ~ ')',
+            image: asset('images/icons/pokeballs.png'),
+            description: 'Manage your PvP Pokémon',
+            link: path('app_pvp_pokemon'),
+        } %}
+
+        {% include 'partials/card.html.twig' with {
+            title: 'Types effectiveness',
+            image: asset('images/icons/grass.png'),
+            description: 'Check effectiveness table',
+            link: path('app_pvp_types'),
+        } %}
+
+        {% include 'partials/card.html.twig' with {
+            title: 'Quiz',
+            image: asset('images/icons/unown-qm.png'),
+            description: 'Train types and moves knowledge',
+            link: '#',
+        } %}
+    </div>
+{% endblock %}

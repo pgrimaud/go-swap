@@ -1,17 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -19,9 +20,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180, unique: true)]
-    private ?string $username = null;
+    #[ORM\Column(length: 180)]
+    private ?string $email = null;
 
+    /**
+     * @var list<string> The user roles
+     */
     #[ORM\Column]
     private array $roles = [];
 
@@ -31,26 +35,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserPokemon::class, orphanRemoval: true)]
-    private Collection $userPokemon;
-
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserPvPPokemon::class, orphanRemoval: true)]
-    private Collection $userPvPPokemon;
-
     #[ORM\Column]
-    private ?\DateTimeImmutable $updatedAt = null;
-
-    /**
-     * @var Collection<int, PvPQuiz>
-     */
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: PvPQuiz::class, orphanRemoval: true)]
-    private Collection $pvpQuizzes;
+    private ?\DateTimeImmutable $createdAt = null;
 
     public function __construct()
     {
-        $this->userPokemon = new ArrayCollection();
-        $this->userPvPPokemon = new ArrayCollection();
-        $this->pvpQuizzes = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -58,14 +48,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
-    public function getUsername(): ?string
+    public function getEmail(): ?string
     {
-        return $this->username;
+        return $this->email;
     }
 
-    public function setUsername(string $username): self
+    public function setEmail(string $email): static
     {
-        $this->username = $username;
+        $this->email = $email;
 
         return $this;
     }
@@ -77,7 +67,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->username;
+        $email = $this->email ?? 'unknown';
+        assert($email !== '');
+
+        return $email;
     }
 
     /**
@@ -92,7 +85,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
-    public function setRoles(array $roles): self
+    /**
+     * @param list<string> $roles
+     */
+    public function setRoles(array $roles): static
     {
         $this->roles = $roles;
 
@@ -107,7 +103,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-    public function setPassword(string $password): self
+    public function setPassword(string $password): static
     {
         $this->password = $password;
 
@@ -115,117 +111,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @see UserInterface
+     * Ensure the session doesn't contain actual password hashes by CRC32C-hashing them, as supported since Symfony 7.3.
      */
-    public function eraseCredentials(): void
+    public function __serialize(): array
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        $data = (array) $this;
+        $data["\0" . self::class . "\0password"] = hash('crc32c', $this->password ?? '');
+
+        return $data;
     }
 
-    /**
-     * @return Collection<int, UserPokemon>
-     */
-    public function getUserPokemon(): Collection
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->userPokemon;
+        return $this->createdAt;
     }
 
-    public function addUserPokemon(UserPokemon $userPokemon): self
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
-        if (!$this->userPokemon->contains($userPokemon)) {
-            $this->userPokemon->add($userPokemon);
-            $userPokemon->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUserPokemon(UserPokemon $userPokemon): self
-    {
-        if ($this->userPokemon->removeElement($userPokemon)) {
-            // set the owning side to null (unless already changed)
-            if ($userPokemon->getUser() === $this) {
-                $userPokemon->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function __toString(): string
-    {
-        return (string)$this->username;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, UserPvPPokemon>
-     */
-    public function getUserPvPPokemon(): Collection
-    {
-        return $this->userPvPPokemon;
-    }
-
-    public function addUserPvPPokemon(UserPvPPokemon $userPvPPokemon): self
-    {
-        if (!$this->userPvPPokemon->contains($userPvPPokemon)) {
-            $this->userPvPPokemon->add($userPvPPokemon);
-            $userPvPPokemon->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUserPvPPokemon(UserPvPPokemon $userPvPPokemon): self
-    {
-        if ($this->userPvPPokemon->removeElement($userPvPPokemon)) {
-            // set the owning side to null (unless already changed)
-            if ($userPvPPokemon->getUser() === $this) {
-                $userPvPPokemon->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, PvPQuiz>
-     */
-    public function getPvpQuizzes(): Collection
-    {
-        return $this->pvpQuizzes;
-    }
-
-    public function addPvpQuiz(PvPQuiz $pvpQuiz): static
-    {
-        if (!$this->pvpQuizzes->contains($pvpQuiz)) {
-            $this->pvpQuizzes->add($pvpQuiz);
-            $pvpQuiz->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removePvpQuiz(PvPQuiz $pvpQuiz): static
-    {
-        if ($this->pvpQuizzes->removeElement($pvpQuiz)) {
-            // set the owning side to null (unless already changed)
-            if ($pvpQuiz->getUser() === $this) {
-                $pvpQuiz->setUser(null);
-            }
-        }
+        $this->createdAt = $createdAt;
 
         return $this;
     }

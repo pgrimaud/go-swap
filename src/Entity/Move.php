@@ -1,17 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use App\Contract\Trait\TimestampTrait;
 use App\Repository\MoveRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 
 #[ORM\Entity(repositoryClass: MoveRepository::class)]
+#[ORM\UniqueConstraint(name: 'slug_uniq', columns: ['slug'])]
+#[HasLifecycleCallbacks]
 class Move
 {
-    public const FAST_MOVE = 'fast';
-    public const CHARGED_MOVE = 'charged';
+    use TimestampTrait;
+
+    public const string BUFF_TARGET_SELF = 'self';
+    public const string BUFF_TARGET_OPPONENT = 'opponent';
+
+    public const string FAST_MOVE = 'fast';
+    public const string CHARGED_MOVE = 'charged';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -21,26 +33,50 @@ class Move
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $slug = null;
+
     #[ORM\ManyToOne(inversedBy: 'moves')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Type $Type = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $attackType = null;
+    private ?Type $type = null;
 
     #[ORM\Column]
     private ?int $power = null;
 
     #[ORM\Column]
-    private ?int $turnDuration = null;
+    private ?int $energy = null;
 
     #[ORM\Column]
-    private ?int $energyDelta = null;
+    private ?int $energyGain = null;
+
+    #[ORM\Column]
+    private ?int $cooldown = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $buffAttack = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $buffDefense = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $buffTarget = null;
+
+    #[ORM\Column(type: Types::FLOAT, nullable: true)]
+    private ?float $buffChance = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $category = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $class = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $hash = null;
 
     /**
      * @var Collection<int, PokemonMove>
      */
-    #[ORM\OneToMany(mappedBy: 'move', targetEntity: PokemonMove::class, orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: PokemonMove::class, mappedBy: 'move', orphanRemoval: true)]
     private Collection $pokemonMoves;
 
     public function __construct()
@@ -65,26 +101,26 @@ class Move
         return $this;
     }
 
-    public function getType(): ?Type
+    public function getSlug(): ?string
     {
-        return $this->Type;
+        return $this->slug;
     }
 
-    public function setType(?Type $Type): static
+    public function setSlug(string $slug): static
     {
-        $this->Type = $Type;
+        $this->slug = $slug;
 
         return $this;
     }
 
-    public function getAttackType(): ?string
+    public function getType(): ?Type
     {
-        return $this->attackType;
+        return $this->type;
     }
 
-    public function setAttackType(string $attackType): static
+    public function setType(?Type $type): static
     {
-        $this->attackType = $attackType;
+        $this->type = $type;
 
         return $this;
     }
@@ -101,26 +137,122 @@ class Move
         return $this;
     }
 
-    public function getTurnDuration(): ?int
+    public function getEnergy(): ?int
     {
-        return $this->turnDuration;
+        return $this->energy;
     }
 
-    public function setTurnDuration(int $turnDuration): static
+    public function setEnergy(int $energy): static
     {
-        $this->turnDuration = $turnDuration;
+        $this->energy = $energy;
 
         return $this;
     }
 
-    public function getEnergyDelta(): ?int
+    public function getEnergyGain(): ?int
     {
-        return $this->energyDelta;
+        return $this->energyGain;
     }
 
-    public function setEnergyDelta(int $energyDelta): static
+    public function setEnergyGain(int $energyGain): static
     {
-        $this->energyDelta = $energyDelta;
+        $this->energyGain = $energyGain;
+
+        return $this;
+    }
+
+    public function getCooldown(): ?int
+    {
+        return $this->cooldown;
+    }
+
+    public function setCooldown(int $cooldown): static
+    {
+        $this->cooldown = $cooldown;
+
+        return $this;
+    }
+
+    public function getBuffAttack(): ?int
+    {
+        return $this->buffAttack;
+    }
+
+    public function setBuffAttack(?int $buffAttack): static
+    {
+        $this->buffAttack = $buffAttack;
+
+        return $this;
+    }
+
+    public function getBuffDefense(): ?int
+    {
+        return $this->buffDefense;
+    }
+
+    public function setBuffDefense(?int $buffDefense): static
+    {
+        $this->buffDefense = $buffDefense;
+
+        return $this;
+    }
+
+    public function getBuffTarget(): ?string
+    {
+        return $this->buffTarget;
+    }
+
+    public function setBuffTarget(?string $buffTarget): static
+    {
+        $this->buffTarget = $buffTarget;
+
+        return $this;
+    }
+
+    public function getCategory(): ?string
+    {
+        return $this->category;
+    }
+
+    public function setCategory(string $category): static
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    public function getBuffChance(): ?float
+    {
+        return $this->buffChance;
+    }
+
+    public function setBuffChance(?float $buffChance): static
+    {
+        $this->buffChance = $buffChance;
+
+        return $this;
+    }
+
+    public function getClass(): ?string
+    {
+        return $this->class;
+    }
+
+    public function setClass(string $class): static
+    {
+        $this->class = $class;
+
+        return $this;
+    }
+
+    public function getHash(): ?string
+    {
+        return $this->hash;
+    }
+
+    public function setHash(string $hash): static
+    {
+        $this->hash = $hash;
 
         return $this;
     }

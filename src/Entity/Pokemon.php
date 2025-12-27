@@ -1,15 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use App\Contract\Trait\TimestampTrait;
 use App\Repository\PokemonRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 
 #[ORM\Entity(repositoryClass: PokemonRepository::class)]
+#[ORM\UniqueConstraint(name: 'slug_uniq', columns: ['slug'])]
+#[HasLifecycleCallbacks]
 class Pokemon
 {
+    use TimestampTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -19,72 +27,58 @@ class Pokemon
     private ?int $number = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $generation = null;
+    private ?string $name = null;
+
+    #[ORM\Column]
+    private ?int $attack = null;
+
+    #[ORM\Column]
+    private ?int $defense = null;
+
+    #[ORM\Column]
+    private ?int $stamina = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $frenchName = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $englishName = null;
+    private ?string $hash = null;
 
     #[ORM\Column]
-    private ?bool $isShiny = null;
-
-    #[ORM\OneToMany(mappedBy: 'pokemon', targetEntity: UserPokemon::class, orphanRemoval: true)]
-    private Collection $userPokemon;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $normalPicture = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $shinyPicture = null;
+    private bool $shadow = false;
 
     #[ORM\Column]
-    private ?bool $isActual = false;
-
-    #[ORM\ManyToOne(inversedBy: 'pokemons')]
-    private ?EvolutionChain $evolutionChain = null;
+    private bool $shiny = false;
 
     #[ORM\Column]
-    private ?bool $isLucky = true;
-
-    #[ORM\Column]
-    private ?bool $isShadow = false;
-
-    #[ORM\Column]
-    private ?bool $isPurified = false;
-
-    #[ORM\Column]
-    private ?bool $isShinyThreeStars = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?int $evolutionChainPosition = 0;
-
-    #[ORM\OneToMany(mappedBy: 'pokemon', targetEntity: UserPvPPokemon::class, orphanRemoval: true)]
-    private Collection $userPvPPokemon;
-
-    /**
-     * @var Collection<int, Type>
-     */
-    #[ORM\ManyToMany(targetEntity: Type::class, inversedBy: 'pokemons')]
-    private Collection $types;
-
-    #[ORM\Column(length: 255)]
-    private ?string $form = null;
-
-    /**
-     * @var Collection<int, PokemonMove>
-     */
-    #[ORM\OneToMany(mappedBy: 'pokemon', targetEntity: PokemonMove::class, orphanRemoval: true)]
-    private Collection $pokemonMoves;
+    private bool $lucky = false;
 
     #[ORM\Column(length: 255)]
     private ?string $slug = null;
 
+    /**
+     * @var Collection<int, Type>
+     */
+    #[ORM\ManyToMany(targetEntity: Type::class, inversedBy: 'pokemon')]
+    private Collection $types;
+
+    /**
+     * @var Collection<int, PokemonMove>
+     */
+    #[ORM\OneToMany(targetEntity: PokemonMove::class, mappedBy: 'pokemon', cascade: ['persist'], orphanRemoval: true)]
+    private Collection $pokemonMoves;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $picture = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $shinyPicture = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $generation = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $form = null;
+
     public function __construct()
     {
-        $this->userPokemon = new ArrayCollection();
-        $this->userPvPPokemon = new ArrayCollection();
         $this->types = new ArrayCollection();
         $this->pokemonMoves = new ArrayCollection();
     }
@@ -99,224 +93,117 @@ class Pokemon
         return $this->number;
     }
 
-    public function setNumber(int $number): self
+    public function setNumber(int $number): static
     {
         $this->number = $number;
 
         return $this;
     }
 
-    public function getGeneration(): ?string
+    public function getName(): ?string
     {
-        return $this->generation;
+        return $this->name;
     }
 
-    public function setGeneration(string $generation): self
+    public function setName(string $name): static
     {
-        $this->generation = $generation;
+        $this->name = $name;
 
         return $this;
     }
 
-    public function getFrenchName(): ?string
+    public function getAttack(): ?int
     {
-        return $this->frenchName;
+        return $this->attack;
     }
 
-    public function setFrenchName(string $frenchName): self
+    public function setAttack(int $attack): static
     {
-        $this->frenchName = $frenchName;
+        $this->attack = $attack;
 
         return $this;
     }
 
-    public function getEnglishName(): ?string
+    public function getDefense(): ?int
     {
-        return $this->englishName;
+        return $this->defense;
     }
 
-    public function setEnglishName(?string $englishName): self
+    public function setDefense(int $defense): static
     {
-        $this->englishName = $englishName;
+        $this->defense = $defense;
 
         return $this;
     }
 
-    public function isIsShiny(): ?bool
+    public function getStamina(): ?int
     {
-        return $this->isShiny;
+        return $this->stamina;
     }
 
-    public function setIsShiny(bool $isShiny): self
+    public function setStamina(int $stamina): static
     {
-        $this->isShiny = $isShiny;
+        $this->stamina = $stamina;
 
         return $this;
     }
 
-    /**
-     * @return Collection<int, UserPokemon>
-     */
-    public function getUserPokemon(): Collection
+    public function getHash(): ?string
     {
-        return $this->userPokemon;
+        return $this->hash;
     }
 
-    public function addUserPokemon(UserPokemon $userPokemon): self
+    public function setHash(string $hash): static
     {
-        if (!$this->userPokemon->contains($userPokemon)) {
-            $this->userPokemon->add($userPokemon);
-            $userPokemon->setPokemon($this);
-        }
+        $this->hash = $hash;
 
         return $this;
     }
 
-    public function removeUserPokemon(UserPokemon $userPokemon): self
+    public function isShadow(): bool
     {
-        if ($this->userPokemon->removeElement($userPokemon)) {
-            // set the owning side to null (unless already changed)
-            if ($userPokemon->getPokemon() === $this) {
-                $userPokemon->setPokemon(null);
-            }
-        }
+        return $this->shadow;
+    }
+
+    public function setShadow(bool $shadow): static
+    {
+        $this->shadow = $shadow;
 
         return $this;
     }
 
-    public function __toString(): string
+    public function isShiny(): bool
     {
-        return (string)$this->frenchName;
+        return $this->shiny;
     }
 
-    public function getNormalPicture(): ?string
+    public function setShiny(bool $shiny): static
     {
-        return $this->normalPicture;
-    }
-
-    public function setNormalPicture(?string $normalPicture): self
-    {
-        $this->normalPicture = $normalPicture;
+        $this->shiny = $shiny;
 
         return $this;
     }
 
-    public function getShinyPicture(): ?string
+    public function isLucky(): bool
     {
-        return $this->shinyPicture;
+        return $this->lucky;
     }
 
-    public function setShinyPicture(?string $shinyPicture): self
+    public function setLucky(bool $lucky): static
     {
-        $this->shinyPicture = $shinyPicture;
+        $this->lucky = $lucky;
 
         return $this;
     }
 
-    public function isIsActual(): ?bool
+    public function getSlug(): ?string
     {
-        return $this->isActual;
+        return $this->slug;
     }
 
-    public function setIsActual(bool $isActual): self
+    public function setSlug(string $slug): static
     {
-        $this->isActual = $isActual;
-
-        return $this;
-    }
-
-    public function getEvolutionChain(): ?EvolutionChain
-    {
-        return $this->evolutionChain;
-    }
-
-    public function setEvolutionChain(?EvolutionChain $evolutionChain): self
-    {
-        $this->evolutionChain = $evolutionChain;
-
-        return $this;
-    }
-
-    public function isIsLucky(): ?bool
-    {
-        return $this->isLucky;
-    }
-
-    public function setIsLucky(bool $isLucky): self
-    {
-        $this->isLucky = $isLucky;
-
-        return $this;
-    }
-
-    public function getIsShadow(): ?bool
-    {
-        return $this->isShadow;
-    }
-
-    public function setIsShadow(?bool $isShadow): void
-    {
-        $this->isShadow = $isShadow;
-    }
-
-    public function getIsPurified(): ?bool
-    {
-        return $this->isPurified;
-    }
-
-    public function setIsPurified(?bool $isPurified): void
-    {
-        $this->isPurified = $isPurified;
-    }
-
-    public function getIsShinyThreeStars(): ?bool
-    {
-        return $this->isShinyThreeStars;
-    }
-
-    public function setIsShinyThreeStars(?bool $isShinyThreeStars): void
-    {
-        $this->isShinyThreeStars = $isShinyThreeStars;
-    }
-
-    public function getEvolutionChainPosition(): ?int
-    {
-        return $this->evolutionChainPosition;
-    }
-
-    public function setEvolutionChainPosition(?int $evolutionChainPosition): static
-    {
-        $this->evolutionChainPosition = $evolutionChainPosition;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, UserPvPPokemon>
-     */
-    public function getUserPvPPokemon(): Collection
-    {
-        return $this->userPvPPokemon;
-    }
-
-    public function addUserPvPPokemon(UserPvPPokemon $userPvPPokemon): self
-    {
-        if (!$this->userPvPPokemon->contains($userPvPPokemon)) {
-            $this->userPvPPokemon->add($userPvPPokemon);
-            $userPvPPokemon->setPokemon($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUserPvPPokemon(UserPvPPokemon $userPvPPokemon): self
-    {
-        if ($this->userPvPPokemon->removeElement($userPvPPokemon)) {
-            // set the owning side to null (unless already changed)
-            if ($userPvPPokemon->getPokemon() === $this) {
-                $userPvPPokemon->setPokemon(null);
-            }
-        }
+        $this->slug = $slug;
 
         return $this;
     }
@@ -345,38 +232,12 @@ class Pokemon
         return $this;
     }
 
-    public function getForm(): ?string
-    {
-        return $this->form;
-    }
-
-    public function setForm(string $form): static
-    {
-        $this->form = $form;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, PokemonMove>
      */
     public function getPokemonMoves(): Collection
     {
         return $this->pokemonMoves;
-    }
-
-    public function getFastMoves(): Collection
-    {
-        return $this->pokemonMoves->filter(function (PokemonMove $pokemonMove) {
-            return $pokemonMove->getMove()?->getAttackType() === Move::FAST_MOVE;
-        });
-    }
-
-    public function getChargedMoves(): Collection
-    {
-        return $this->pokemonMoves->filter(function (PokemonMove $pokemonMove) {
-            return $pokemonMove->getMove()?->getAttackType() === Move::CHARGED_MOVE;
-        });
     }
 
     public function addPokemonMove(PokemonMove $pokemonMove): static
@@ -401,23 +262,50 @@ class Pokemon
         return $this;
     }
 
-    public function removeAllPokemonMoves(): static
+    public function getPicture(): ?string
     {
-        foreach ($this->pokemonMoves as $pokemonMove) {
-            $this->removePokemonMove($pokemonMove);
-        }
+        return $this->picture;
+    }
+
+    public function setPicture(?string $picture): static
+    {
+        $this->picture = $picture;
 
         return $this;
     }
 
-    public function getSlug(): ?string
+    public function getShinyPicture(): ?string
     {
-        return $this->slug;
+        return $this->shinyPicture;
     }
 
-    public function setSlug(string $slug): static
+    public function setShinyPicture(?string $shinyPicture): static
     {
-        $this->slug = $slug;
+        $this->shinyPicture = $shinyPicture;
+
+        return $this;
+    }
+
+    public function getGeneration(): ?string
+    {
+        return $this->generation;
+    }
+
+    public function setGeneration(string $generation): static
+    {
+        $this->generation = $generation;
+
+        return $this;
+    }
+
+    public function getForm(): ?string
+    {
+        return $this->form;
+    }
+
+    public function setForm(?string $form): static
+    {
+        $this->form = $form;
 
         return $this;
     }

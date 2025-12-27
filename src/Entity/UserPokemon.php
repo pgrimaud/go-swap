@@ -1,65 +1,72 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use App\Contract\Trait\TimestampTrait;
 use App\Repository\UserPokemonRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 
 #[ORM\Entity(repositoryClass: UserPokemonRepository::class)]
+#[ORM\UniqueConstraint(name: 'user_pokemon_unique', columns: ['user_id', 'pokemon_id'])]
+#[HasLifecycleCallbacks]
 class UserPokemon
 {
+    use TimestampTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'userPokemon')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
-    private User|UserInterface|null $user = null;
+    private ?User $user = null;
 
-    #[ORM\ManyToOne(targetEntity: Pokemon::class, inversedBy: 'userPokemon')]
+    #[ORM\ManyToOne(targetEntity: Pokemon::class)]
     #[ORM\JoinColumn(nullable: false)]
     private ?Pokemon $pokemon = null;
 
-    #[ORM\Column]
-    private ?bool $normal = null;
+    #[ORM\Column(options: ['default' => false])]
+    private bool $hasNormal = false;
+
+    #[ORM\Column(options: ['default' => false])]
+    private bool $hasShiny = false;
+
+    #[ORM\Column(options: ['default' => false])]
+    private bool $hasShadow = false;
+
+    #[ORM\Column(options: ['default' => false])]
+    private bool $hasPurified = false;
+
+    #[ORM\Column(options: ['default' => false])]
+    private bool $hasLucky = false;
+
+    #[ORM\Column(options: ['default' => false])]
+    private bool $hasXxl = false;
+
+    #[ORM\Column(options: ['default' => false])]
+    private bool $hasXxs = false;
+
+    #[ORM\Column(options: ['default' => false])]
+    private bool $hasPerfect = false;
 
     #[ORM\Column]
-    private ?bool $shiny = null;
-
-    #[ORM\Column]
-    private ?bool $lucky = null;
-
-    #[ORM\Column]
-    private ?bool $threeStars = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?int $numberShiny = null;
-
-    #[ORM\Column]
-    private ?bool $shadow = null;
-
-    #[ORM\Column]
-    private ?bool $purified = null;
-
-    #[ORM\Column]
-    private ?bool $shinyThreeStars = null;
-
-    #[ORM\Column]
-    private ?bool $perfect = null;
+    private ?\DateTimeImmutable $firstCaughtAt = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getUser(): User|UserInterface|null
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(User|UserInterface|null $user): self
+    public function setUser(?User $user): static
     {
         $this->user = $user;
 
@@ -71,110 +78,118 @@ class UserPokemon
         return $this->pokemon;
     }
 
-    public function setPokemon(?Pokemon $pokemon): self
+    public function setPokemon(?Pokemon $pokemon): static
     {
         $this->pokemon = $pokemon;
 
         return $this;
     }
 
-    public function isNormal(): ?bool
+    public function hasNormal(): bool
     {
-        return $this->normal;
+        return $this->hasNormal;
     }
 
-    public function setNormal(bool $normal): self
+    public function setHasNormal(bool $hasNormal): static
     {
-        $this->normal = $normal;
+        $this->hasNormal = $hasNormal;
 
         return $this;
     }
 
-    public function isShiny(): ?bool
+    public function hasShiny(): bool
     {
-        return $this->shiny;
+        return $this->hasShiny;
     }
 
-    public function setShiny(bool $shiny): self
+    public function setHasShiny(bool $hasShiny): static
     {
-        $this->shiny = $shiny;
+        $this->hasShiny = $hasShiny;
 
         return $this;
     }
 
-    public function isLucky(): ?bool
+    public function hasShadow(): bool
     {
-        return $this->lucky;
+        return $this->hasShadow;
     }
 
-    public function setLucky(bool $lucky): self
+    public function setHasShadow(bool $hasShadow): static
     {
-        $this->lucky = $lucky;
+        $this->hasShadow = $hasShadow;
 
         return $this;
     }
 
-    public function isThreeStars(): ?bool
+    public function hasPurified(): bool
     {
-        return $this->threeStars;
+        return $this->hasPurified;
     }
 
-    public function setThreeStars(bool $threeStars): self
+    public function setHasPurified(bool $hasPurified): static
     {
-        $this->threeStars = $threeStars;
+        $this->hasPurified = $hasPurified;
 
         return $this;
     }
 
-    public function getNumberShiny(): ?int
+    public function hasLucky(): bool
     {
-        return $this->numberShiny;
+        return $this->hasLucky;
     }
 
-    public function setNumberShiny(?int $numberShiny): self
+    public function setHasLucky(bool $hasLucky): static
     {
-        $this->numberShiny = $numberShiny;
+        $this->hasLucky = $hasLucky;
 
         return $this;
     }
 
-    public function getShadow(): ?bool
+    public function hasXxl(): bool
     {
-        return $this->shadow;
+        return $this->hasXxl;
     }
 
-    public function setShadow(?bool $shadow): void
+    public function setHasXxl(bool $hasXxl): static
     {
-        $this->shadow = $shadow;
+        $this->hasXxl = $hasXxl;
+
+        return $this;
     }
 
-    public function getPurified(): ?bool
+    public function hasXxs(): bool
     {
-        return $this->purified;
+        return $this->hasXxs;
     }
 
-    public function setPurified(?bool $purified): void
+    public function setHasXxs(bool $hasXxs): static
     {
-        $this->purified = $purified;
+        $this->hasXxs = $hasXxs;
+
+        return $this;
     }
 
-    public function getShinyThreeStars(): ?bool
+    public function hasPerfect(): bool
     {
-        return $this->shinyThreeStars;
+        return $this->hasPerfect;
     }
 
-    public function setShinyThreeStars(?bool $shinyThreeStars): void
+    public function setHasPerfect(bool $hasPerfect): static
     {
-        $this->shinyThreeStars = $shinyThreeStars;
+        $this->hasPerfect = $hasPerfect;
+
+        return $this;
     }
 
-    public function getPerfect(): ?bool
+    public function getFirstCaughtAt(): ?\DateTimeImmutable
     {
-        return $this->perfect;
+        return $this->firstCaughtAt;
     }
 
-    public function setPerfect(?bool $perfect): void
+    public function setFirstCaughtAt(\DateTimeImmutable $firstCaughtAt): static
     {
-        $this->perfect = $perfect;
+        $this->firstCaughtAt = $firstCaughtAt;
+
+        return $this;
     }
 }

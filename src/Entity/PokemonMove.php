@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\PokemonMoveRepository;
@@ -22,7 +24,7 @@ class PokemonMove
     private ?Move $move = null;
 
     #[ORM\Column]
-    private ?bool $elite = false;
+    private bool $elite = false;
 
     public function getId(): ?int
     {
@@ -53,7 +55,7 @@ class PokemonMove
         return $this;
     }
 
-    public function isElite(): ?bool
+    public function isElite(): bool
     {
         return $this->elite;
     }

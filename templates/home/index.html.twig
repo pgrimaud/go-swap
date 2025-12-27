@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Go Swap - Dashboard{% endblock %}
+
+{% block body %}
+<div class="min-h-screen">
+    {% include 'partials/header.html.twig' %}
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <!-- Page Header -->
+        <div class="px-4 py-6 sm:px-0">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                    Welcome to Go Swap! 🎉
+                </h1>
+                <p class="text-gray-600 dark:text-gray-400">
+                    Track your Pokémon GO collection like a pro
+                </p>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="px-4 py-6 sm:px-0">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Pokédex Collection</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {% for category in pokedexCategories %}
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border-2 border-gray-300 dark:border-gray-600 hover:border-indigo-600 dark:hover:border-indigo-500 hover:shadow-xl transition cursor-pointer">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="flex items-center gap-2 mb-2">
+                            <img src="{{ asset('images/pokedex/' ~ category.icon) }}" alt="{{ category.name }}" class="w-8 h-8 border-2 border-white dark:border-gray-800 rounded-full">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ category.name }}</h3>
+                        </div>
+                        <span class="text-lg font-semibold px-3 py-1 rounded bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 leading-none mb-2">{{ category.percentage }}%</span>
+                        <p class="text-3xl font-bold">
+                            <span class="text-white">{{ category.count }}</span>
+                            <span class="text-base text-gray-500 dark:text-gray-400">/ {{ category.total }}</span>
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Other Collections -->
+        <div class="px-4 py-6 sm:px-0">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Collections Overview</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- PvP Card -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border-2 border-gray-300 dark:border-gray-600 hover:border-indigo-600 dark:hover:border-indigo-500 hover:shadow-xl transition cursor-pointer">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 bg-purple-100 dark:bg-purple-900/30 rounded-lg p-3">
+                            <span class="text-3xl">⚔️</span>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">PvP Collection</h3>
+                            <p class="text-2xl font-bold text-purple-600 dark:text-purple-400">0</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Battle-ready Pokémon</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lists Card -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border-2 border-gray-300 dark:border-gray-600 hover:border-indigo-600 dark:hover:border-indigo-500 hover:shadow-xl transition cursor-pointer">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 bg-green-100 dark:bg-green-900/30 rounded-lg p-3">
+                            <span class="text-3xl">📝</span>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">My Lists</h3>
+                            <p class="text-2xl font-bold text-green-600 dark:text-green-400">0</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Custom lists</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Card -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border-2 border-gray-300 dark:border-gray-600 hover:border-indigo-600 dark:hover:border-indigo-500 hover:shadow-xl transition cursor-pointer">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 bg-blue-100 dark:bg-blue-900/30 rounded-lg p-3">
+                            <span class="text-3xl">📊</span>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Statistics</h3>
+                            <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">0%</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Overall completion</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

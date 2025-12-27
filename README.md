@@ -9,15 +9,16 @@
 
 ## Prerequisites
 
-- PHP 8.2
-- Symfony 6.3
+- PHP 8.4
+- Symfony 7.3
 - MySQL
 
 ## Installation
 
 1. Clone this repository: `git clone https://github.com/pgrimaud/go-swap.git`
 2. Install the dependencies: `composer install`
-3. Start the Symfony server: Visit `http://localhost:8000` in your browser to access the application.
+3. Run assetmapper: `php bin/console asset:install && php bin/console tailwind:build --watch`
+4. Start the Symfony server: Visit `http://localhost:8000` in your browser to access the application.
 
 ## Contributing
 

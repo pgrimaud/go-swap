@@ -1,8 +1,0 @@
-<select class="border text-sm rounded-lg h-9 block bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500 px-2" id="switch-pokedex">
-    <option>Friends</option>
-    {% for user in users %}
-        {% if user.username != app.user.username %}
-            <option {% if userId is not null and userId == user.id %}selected{% endif%} value="{{ user.id }}">{{ user.username }}</option>
-        {% endif %}
-    {% endfor %}
-</select>

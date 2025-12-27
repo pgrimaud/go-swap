@@ -1,19 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\TypeEffectivenessRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TypeEffectivenessRepository::class)]
-class   TypeEffectiveness
+class TypeEffectiveness
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'effectivenesses')]
+    #[ORM\ManyToOne(inversedBy: 'effectiveness')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Type $sourceType = null;
 
@@ -22,7 +24,7 @@ class   TypeEffectiveness
     private ?Type $targetType = null;
 
     #[ORM\Column]
-    private ?float $multiplier = null;
+    private float $multiplier = 0;
 
     public function getId(): ?int
     {
@@ -53,7 +55,7 @@ class   TypeEffectiveness
         return $this;
     }
 
-    public function getMultiplier(): ?float
+    public function getMultiplier(): float
     {
         return $this->multiplier;
     }

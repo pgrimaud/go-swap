@@ -1,22 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
+use App\Entity\Pokemon;
 use App\Entity\User;
 use App\Entity\UserPokemon;
-use App\Helper\GenerationHelper;
-use App\Helper\PokedexHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @extends ServiceEntityRepository<UserPokemon>
- *
- * @method UserPokemon|null find($id, $lockMode = null, $lockVersion = null)
- * @method UserPokemon|null findOneBy(array $criteria, array $orderBy = null)
- * @method UserPokemon[]    findAll()
- * @method UserPokemon[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class UserPokemonRepository extends ServiceEntityRepository
 {
@@ -25,85 +20,88 @@ class UserPokemonRepository extends ServiceEntityRepository
         parent::__construct($registry, UserPokemon::class);
     }
 
-    public function save(UserPokemon $entity, bool $flush = false): void
+    public function findByUserAndPokemon(User $user, Pokemon $pokemon): ?UserPokemon
     {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function remove(UserPokemon $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function countByPokedex(?UserInterface $user, string $type): int
-    {
-        /** @var int $result */
+        /** @var UserPokemon|null $result */
         $result = $this->createQueryBuilder('up')
-            ->select('COUNT(DISTINCT(p.number))')
-            ->join('up.pokemon', 'p')
             ->where('up.user = :user')
-            ->andWhere('up.' . $type . ' = true')
+            ->andWhere('up.pokemon = :pokemon')
             ->setParameter('user', $user)
+            ->setParameter('pokemon', $pokemon)
             ->getQuery()
-            ->getSingleScalarResult();
+            ->getOneOrNullResult();
 
         return $result;
     }
 
-    public function countByGeneration(?UserInterface $user, string $type): array
+    /**
+     * @return UserPokemon[]
+     */
+    public function findAllByUser(User $user): array
     {
-        if (!$user instanceof User) {
-            return [];
-        }
+        /** @var UserPokemon[] $results */
+        $results = $this->createQueryBuilder('up')
+            ->where('up.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('up.pokemon', 'ASC')
+            ->getQuery()
+            ->getResult();
 
-        $connection = $this->getEntityManager()->getConnection();
+        return $results;
+    }
 
-        $sql = '
-            SELECT COUNT(DISTINCT(p.number)) as total, p.generation
-            FROM pokemon p 
-            RIGHT JOIN user_pokemon up ON up.pokemon_id = p.id
-            RIGHT JOIN user u ON u.id = up.user_id
-            WHERE u.id = :userId
-            AND up.' . PokedexHelper::POKEDEX_MAPPING_FIELD[$type] . ' = 1
-            GROUP BY p.generation
-            ORDER BY generation';
+    public function countByUserAndVariant(User $user, string $variant): int
+    {
+        $field = match ($variant) {
+            'normal' => 'hasNormal',
+            'shiny' => 'hasShiny',
+            'shadow' => 'hasShadow',
+            'purified' => 'hasPurified',
+            'lucky' => 'hasLucky',
+            'xxl' => 'hasXxl',
+            'xxs' => 'hasXxs',
+            'perfect' => 'hasPerfect',
+            default => throw new \InvalidArgumentException(sprintf('Invalid variant: %s', $variant)),
+        };
 
-        $stmt = $connection->prepare($sql);
+        return (int) $this->createQueryBuilder('up')
+            ->select('COUNT(up.id)')
+            ->where('up.user = :user')
+            ->andWhere(sprintf('up.%s = :true', $field))
+            ->setParameter('user', $user)
+            ->setParameter('true', true)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 
-        $statement = $stmt->executeQuery([
-            'userId' => $user->getId(),
-        ]);
+    public function countPokemonWithAtLeastOneVariant(User $user): int
+    {
+        return (int) $this->createQueryBuilder('up')
+            ->select('COUNT(up.id)')
+            ->where('up.user = :user')
+            ->andWhere('(up.hasNormal = :true OR up.hasShiny = :true OR up.hasShadow = :true OR up.hasPurified = :true OR up.hasLucky = :true OR up.hasXxl = :true OR up.hasXxs = :true OR up.hasPerfect = :true)')
+            ->setParameter('user', $user)
+            ->setParameter('true', true)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 
-        $results = $statement->fetchAllAssociative();
-
-        $allGenerations = GenerationHelper::getAllGenerations();
-
-        $allGenerationInit = [];
-
-        foreach ($allGenerations as $generationCode => $generationName) {
-            $allGenerationInit[$generationCode] = [
-                'total' => 0,
-                'generation' => $generationCode,
-                'name' => $generationName
-            ];
-        }
-
-        foreach ($results as $result) {
-            $allGenerationInit[$result['generation']] = [
-                'total' => $result['total'],
-                'generation' => $result['generation'],
-                'name' => GenerationHelper::getAllGenerations()[$result['generation']]
-            ];
-        }
-
-        return $allGenerationInit;
+    public function countPokemonWithAllVariants(User $user): int
+    {
+        return (int) $this->createQueryBuilder('up')
+            ->select('COUNT(up.id)')
+            ->where('up.user = :user')
+            ->andWhere('up.hasNormal = :true')
+            ->andWhere('up.hasShiny = :true')
+            ->andWhere('up.hasShadow = :true')
+            ->andWhere('up.hasPurified = :true')
+            ->andWhere('up.hasLucky = :true')
+            ->andWhere('up.hasXxl = :true')
+            ->andWhere('up.hasXxs = :true')
+            ->andWhere('up.hasPerfect = :true')
+            ->setParameter('user', $user)
+            ->setParameter('true', true)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }

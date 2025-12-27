@@ -1,44 +1,118 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Go Swap - Log in{% endblock %}
+{% block title %}Go Swap - Login{% endblock %}
 
 {% block body %}
-    <div class="h-full container mx-auto flex flex-wrap flex-col items-center mb-6 max-lg:w-full">
-        <div class="h-full flex items-center justify-center flex-col max-lg:p-4 max-lg:w-full">
-            <form method="post"
-                  class="flex items-center flex-col justify-center bg-gray-900 opacity-75 w-full shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4 max-lg:w-full">
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <div>
+            <div class="mx-auto h-24 w-24 flex items-center justify-center">
+                <img src="/images/logo.png" alt="Go Swap Logo" class="h-24 w-auto">
+            </div>
+            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+                Welcome back
+            </h2>
+            <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+                Sign in to your Go Swap account
+            </p>
+        </div>
 
-                <a class="flex items-center text-indigo-400 no-underline hover:no-underline font-bold text-2xl lg:text-4xl mb-8"
-                   href="{{ path('app_index') }}">
-                    <img src="{{ asset('images/logo.png') }}" style="width:70px;" alt="Logo Go Swap"><span
-                            class="ml-3 bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-pink-500 to-purple-500">Go Swap</span>
-                </a>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8">
+            {% if error %}
+                <div class="mb-4 bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 dark:border-red-400 p-4 rounded">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-red-700 dark:text-red-200">
+                                {{ error.messageKey|trans(error.messageData, 'security') }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
 
-                {% if error %}
-                    <div class="mb-4 text-pink-400">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-                {% endif %}
+            {% if app.user %}
+                <div class="mb-4 bg-indigo-50 dark:bg-indigo-900/30 border-l-4 border-indigo-500 dark:border-indigo-400 p-4 rounded">
+                    <p class="text-sm text-indigo-700 dark:text-indigo-200">
+                        You are logged in as <span class="font-semibold">{{ app.user.userIdentifier }}</span>.
+                        <a href="{{ path('app_logout') }}" class="underline hover:text-indigo-900 dark:hover:text-indigo-100">Logout</a>
+                    </p>
+                </div>
+            {% endif %}
 
-                <input placeholder="Username" type="text" value="{{ last_username }}" name="username" id="inputUsername"
-                       required autofocus autocomplete="off" spellcheck="false"
-                       class="w-96 shadow appearance-none border rounded p-3 text-gray-700 leading-tight mb-4 max-lg:w-full">
-                <input placeholder="Password" type="password" name="password" id="inputPassword"
-                       autocomplete="current-password" required
-                       class="w-96 shadow appearance-none border rounded p-3 text-gray-700 leading-tight mb-4 max-lg:w-full">
-
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-                <div class="checkbox mb-8">
-                    <label>
-                        <input type="checkbox" name="_remember_me" checked> Remember me
+            <form method="post" class="space-y-6">
+                <div>
+                    <label for="inputEmail" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Email address
                     </label>
+                    <input type="email" 
+                           value="{{ last_username }}" 
+                           name="email" 
+                           id="inputEmail" 
+                           class="appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-indigo-500 dark:focus:border-indigo-400 focus:z-10 sm:text-sm transition" 
+                           placeholder="you@example.com"
+                           autocomplete="email" 
+                           required 
+                           autofocus>
                 </div>
 
-                <button class="bg-gradient-to-r from-purple-800 to-green-500 hover:from-pink-500 hover:to-green-500 text-white font-bold py-2 px-12 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
-                        type="submit">
-                    Sign In
-                </button>
-                <a href="{{ path('app_register') }}" class="mt-2 text-xs">Create an account</a>
+                <div>
+                    <label for="inputPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Password
+                    </label>
+                    <input type="password" 
+                           name="password" 
+                           id="inputPassword" 
+                           class="appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-indigo-500 dark:focus:border-indigo-400 focus:z-10 sm:text-sm transition" 
+                           placeholder="••••••••"
+                           autocomplete="current-password" 
+                           required>
+                </div>
+
+                <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input id="remember_me" 
+                               name="_remember_me" 
+                               type="checkbox" 
+                               class="h-4 w-4 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 dark:focus:ring-indigo-400 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded cursor-pointer">
+                        <label for="remember_me" class="ml-2 block text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
+                            Remember me
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" 
+                            class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800 transition duration-150 ease-in-out">
+                        <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                            <svg class="h-5 w-5 text-indigo-500 dark:text-indigo-300 group-hover:text-indigo-400 dark:group-hover:text-indigo-200" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </span>
+                        Sign in
+                    </button>
+                </div>
+
+                <div class="text-center mt-4">
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        Don't have an account?
+                        <a href="{{ path('app_register') }}" class="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition">
+                            Sign up now
+                        </a>
+                    </p>
+                </div>
             </form>
         </div>
+
+        <p class="mt-8 text-center text-xs text-gray-500 dark:text-gray-400">
+            © {{ 'now'|date('Y') }} Go Swap. All rights reserved.
+        </p>
     </div>
+</div>
 {% endblock %}

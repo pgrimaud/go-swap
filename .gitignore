@@ -9,29 +9,28 @@
 /vendor/
 ###< symfony/framework-bundle ###
 
+###> symfony/asset-mapper ###
+/public/assets/
+/assets/vendor/
+###< symfony/asset-mapper ###
+
+###> friendsofphp/php-cs-fixer ###
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###
+
+###> phpstan/phpstan ###
+/.phpstan.cache/
+###< phpstan/phpstan ###
+
 ###> phpunit/phpunit ###
 /phpunit.xml
-.phpunit.result.cache
+/.phpunit.cache/
 ###< phpunit/phpunit ###
 
-###> symfony/phpunit-bridge ###
-.phpunit.result.cache
-/phpunit.xml
-###< symfony/phpunit-bridge ###
+public/images/pokemon/
+!public/images/pokemon/normal/.gitkeep
+!public/images/pokemon/shiny/.gitkeep
 
-.idea/
-
-###> symfony/webpack-encore-bundle ###
-/node_modules/
-/public/build/
-npm-debug.log
-yarn-error.log
-###< symfony/webpack-encore-bundle ###
-
-public/images/normal
-public/images/shiny
-public/images/type
-
-!public/images/normal/.gitkeep
-!public/images/shiny/.gitkeep
+public/images/type/
 !public/images/type/.gitkeep

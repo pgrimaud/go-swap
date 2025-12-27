@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Go Swap - PvP - Pokémon{% endblock %}
+
+{% block body %}
+    {% include 'partials/header.html.twig' %}
+
+    {% include 'partials/breadcrumb.html.twig' with {
+        'links': [
+            {'name': 'PvP', 'url': path('app_pvp_index')},
+            {'name': 'PvP Pokémon (' ~ totalUserPokemon ~ ')', 'url': path('app_pvp_pokemon')},
+            {'name': 'Details', 'url': path('app_pvp_pokemon_details')},
+        ]
+    } %}
+
+    <div class="container px-6 py-5 mx-auto text-center">
+        <section class="container px-4 mx-auto">
+        </section>
+    </div>
+{% endblock %}
