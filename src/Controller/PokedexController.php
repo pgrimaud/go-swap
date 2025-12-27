@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Repository\PokemonRepository;
-use App\Repository\TypeRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,49 +18,14 @@ final class PokedexController extends AbstractController
     public function index(
         Request $request,
         PokemonRepository $pokemonRepository,
-        TypeRepository $typeRepository,
     ): Response {
         // Get filter parameters
-        $generation = $request->query->getInt('generation');
-        $typeId = $request->query->getInt('type');
+        $variant = $request->query->get('variant', '');
         $search = $request->query->get('search', '');
-
-        // Get all types for filter dropdown
-        $types = $typeRepository->findAll();
 
         // Get filtered Pokémon
         $queryBuilder = $pokemonRepository->createQueryBuilder('p')
-            ->leftJoin('p.types', 't')
             ->orderBy('p.number', 'ASC');
-
-        // Apply generation filter
-        if ($generation > 0) {
-            $ranges = [
-                1 => [1, 151],
-                2 => [152, 251],
-                3 => [252, 386],
-                4 => [387, 493],
-                5 => [494, 649],
-                6 => [650, 721],
-                7 => [722, 809],
-                8 => [810, 905],
-                9 => [906, 1025],
-            ];
-
-            if (isset($ranges[$generation])) {
-                $queryBuilder
-                    ->andWhere('p.number BETWEEN :min AND :max')
-                    ->setParameter('min', $ranges[$generation][0])
-                    ->setParameter('max', $ranges[$generation][1]);
-            }
-        }
-
-        // Apply type filter
-        if ($typeId > 0) {
-            $queryBuilder
-                ->andWhere('t.id = :typeId')
-                ->setParameter('typeId', $typeId);
-        }
 
         // Apply search filter
         if ($search !== '') {
@@ -71,13 +35,14 @@ final class PokedexController extends AbstractController
                 ->setParameter('number', (int) $search);
         }
 
+        // TODO: Apply variant filter when UserPokemon entity is ready
+        // This will filter based on owned variants
+
         $allPokemon = $queryBuilder->getQuery()->getResult();
 
         return $this->render('pokedex/index.html.twig', [
             'allPokemon' => $allPokemon,
-            'types' => $types,
-            'currentGeneration' => $generation,
-            'currentType' => $typeId,
+            'currentVariant' => $variant,
             'currentSearch' => $search,
         ]);
     }

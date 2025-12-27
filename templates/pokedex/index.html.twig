@@ -29,35 +29,53 @@
                         </a>
                     </div>
 
-                    {# Generation Filters #}
-                    <div class="flex flex-wrap gap-2">
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">Generation:</span>
-                        <button type="submit" name="generation" value="0" 
-                                class="px-4 py-1.5 rounded-full text-sm font-medium transition {{ currentGeneration == 0 ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600' }}">
+                    {# Variant Filters #}
+                    <div class="flex flex-wrap gap-2 items-center">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Show variants:</span>
+                        <button type="submit" name="variant" value="" 
+                                class="px-4 py-1.5 rounded-full text-sm font-medium transition inline-flex items-center gap-1.5 {{ currentVariant == '' ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600' }}">
                             All
                         </button>
-                        {% for gen in 1..9 %}
-                            <button type="submit" name="generation" value="{{ gen }}" 
-                                    class="px-4 py-1.5 rounded-full text-sm font-medium transition {{ currentGeneration == gen ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600' }}">
-                                Gen {{ gen }}
-                            </button>
-                        {% endfor %}
-                    </div>
-
-                    {# Type Filter #}
-                    <div class="flex flex-wrap gap-2 items-center">
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Type:</span>
-                        <button type="submit" name="type" value="0" 
-                                class="px-4 py-1.5 rounded-full text-sm font-medium transition {{ currentType == 0 ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600' }}">
-                            All Types
+                        <button type="submit" name="variant" value="normal" 
+                                class="px-4 py-1.5 rounded-full text-sm font-medium transition inline-flex items-center gap-1.5 {{ currentVariant == 'normal' ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600' }}">
+                            <img src="{{ asset('images/pokedex/normal.png') }}" alt="Normal" class="w-4 h-4">
+                            Normal
                         </button>
-                        {% for type in types %}
-                            <button type="submit" name="type" value="{{ type.id }}" 
-                                    class="px-4 py-1.5 rounded-full text-sm font-medium transition {{ currentType == type.id ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600' }}">
-                                <img src="{{ asset('images/type/' ~ type.slug ~ '.png') }}" alt="{{ type.name }}" class="inline w-4 h-4 mr-1">
-                                {{ type.name }}
-                            </button>
-                        {% endfor %}
+                        <button type="submit" name="variant" value="shiny" 
+                                class="px-4 py-1.5 rounded-full text-sm font-medium transition inline-flex items-center gap-1.5 {{ currentVariant == 'shiny' ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600' }}">
+                            <img src="{{ asset('images/pokedex/shiny.png') }}" alt="Shiny" class="w-4 h-4">
+                            Shiny
+                        </button>
+                        <button type="submit" name="variant" value="shadow" 
+                                class="px-4 py-1.5 rounded-full text-sm font-medium transition inline-flex items-center gap-1.5 {{ currentVariant == 'shadow' ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600' }}">
+                            <img src="{{ asset('images/pokedex/shadow.png') }}" alt="Shadow" class="w-4 h-4">
+                            Shadow
+                        </button>
+                        <button type="submit" name="variant" value="purified" 
+                                class="px-4 py-1.5 rounded-full text-sm font-medium transition inline-flex items-center gap-1.5 {{ currentVariant == 'purified' ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600' }}">
+                            <img src="{{ asset('images/pokedex/purified.png') }}" alt="Purified" class="w-4 h-4">
+                            Purified
+                        </button>
+                        <button type="submit" name="variant" value="lucky" 
+                                class="px-4 py-1.5 rounded-full text-sm font-medium transition inline-flex items-center gap-1.5 {{ currentVariant == 'lucky' ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600' }}">
+                            <img src="{{ asset('images/pokedex/lucky.png') }}" alt="Lucky" class="w-4 h-4">
+                            Lucky
+                        </button>
+                        <button type="submit" name="variant" value="xxl" 
+                                class="px-4 py-1.5 rounded-full text-sm font-medium transition inline-flex items-center gap-1.5 {{ currentVariant == 'xxl' ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600' }}">
+                            <img src="{{ asset('images/pokedex/xxl.png') }}" alt="XXL" class="w-4 h-4">
+                            XXL
+                        </button>
+                        <button type="submit" name="variant" value="xxs" 
+                                class="px-4 py-1.5 rounded-full text-sm font-medium transition inline-flex items-center gap-1.5 {{ currentVariant == 'xxs' ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600' }}">
+                            <img src="{{ asset('images/pokedex/xxs.png') }}" alt="XXS" class="w-4 h-4">
+                            XXS
+                        </button>
+                        <button type="submit" name="variant" value="perfect" 
+                                class="px-4 py-1.5 rounded-full text-sm font-medium transition inline-flex items-center gap-1.5 {{ currentVariant == 'perfect' ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600' }}">
+                            <img src="{{ asset('images/pokedex/perfect.png') }}" alt="Perfect" class="w-4 h-4">
+                            Perfect
+                        </button>
                     </div>
                 </form>
 
