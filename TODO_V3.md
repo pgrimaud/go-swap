@@ -83,9 +83,9 @@ Créer des listes custom pour organiser mes Pokémon :
 - [x] `UpdateTypesCommand` - Import types Pokémon depuis Gamemaster
 - [x] `UpdatePokemonCommand` - Import tous les Pokémon depuis Gamemaster
 - [x] `UpdateMovesCommand` - Import attaques PvP (fast + charged)
-- [ ] `UpdatePicturesCommand` - Download images Pokémon
+- [x] `UpdatePicturesCommand` - Download images Pokémon (normal + shiny)
 
-**Note** : ✅ Commands migrées avec PHP 8.4 attributes
+**Note** : ✅ Commands migrées avec PHP 8.4 attributes + 950/954 shiny pictures téléchargées
 
 ### 2.2 Entities de base
 - [x] **`Type`** (id, name, slug, icon, timestamps)
