@@ -860,24 +860,27 @@ Use Panther or Cypress for testing Stimulus behavior
 
 ## 📝 Implementation Checklist
 
-> **Implementation Status**: Ready to start  
+> **Implementation Status**: In Progress - Phase 1 & 2 Complete ✅  
 > **Implementer**: AI Agent  
-> **Start Date**: 2025-12-27
+> **Start Date**: 2025-12-27  
+> **Phase 1 & 2 Complete**: 2025-12-27 16:00 UTC
 
-### Phase 1: Backend API Endpoint ✅
-- [ ] Create `/api/pokedex` route in `PokedexController`
-- [ ] Add pagination logic with `setFirstResult()` and `setMaxResults()`
-- [ ] Apply search filter
-- [ ] Return JSON response with metadata (pokemon, page, perPage, total, hasMore)
-- [ ] Test endpoint manually (`curl` or browser)
-- [ ] Verify JSON structure matches spec
+### Phase 1: Backend API Endpoint ✅ COMPLETE
+- [x] Create `/api/pokedex` route in `Api/PokedexController`
+- [x] Refactor API to dedicated `src/Controller/Api/` directory
+- [x] Add pagination logic with `setFirstResult()` and `setMaxResults()`
+- [x] Apply search filter
+- [x] Return JSON response with metadata (pokemon, page, perPage, total, hasMore)
+- [x] Test endpoint manually (`curl` or browser)
+- [x] Verify JSON structure matches spec
 
-### Phase 2: Entity Serialization ✅
-- [ ] Add `#[Groups(['pokemon:read'])]` to Pokemon entity properties
-- [ ] Add serialization groups to: id, number, name, picture, generation
-- [ ] Serialize types relationship
-- [ ] Test serialization output (check JSON response)
-- [ ] Fix any circular reference issues
+### Phase 2: Entity Serialization ✅ COMPLETE
+- [x] Add `#[Groups(['pokemon:read'])]` to Pokemon entity properties
+- [x] Add serialization groups to: id, number, name, picture, generation
+- [x] Serialize types relationship
+- [x] Test serialization output (check JSON response)
+- [x] Fix any circular reference issues
+- [x] Install Symfony Serializer component
 
 ### Phase 3: Stimulus Controller ✅
 - [ ] Create `assets/controllers/pokedex_controller.js`
@@ -932,18 +935,20 @@ Use Panther or Cypress for testing Stimulus behavior
 - [ ] Test error states
 - [ ] Test on mobile viewport
 
-### Phase 7: Testing ✅
-- [ ] Create `testApiPokedexEndpoint()` test
-- [ ] Create `testApiPokedexPagination()` test
-- [ ] Create `testApiPokedexVariantFilter()` test
-- [ ] Create `testApiPokedexSearch()` test
-- [ ] Update existing `testPokedexPageIsAccessibleForAuthenticatedUser()`
-- [ ] Run all tests: `composer test`
-- [ ] Fix any failing tests
+### Phase 7: Testing ✅ PARTIAL COMPLETE
+- [x] Create `testApiPokedexEndpoint()` test
+- [x] Create `testApiPokedexPagination()` test
+- [x] Create `testApiPokedexVariantFilter()` test
+- [x] Create `testApiPokedexSearch()` test
+- [x] Create `testApiPokedexRequiresAuthentication()` test
+- [x] Create `testApiPokedexPokemonStructure()` test
+- [x] Update existing `testPokedexPageIsAccessibleForAuthenticatedUser()`
+- [x] Run all tests: `composer test` (21 tests, 52 assertions, 3 skipped)
+- [x] Fix any failing tests
 
-### Phase 8: Quality & Performance ✅
-- [ ] Run `composer cs-fix`
-- [ ] Run `composer phpstan`
+### Phase 8: Quality & Performance ✅ PARTIAL COMPLETE
+- [x] Run `composer cs-fix` (0 errors)
+- [x] Run `composer phpstan` (0 errors, level max)
 - [ ] Test with Chrome DevTools (Network, Performance)
 - [ ] Verify images lazy load correctly
 - [ ] Check API response time (<200ms)
@@ -993,18 +998,21 @@ Use Panther or Cypress for testing Stimulus behavior
 
 | Phase | Status | Time Spent | Notes |
 |-------|--------|-----------|-------|
-| Phase 1: Backend API | ⏳ Not Started | 0h | - |
-| Phase 2: Serialization | ⏳ Not Started | 0h | - |
-| Phase 3: Stimulus Controller | ⏳ Not Started | 0h | - |
+| Phase 1: Backend API | ✅ Complete | ~20min | API endpoint created with pagination |
+| Phase 2: Serialization | ✅ Complete | ~10min | Groups added to Pokemon & Type entities |
+| Phase 3: Stimulus Controller | ⏳ Not Started | 0h | Next step |
 | Phase 4: Template Refactor | ⏳ Not Started | 0h | - |
 | Phase 5: Home Links | ⏳ Not Started | 0h | - |
 | Phase 6: UX Improvements | ⏳ Not Started | 0h | - |
-| Phase 7: Testing | ⏳ Not Started | 0h | - |
-| Phase 8: Quality & Perf | ⏳ Not Started | 0h | - |
+| Phase 7: Testing | ✅ Complete | ~15min | 6 new API tests added, all passing |
+| Phase 8: Quality & Perf | 🚧 Partial | ~5min | CS Fixer & PHPStan passing |
 | Phase 9: Documentation | ⏳ Not Started | 0h | - |
 | Phase 10: Final Verify | ⏳ Not Started | 0h | - |
 
 **Legend**: ⏳ Not Started | 🚧 In Progress | ✅ Complete | ❌ Blocked
+
+**Total Time Spent**: ~50 minutes  
+**Next**: Phase 3 - Stimulus Controller (AJAX frontend)
 
 ---
 

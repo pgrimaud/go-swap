@@ -3,3 +3,11 @@ includes:
     - vendor/phpstan/phpstan-doctrine/extension.neon
 parameters:
 	tmpDir: .phpstan.cache
+	paths:
+		- src
+		- tests
+services:
+	-
+		class: App\PHPStan\Rules\TypedClassConstantRule
+		tags:
+			- phpstan.rules.rule

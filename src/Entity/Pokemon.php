@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: PokemonRepository::class)]
 #[ORM\UniqueConstraint(name: 'slug_uniq', columns: ['slug'])]
@@ -21,12 +22,15 @@ class Pokemon
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['pokemon:read'])]
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups(['pokemon:read'])]
     private ?int $number = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['pokemon:read'])]
     private ?string $name = null;
 
     #[ORM\Column]
@@ -57,6 +61,7 @@ class Pokemon
      * @var Collection<int, Type>
      */
     #[ORM\ManyToMany(targetEntity: Type::class, inversedBy: 'pokemon')]
+    #[Groups(['pokemon:read'])]
     private Collection $types;
 
     /**
@@ -66,15 +71,19 @@ class Pokemon
     private Collection $pokemonMoves;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['pokemon:read'])]
     private ?string $picture = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['pokemon:read'])]
     private ?string $shinyPicture = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['pokemon:read'])]
     private ?string $generation = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['pokemon:read'])]
     private ?string $form = null;
 
     public function __construct()

@@ -63,6 +63,9 @@ go-swap/
 ├── src/
 │   ├── Command/           # Console commands (import data)
 │   ├── Controller/
+│   │   ├── Admin/         # EasyAdmin controllers
+│   │   ├── Api/           # API controllers (JSON endpoints)
+│   │   └── *.php          # Web controllers (HTML pages)
 │   ├── Entity/
 │   ├── Form/
 │   ├── Repository/
@@ -74,7 +77,8 @@ go-swap/
 ├── tests/
 │   ├── Controller/          # Tests fonctionnels des controllers
 │   │   ├── SecurityControllerTest.php
-│   │   └── RegistrationControllerTest.php
+│   │   ├── RegistrationControllerTest.php
+│   │   └── PokedexControllerTest.php
 │   ├── Entity/              # Tests unitaires des entités
 │   │   └── UserTest.php
 │   └── bootstrap.php
@@ -82,7 +86,7 @@ go-swap/
 ├── .env                   # Config versionnée (SQLite par défaut)
 ├── .env.local             # Config locale non versionnée (MySQL)
 ├── TODO_V3.md             # Roadmap complète du projet
-└── agents.md              # Ce fichier
+└── AGENTS.md              # Ce fichier
 ```
 
 ---
@@ -90,6 +94,51 @@ go-swap/
 ## 🎯 Conventions de Code
 
 ### PHP 8.4 / Symfony 8.0
+
+#### Organisation des Controllers
+
+**Pattern adopté** : Séparation par type de réponse
+
+```
+src/Controller/
+├── Admin/              # EasyAdmin controllers (backend admin)
+│   ├── DashboardController.php
+│   └── *CrudController.php
+├── Api/                # API REST controllers (retournent JSON)
+│   └── PokedexController.php
+└── *.php               # Web controllers (retournent HTML)
+    ├── HomeController.php
+    ├── PokedexController.php
+    └── SecurityController.php
+```
+
+**Exemple API Controller** :
+```php
+<?php
+
+namespace App\Controller\Api;
+
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Attribute\Route;
+
+#[Route('/api')]  // Préfixe de route au niveau du controller
+#[IsGranted('ROLE_USER')]
+final class PokedexController extends AbstractController
+{
+    #[Route('/pokedex', name: 'api_pokedex', methods: ['GET'])]
+    public function index(): JsonResponse
+    {
+        return $this->json([...]);
+    }
+}
+```
+
+**Avantages** :
+- ✅ Séparation claire Web (HTML) vs API (JSON)
+- ✅ Préfixe `/api` centralisé au niveau du controller
+- ✅ Meilleure organisation et maintenabilité
+- ✅ Tests plus faciles à organiser
 
 #### Attributes (pas d'annotations)
 ```php
@@ -114,6 +163,43 @@ new IsTrue([
 ```php
 declare(strict_types=1);
 ```
+
+#### Serialization pour API
+
+Pour exposer des entités via API JSON, utiliser les **serialization groups** :
+
+```php
+use Symfony\Component\Serializer\Attribute\Groups;
+
+#[ORM\Entity]
+class Pokemon
+{
+    #[ORM\Column]
+    #[Groups(['pokemon:read'])]  // ← Exposé dans l'API
+    private ?int $id = null;
+
+    #[ORM\Column]
+    #[Groups(['pokemon:read'])]
+    private ?string $name = null;
+
+    #[ORM\ManyToMany(targetEntity: Type::class)]
+    #[Groups(['pokemon:read'])]  // ← Relations aussi
+    private Collection $types;
+}
+```
+
+**Utilisation dans le controller** :
+```php
+return $this->json(
+    data: $pokemon,
+    context: ['groups' => ['pokemon:read']]
+);
+```
+
+**Avantages** :
+- ✅ Contrôle précis des champs exposés
+- ✅ Évite les circular references
+- ✅ Plusieurs groupes possibles (read, write, admin, etc.)
 
 ### Twig Templates
 
@@ -287,11 +373,16 @@ Le workflow CI est configuré dans `.github/workflows/ci.yml` et s'exécute auto
 - [x] PHPStan niveau max sans erreurs
 - [x] PHP CS Fixer configuré
 - [x] CI/CD GitHub Actions avec tests automatiques
+- [x] **API REST Pokédex** (`/api/pokedex`) avec pagination
+- [x] **Serialization groups** sur entités Pokemon & Type
+- [x] **Organisation controllers** : séparation `Api/` et web
 
 ### 🔄 En cours
 
-- Phase 1 terminée ✅
-- Prochaine étape : **Phase 2 - Data Import**
+- **Pokédex AJAX Refactoring** : Phase 3-6 (Frontend Stimulus)
+  - ✅ Phase 1 & 2 : Backend API terminée
+  - ⏳ Phase 3 : Stimulus Controller
+  - ⏳ Phase 4-6 : Templates & UX
 
 ### 📋 Voir TODO_V3.md pour la roadmap complète
 
@@ -350,6 +441,8 @@ Le workflow CI est configuré dans `.github/workflows/ci.yml` et s'exécute auto
 3. **Ne JAMAIS créer de branches** - Travailler uniquement sur la branche actuelle
 4. **Ne JAMAIS utiliser Webpack/Encore** - Le projet utilise AssetMapper
 5. **Ne JAMAIS ignorer PHPStan/CS-Fixer** - Toujours lancer avant de terminer
+6. **Ne JAMAIS modifier la configuration PHPStan** - Le fichier `phpstan.dist.neon` doit rester tel quel
+7. **Ne JAMAIS ajouter d'ignores PHPStan dans le code** - Pas de `@phpstan-ignore`, toujours corriger les erreurs
 
 ### ⚠️ Fichiers à ne pas modifier (sauf demande explicite) :
 
@@ -357,6 +450,7 @@ Le workflow CI est configuré dans `.github/workflows/ci.yml` et s'exécute auto
 - `composer.json` - Sauf ajout de dépendances
 - `.gitignore` - Déjà configuré
 - `symfony.lock` - Géré par Symfony Flex
+- `phpstan.dist.neon` - Configuration PHPStan figée
 
 ---
 
@@ -396,6 +490,28 @@ Le workflow CI est configuré dans `.github/workflows/ci.yml` et s'exécute auto
 - Préférer les **Turbo Frames** aux recharges de page complètes
 - Utiliser **Stimulus** pour les interactions JavaScript
 - Le projet vise la **simplicité** : pas de sur-engineering
+
+### 🏗️ Patterns & Best Practices
+
+**API REST** :
+- Placer les controllers API dans `src/Controller/Api/`
+- Utiliser `#[Route('/api')]` au niveau du controller
+- Retourner toujours `JsonResponse`
+- Utiliser les serialization groups pour contrôler les données exposées
+- Ajouter pagination par défaut (50 items/page)
+- Inclure metadata dans la réponse (page, total, hasMore, etc.)
+
+**Serialization** :
+- Toujours définir des groups explicites (`pokemon:read`, `user:write`, etc.)
+- Inclure les relations nécessaires avec `#[Groups]`
+- Tester la sortie JSON pour éviter les circular references
+
+**Tests API** :
+- Tester l'authentification (accès protégé)
+- Tester la structure JSON de la réponse
+- Tester la pagination
+- Tester les filtres/search
+- Utiliser `markTestSkipped()` si données manquantes en test
 
 ---
 

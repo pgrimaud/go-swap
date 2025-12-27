@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use App\Contract\Trait\TimestampTrait;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: TypeRepository::class)]
 #[ORM\UniqueConstraint(name: 'slug_uniq', columns: ['slug'])]
@@ -21,15 +22,19 @@ class Type
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['pokemon:read'])]
     private int $id;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['pokemon:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['pokemon:read'])]
     private ?string $slug = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['pokemon:read'])]
     private ?string $icon = null;
 
     /**
