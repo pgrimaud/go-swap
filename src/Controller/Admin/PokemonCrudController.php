@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Pokemon;
+use App\Entity\PokemonMove;
 use App\Helper\GenerationHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -152,6 +153,15 @@ class PokemonCrudController extends AbstractCrudController
 
         foreach ($originalPokemon->getTypes() as $type) {
             $duplicatedPokemon->addType($type);
+        }
+
+        // Duplicate moves
+        foreach ($originalPokemon->getPokemonMoves() as $originalPokemonMove) {
+            $duplicatedPokemonMove = new PokemonMove();
+            $duplicatedPokemonMove->setPokemon($duplicatedPokemon);
+            $duplicatedPokemonMove->setMove($originalPokemonMove->getMove());
+            $duplicatedPokemonMove->setElite($originalPokemonMove->isElite());
+            $duplicatedPokemon->addPokemonMove($duplicatedPokemonMove);
         }
 
         $entityManager->persist($duplicatedPokemon);
