@@ -163,6 +163,47 @@ class PokemonRepository extends ServiceEntityRepository
     }
 
     /**
+     * Get all variant counts by generation in one query.
+     *
+     * @return array<string, array<string, int>>
+     */
+    public function countAllVariantsByGeneration(): array
+    {
+        /** @var array<array{generation: string, normal: string, shiny: string, shadow: string, lucky: string}> $results */
+        $results = $this->getEntityManager()->getConnection()->executeQuery(
+            'SELECT 
+                generation,
+                COUNT(DISTINCT number) as normal,
+                COUNT(DISTINCT CASE WHEN shiny = 1 THEN number END) as shiny,
+                COUNT(DISTINCT CASE WHEN shadow = 1 THEN number END) as shadow,
+                COUNT(DISTINCT CASE WHEN lucky = 1 THEN number END) as lucky
+            FROM pokemon
+            GROUP BY generation
+            ORDER BY generation ASC'
+        )->fetchAllAssociative();
+
+        $stats = [];
+        foreach ($results as $row) {
+            $generation = $row['generation'];
+            $stats['normal'][$generation] = (int) $row['normal'];
+            $stats['shiny'][$generation] = (int) $row['shiny'];
+            $stats['shadow'][$generation] = (int) $row['shadow'];
+            $stats['purified'][$generation] = (int) $row['shadow']; // Same as shadow
+            $stats['lucky'][$generation] = (int) $row['lucky'];
+            $stats['xxl'][$generation] = (int) $row['normal']; // All Pokemon available
+            $stats['xxs'][$generation] = (int) $row['normal']; // All Pokemon available
+            $stats['perfect'][$generation] = (int) $row['normal']; // All Pokemon available
+        }
+
+        // Sort each variant by generation order
+        foreach (array_keys($stats) as $variant) {
+            $stats[$variant] = $this->sortByGenerationOrder($stats[$variant]);
+        }
+
+        return $stats;
+    }
+
+    /**
      * Find all Pokemon that belong to the same evolution chain.
      *
      * @return Pokemon[]

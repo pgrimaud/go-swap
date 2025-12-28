@@ -185,4 +185,88 @@ class UserPokemonRepository extends ServiceEntityRepository
 
         return $orderedStats;
     }
+
+    /**
+     * Get all variant counts for a user in one query.
+     *
+     * @return array<string, int>
+     */
+    public function countAllVariantsByUser(User $user): array
+    {
+        /** @var array<array{variant: string, total: string}> $results */
+        $results = $this->getEntityManager()->getConnection()->executeQuery(
+            'SELECT 
+                COUNT(DISTINCT CASE WHEN has_normal = 1 THEN p.number END) as normal,
+                COUNT(DISTINCT CASE WHEN has_shiny = 1 THEN p.number END) as shiny,
+                COUNT(DISTINCT CASE WHEN has_shadow = 1 THEN p.number END) as shadow,
+                COUNT(DISTINCT CASE WHEN has_purified = 1 THEN p.number END) as purified,
+                COUNT(DISTINCT CASE WHEN has_lucky = 1 THEN p.number END) as lucky,
+                COUNT(DISTINCT CASE WHEN has_xxl = 1 THEN p.number END) as xxl,
+                COUNT(DISTINCT CASE WHEN has_xxs = 1 THEN p.number END) as xxs,
+                COUNT(DISTINCT CASE WHEN has_perfect = 1 THEN p.number END) as perfect
+            FROM user_pokemon up
+            JOIN pokemon p ON up.pokemon_id = p.id
+            WHERE up.user_id = :user_id',
+            ['user_id' => $user->getId()]
+        )->fetchAssociative();
+
+        return [
+            'normal' => (int) ($results['normal'] ?? 0),
+            'shiny' => (int) ($results['shiny'] ?? 0),
+            'shadow' => (int) ($results['shadow'] ?? 0),
+            'purified' => (int) ($results['purified'] ?? 0),
+            'lucky' => (int) ($results['lucky'] ?? 0),
+            'xxl' => (int) ($results['xxl'] ?? 0),
+            'xxs' => (int) ($results['xxs'] ?? 0),
+            'perfect' => (int) ($results['perfect'] ?? 0),
+        ];
+    }
+
+    /**
+     * Get all variant counts by generation for a user in one query.
+     *
+     * @return array<string, array<string, int>>
+     */
+    public function countAllVariantsByGenerationForUser(User $user): array
+    {
+        /** @var array<array{generation: string, normal: string, shiny: string, shadow: string, purified: string, lucky: string, xxl: string, xxs: string, perfect: string}> $results */
+        $results = $this->getEntityManager()->getConnection()->executeQuery(
+            'SELECT 
+                p.generation,
+                COUNT(DISTINCT CASE WHEN up.has_normal = 1 THEN p.number END) as normal,
+                COUNT(DISTINCT CASE WHEN up.has_shiny = 1 THEN p.number END) as shiny,
+                COUNT(DISTINCT CASE WHEN up.has_shadow = 1 THEN p.number END) as shadow,
+                COUNT(DISTINCT CASE WHEN up.has_purified = 1 THEN p.number END) as purified,
+                COUNT(DISTINCT CASE WHEN up.has_lucky = 1 THEN p.number END) as lucky,
+                COUNT(DISTINCT CASE WHEN up.has_xxl = 1 THEN p.number END) as xxl,
+                COUNT(DISTINCT CASE WHEN up.has_xxs = 1 THEN p.number END) as xxs,
+                COUNT(DISTINCT CASE WHEN up.has_perfect = 1 THEN p.number END) as perfect
+            FROM user_pokemon up
+            JOIN pokemon p ON up.pokemon_id = p.id
+            WHERE up.user_id = :user_id
+            GROUP BY p.generation
+            ORDER BY p.generation ASC',
+            ['user_id' => $user->getId()]
+        )->fetchAllAssociative();
+
+        $stats = [];
+        foreach ($results as $row) {
+            $generation = $row['generation'];
+            $stats['normal'][$generation] = (int) $row['normal'];
+            $stats['shiny'][$generation] = (int) $row['shiny'];
+            $stats['shadow'][$generation] = (int) $row['shadow'];
+            $stats['purified'][$generation] = (int) $row['purified'];
+            $stats['lucky'][$generation] = (int) $row['lucky'];
+            $stats['xxl'][$generation] = (int) $row['xxl'];
+            $stats['xxs'][$generation] = (int) $row['xxs'];
+            $stats['perfect'][$generation] = (int) $row['perfect'];
+        }
+
+        // Sort each variant by generation order
+        foreach (array_keys($stats) as $variant) {
+            $stats[$variant] = $this->sortByGenerationOrder($stats[$variant]);
+        }
+
+        return $stats;
+    }
 }

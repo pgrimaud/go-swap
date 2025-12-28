@@ -23,101 +23,108 @@ final class HomeController extends AbstractController
             $user = null;
         }
 
+        // Get all totals in 4 queries (cacheable)
         $totalDistinct = $pokemonRepository->countTotalDistinctPokemon();
         $totalShinies = $pokemonRepository->countDistinctShinies();
         $totalShadows = $pokemonRepository->countDistinctShadows();
         $totalLuckies = $pokemonRepository->countDistinctLuckies();
 
-        // Calculate owned counts per variant (distinct pokemon numbers)
-        $ownedNormal = $user ? $userPokemonRepository->countDistinctPokemonByUserAndVariant($user, 'normal') : 0;
-        $ownedShiny = $user ? $userPokemonRepository->countDistinctPokemonByUserAndVariant($user, 'shiny') : 0;
-        $ownedShadow = $user ? $userPokemonRepository->countDistinctPokemonByUserAndVariant($user, 'shadow') : 0;
-        $ownedPurified = $user ? $userPokemonRepository->countDistinctPokemonByUserAndVariant($user, 'purified') : 0;
-        $ownedLucky = $user ? $userPokemonRepository->countDistinctPokemonByUserAndVariant($user, 'lucky') : 0;
-        $ownedXxl = $user ? $userPokemonRepository->countDistinctPokemonByUserAndVariant($user, 'xxl') : 0;
-        $ownedXxs = $user ? $userPokemonRepository->countDistinctPokemonByUserAndVariant($user, 'xxs') : 0;
-        $ownedPerfect = $user ? $userPokemonRepository->countDistinctPokemonByUserAndVariant($user, 'perfect') : 0;
+        // Get all user owned counts in 1 query (or 0 if not logged in)
+        $ownedCounts = $user ? $userPokemonRepository->countAllVariantsByUser($user) : [
+            'normal' => 0,
+            'shiny' => 0,
+            'shadow' => 0,
+            'purified' => 0,
+            'lucky' => 0,
+            'xxl' => 0,
+            'xxs' => 0,
+            'perfect' => 0,
+        ];
+
+        // Get all generation stats in 2 queries (or 0 if not logged in)
+        $userGenerationStats = $user ? $userPokemonRepository->countAllVariantsByGenerationForUser($user) : [];
+        $totalGenerationStats = $pokemonRepository->countAllVariantsByGeneration();
 
         $pokedexCategories = [
             [
                 'name' => 'Normal',
                 'slug' => 'normal',
                 'icon' => 'normal.png',
-                'count' => $ownedNormal,
+                'count' => $ownedCounts['normal'],
                 'total' => $totalDistinct,
-                'percentage' => $totalDistinct > 0 ? round(($ownedNormal / $totalDistinct) * 100) : 0,
-                'generationStats' => $user ? $userPokemonRepository->countPokemonByGenerationAndVariant($user, 'normal') : [],
-                'totalGenerationStats' => $pokemonRepository->countPokemonByGenerationAndVariant('normal'),
+                'percentage' => $totalDistinct > 0 ? round(($ownedCounts['normal'] / $totalDistinct) * 100) : 0,
+                'generationStats' => $userGenerationStats['normal'] ?? [],
+                'totalGenerationStats' => $totalGenerationStats['normal'] ?? [],
             ],
             [
                 'name' => 'Shiny',
                 'slug' => 'shiny',
                 'icon' => 'shiny.png',
-                'count' => $ownedShiny,
+                'count' => $ownedCounts['shiny'],
                 'total' => $totalShinies,
-                'percentage' => $totalShinies > 0 ? round(($ownedShiny / $totalShinies) * 100) : 0,
-                'generationStats' => $user ? $userPokemonRepository->countPokemonByGenerationAndVariant($user, 'shiny') : [],
-                'totalGenerationStats' => $pokemonRepository->countPokemonByGenerationAndVariant('shiny'),
+                'percentage' => $totalShinies > 0 ? round(($ownedCounts['shiny'] / $totalShinies) * 100) : 0,
+                'generationStats' => $userGenerationStats['shiny'] ?? [],
+                'totalGenerationStats' => $totalGenerationStats['shiny'] ?? [],
             ],
             [
                 'name' => 'Shadow',
                 'slug' => 'shadow',
                 'icon' => 'shadow.png',
-                'count' => $ownedShadow,
+                'count' => $ownedCounts['shadow'],
                 'total' => $totalShadows,
-                'percentage' => $totalShadows > 0 ? round(($ownedShadow / $totalShadows) * 100) : 0,
-                'generationStats' => $user ? $userPokemonRepository->countPokemonByGenerationAndVariant($user, 'shadow') : [],
-                'totalGenerationStats' => $pokemonRepository->countPokemonByGenerationAndVariant('shadow'),
+                'percentage' => $totalShadows > 0 ? round(($ownedCounts['shadow'] / $totalShadows) * 100) : 0,
+                'generationStats' => $userGenerationStats['shadow'] ?? [],
+                'totalGenerationStats' => $totalGenerationStats['shadow'] ?? [],
             ],
             [
                 'name' => 'Purified',
                 'slug' => 'purified',
                 'icon' => 'purified.png',
-                'count' => $ownedPurified,
+                'count' => $ownedCounts['purified'],
                 'total' => $totalShadows,
-                'percentage' => $totalShadows > 0 ? round(($ownedPurified / $totalShadows) * 100) : 0,
-                'generationStats' => $user ? $userPokemonRepository->countPokemonByGenerationAndVariant($user, 'purified') : [],
-                'totalGenerationStats' => $pokemonRepository->countPokemonByGenerationAndVariant('purified'),
+                'percentage' => $totalShadows > 0 ? round(($ownedCounts['purified'] / $totalShadows) * 100) : 0,
+                'generationStats' => $userGenerationStats['purified'] ?? [],
+                'totalGenerationStats' => $totalGenerationStats['purified'] ?? [],
             ],
             [
                 'name' => 'Lucky',
                 'slug' => 'lucky',
                 'icon' => 'lucky.png',
-                'count' => $ownedLucky,
+                'count' => $ownedCounts['lucky'],
                 'total' => $totalLuckies,
-                'percentage' => $totalLuckies > 0 ? round(($ownedLucky / $totalLuckies) * 100) : 0,
-                'generationStats' => $user ? $userPokemonRepository->countPokemonByGenerationAndVariant($user, 'lucky') : [],
-                'totalGenerationStats' => $pokemonRepository->countPokemonByGenerationAndVariant('lucky'),
+                'percentage' => $totalLuckies > 0 ? round(($ownedCounts['lucky'] / $totalLuckies) * 100) : 0,
+                'generationStats' => $userGenerationStats['lucky'] ?? [],
+                'totalGenerationStats' => $totalGenerationStats['lucky'] ?? [],
             ],
             [
                 'name' => 'XXL',
                 'slug' => 'xxl',
                 'icon' => 'xxl.png',
-                'count' => $ownedXxl,
+                'count' => $ownedCounts['xxl'],
                 'total' => $totalDistinct,
-                'percentage' => $totalDistinct > 0 ? round(($ownedXxl / $totalDistinct) * 100) : 0,
-                'generationStats' => $user ? $userPokemonRepository->countPokemonByGenerationAndVariant($user, 'xxl') : [],
-                'totalGenerationStats' => $pokemonRepository->countPokemonByGenerationAndVariant('xxl'),
+                'percentage' => $totalDistinct > 0 ? round(($ownedCounts['xxl'] / $totalDistinct) * 100) : 0,
+                'generationStats' => $userGenerationStats['xxl'] ?? [],
+                'totalGenerationStats' => $totalGenerationStats['xxl'] ?? [],
             ],
             [
                 'name' => 'XXS',
                 'slug' => 'xxs',
                 'icon' => 'xxs.png',
-                'count' => $ownedXxs,
+                'count' => $ownedCounts['xxs'],
                 'total' => $totalDistinct,
-                'percentage' => $totalDistinct > 0 ? round(($ownedXxs / $totalDistinct) * 100) : 0,
-                'generationStats' => $user ? $userPokemonRepository->countPokemonByGenerationAndVariant($user, 'xxs') : [],
-                'totalGenerationStats' => $pokemonRepository->countPokemonByGenerationAndVariant('xxs'),
+                'percentage' => $totalDistinct > 0 ? round(($ownedCounts['xxs'] / $totalDistinct) * 100) : 0,
+                'generationStats' => $userGenerationStats['xxs'] ?? [],
+                'totalGenerationStats' => $totalGenerationStats['xxs'] ?? [],
             ],
             [
                 'name' => 'Perfect',
                 'slug' => 'perfect',
                 'icon' => 'perfect.png',
-                'count' => $ownedPerfect,
+                'count' => $ownedCounts['perfect'],
                 'total' => $totalDistinct,
-                'percentage' => $totalDistinct > 0 ? round(($ownedPerfect / $totalDistinct) * 100) : 0,
-                'generationStats' => $user ? $userPokemonRepository->countPokemonByGenerationAndVariant($user, 'perfect') : [],
-                'totalGenerationStats' => $pokemonRepository->countPokemonByGenerationAndVariant('perfect'),
+                'percentage' => $totalDistinct > 0 ? round(($ownedCounts['perfect'] / $totalDistinct) * 100) : 0,
+                'generationStats' => $userGenerationStats['perfect'] ?? [],
+                'totalGenerationStats' => $totalGenerationStats['perfect'] ?? [],
             ],
         ];
 
