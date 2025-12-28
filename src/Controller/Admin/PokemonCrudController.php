@@ -6,7 +6,11 @@ namespace App\Controller\Admin;
 
 use App\Entity\Pokemon;
 use App\Helper\GenerationHelper;
+use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
@@ -14,6 +18,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * @extends AbstractCrudController<Pokemon>
@@ -29,6 +35,17 @@ class PokemonCrudController extends AbstractCrudController
     {
         return parent::configureCrud($crud)
             ->setDefaultSort(['number' => 'ASC']);
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        $duplicate = Action::new('duplicate', 'Duplicate', 'fa fa-copy')
+            ->linkToCrudAction('duplicatePokemon')
+            ->setCssClass('btn btn-secondary');
+
+        return parent::configureActions($actions)
+            ->add(Crud::PAGE_INDEX, $duplicate)
+            ->add(Crud::PAGE_DETAIL, $duplicate);
     }
 
     public function configureFields(string $pageName): iterable
@@ -95,5 +112,47 @@ class PokemonCrudController extends AbstractCrudController
             IntegerField::new('defense')->setHelp('Base defense stat')->hideOnIndex(),
             IntegerField::new('stamina')->setHelp('Base stamina (HP) stat')->hideOnIndex(),
         ];
+    }
+
+    public function duplicatePokemon(
+        AdminContext $context,
+        EntityManagerInterface $entityManager,
+        AdminUrlGenerator $adminUrlGenerator,
+    ): RedirectResponse {
+        /** @var Pokemon $originalPokemon */
+        $originalPokemon = $context->getEntity()->getInstance();
+
+        $duplicatedPokemon = new Pokemon();
+        $duplicatedPokemon->setNumber($originalPokemon->getNumber() ?? 0);
+        $duplicatedPokemon->setName($originalPokemon->getName() . ' (Copy)');
+        $duplicatedPokemon->setSlug($originalPokemon->getSlug() . '-copy-' . time());
+        $duplicatedPokemon->setGeneration($originalPokemon->getGeneration() ?? '');
+        $duplicatedPokemon->setForm($originalPokemon->getForm());
+        $duplicatedPokemon->setAttack($originalPokemon->getAttack() ?? 0);
+        $duplicatedPokemon->setDefense($originalPokemon->getDefense() ?? 0);
+        $duplicatedPokemon->setStamina($originalPokemon->getStamina() ?? 0);
+        $duplicatedPokemon->setHash(md5(uniqid((string) rand(), true)));
+        $duplicatedPokemon->setShadow($originalPokemon->isShadow());
+        $duplicatedPokemon->setShiny($originalPokemon->isShiny());
+        $duplicatedPokemon->setLucky($originalPokemon->isLucky());
+        $duplicatedPokemon->setPicture($originalPokemon->getPicture());
+        $duplicatedPokemon->setShinyPicture($originalPokemon->getShinyPicture());
+
+        foreach ($originalPokemon->getTypes() as $type) {
+            $duplicatedPokemon->addType($type);
+        }
+
+        $entityManager->persist($duplicatedPokemon);
+        $entityManager->flush();
+
+        $this->addFlash('success', sprintf('Pokémon "%s" has been duplicated successfully!', $originalPokemon->getName()));
+
+        $url = $adminUrlGenerator
+            ->setController(self::class)
+            ->setAction(Action::EDIT)
+            ->setEntityId($duplicatedPokemon->getId())
+            ->generateUrl();
+
+        return new RedirectResponse($url);
     }
 }
