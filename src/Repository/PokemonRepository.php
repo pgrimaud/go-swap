@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Pokemon;
+use App\Helper\GenerationHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -104,6 +105,23 @@ class PokemonRepository extends ServiceEntityRepository
             $stats[$result['generation']] = (int) $result['total'];
         }
 
-        return $stats;
+        return $this->sortByGenerationOrder($stats);
+    }
+
+    /**
+     * @param array<string, int> $stats
+     *
+     * @return array<string, int>
+     */
+    private function sortByGenerationOrder(array $stats): array
+    {
+        $orderedStats = [];
+        foreach (GenerationHelper::GENERATIONS as $generation) {
+            if (isset($stats[$generation])) {
+                $orderedStats[$generation] = $stats[$generation];
+            }
+        }
+
+        return $orderedStats;
     }
 }
