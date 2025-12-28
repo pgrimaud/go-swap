@@ -104,6 +104,10 @@ class PokemonCrudController extends AbstractCrudController
                     'multiple' => true,
                 ])->hideOnIndex(),
 
+            AssociationField::new('evolutionChain', 'Evolution Chain')
+                ->setHelp('Select the evolution chain this Pokémon belongs to')
+                ->hideOnIndex(),
+
             BooleanField::new('shiny'),
             BooleanField::new('shadow'),
             BooleanField::new('lucky'),
@@ -150,6 +154,7 @@ class PokemonCrudController extends AbstractCrudController
         $duplicatedPokemon->setShadow($originalPokemon->isShadow());
         $duplicatedPokemon->setShiny($originalPokemon->isShiny());
         $duplicatedPokemon->setLucky($originalPokemon->isLucky());
+        $duplicatedPokemon->setEvolutionChain($originalPokemon->getEvolutionChain());
 
         foreach ($originalPokemon->getTypes() as $type) {
             $duplicatedPokemon->addType($type);

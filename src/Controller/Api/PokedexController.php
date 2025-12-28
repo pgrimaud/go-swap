@@ -64,12 +64,18 @@ final class PokedexController extends AbstractController
 
             $userPokemon = $userPokemonMap[$pokemonId] ?? null;
 
+            $evolutionChain = $p->getEvolutionChain();
             $enrichedPokemon[] = [
                 'id' => $pokemonId,
                 'number' => $p->getNumber(),
                 'name' => $p->getName(),
                 'picture' => $p->getPicture(),
                 'generation' => $p->getGeneration(),
+                'evolutionChain' => $evolutionChain ? [
+                    'id' => $evolutionChain->getId(),
+                    'chainId' => $evolutionChain->getChainId(),
+                    'basePokemonName' => $evolutionChain->getBasePokemonName(),
+                ] : null,
                 'availableVariants' => [
                     'shadow' => $p->isShadow(),
                     'shiny' => $p->isShiny(),

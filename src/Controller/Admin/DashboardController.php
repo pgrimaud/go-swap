@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Entity\EvolutionChain;
 use App\Entity\Move;
 use App\Entity\Pokemon;
 use App\Entity\PokemonMove;
@@ -49,6 +50,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Data');
         yield MenuItem::linkToCrud('Types', 'fas fa-shield', Type::class);
         yield MenuItem::linkToCrud('Moves', 'fas fa-fist-raised', Move::class);
+        yield MenuItem::linkToCrud('Evolution Chains', 'fas fa-code-branch', EvolutionChain::class);
 
         yield MenuItem::section('Relationships');
         yield MenuItem::linkToCrud('Pokemon Moves', 'fas fa-link', PokemonMove::class);

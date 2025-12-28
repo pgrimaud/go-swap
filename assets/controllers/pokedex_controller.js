@@ -109,13 +109,44 @@ export default class extends Controller {
                 const isNumericSearch = /^\d+$/.test(this.searchValue);
                 
                 if (isNumericSearch) {
-                    // For numeric search: exact match on Pokemon number ONLY
-                    const matchesNumber = p.number === parseInt(this.searchValue, 10);
-                    if (!matchesNumber) return false;
+                    // For numeric search: find Pokemon with this number and get its evolution chain
+                    const searchNumber = parseInt(this.searchValue, 10);
+                    
+                    // Find the Pokemon with this number
+                    const matchingPokemon = this.allPokemon.find(p => p.number === searchNumber);
+                    
+                    if (matchingPokemon && matchingPokemon.evolutionChain && matchingPokemon.evolutionChain.chainId) {
+                        // Show all Pokemon from the same evolution chain
+                        const chainId = matchingPokemon.evolutionChain.chainId;
+                        const matchesChain = p.evolutionChain && p.evolutionChain.chainId === chainId;
+                        if (!matchesChain) return false;
+                    } else {
+                        // Fallback: exact match on Pokemon number only
+                        const matchesNumber = p.number === searchNumber;
+                        if (!matchesNumber) return false;
+                    }
                 } else {
-                    // For text search: search in name only
+                    // For text search: find Pokemon matching name and show its evolution chain
                     const matchesName = p.name.toLowerCase().includes(search);
-                    if (!matchesName) return false;
+                    
+                    if (matchesName) {
+                        // This Pokemon matches, show it
+                        return true;
+                    }
+                    
+                    // Check if any Pokemon in this evolution chain matches the search
+                    if (p.evolutionChain && p.evolutionChain.chainId) {
+                        const chainId = p.evolutionChain.chainId;
+                        const chainHasMatch = this.allPokemon.some(poke => 
+                            poke.evolutionChain && 
+                            poke.evolutionChain.chainId === chainId && 
+                            poke.name.toLowerCase().includes(search)
+                        );
+                        if (chainHasMatch) return true;
+                    }
+                    
+                    // No match
+                    return false;
                 }
                 
                 // When searching, ignore hideCompleted filter - always show search results

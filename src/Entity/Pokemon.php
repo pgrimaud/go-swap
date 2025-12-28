@@ -88,6 +88,11 @@ class Pokemon
     #[Groups(['pokemon:read'])]
     private ?string $form = null;
 
+    #[ORM\ManyToOne(targetEntity: EvolutionChain::class, inversedBy: 'pokemon')]
+    #[ORM\JoinColumn(name: 'evolution_chain_id', referencedColumnName: 'id', nullable: true)]
+    #[Groups(['pokemon:read'])]
+    private ?EvolutionChain $evolutionChain = null;
+
     public function __construct()
     {
         $this->types = new ArrayCollection();
@@ -317,6 +322,18 @@ class Pokemon
     public function setForm(?string $form): static
     {
         $this->form = $form;
+
+        return $this;
+    }
+
+    public function getEvolutionChain(): ?EvolutionChain
+    {
+        return $this->evolutionChain;
+    }
+
+    public function setEvolutionChain(?EvolutionChain $evolutionChain): static
+    {
+        $this->evolutionChain = $evolutionChain;
 
         return $this;
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\EvolutionChain;
 use App\Entity\Pokemon;
 use App\Helper\GenerationHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -159,5 +160,23 @@ class PokemonRepository extends ServiceEntityRepository
         }
 
         return $orderedStats;
+    }
+
+    /**
+     * Find all Pokemon that belong to the same evolution chain.
+     *
+     * @return Pokemon[]
+     */
+    public function findByEvolutionChain(EvolutionChain $evolutionChain): array
+    {
+        /** @var Pokemon[] $results */
+        $results = $this->createQueryBuilder('p')
+            ->where('p.evolutionChain = :chain')
+            ->setParameter('chain', $evolutionChain)
+            ->orderBy('p.number', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        return $results;
     }
 }

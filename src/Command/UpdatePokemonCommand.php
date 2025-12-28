@@ -66,7 +66,7 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
         'unown' => 'fUNOWN_A',
 
         // Spinda
-        'spinda' => 'f01',
+        'spinda' => 'f00',
 
         // Darmanitan (BEFORE generic galarian pattern!)
         'darmanitan_galarian_standard' => 'fGALARIAN_STANDARD',
@@ -215,8 +215,8 @@ final class UpdatePokemonCommand extends AbstractSuggestCommand
         'wormadam_trash' => 'fWORMADAM_TRASH',
 
         // Deerling/Sawsbuck
-        'deerling' => 'fAUTUMN',
-        'sawsbuck' => 'fAUTUMN',
+        'deerling' => 'fSPRING',
+        'sawsbuck' => 'fSPRING',
 
         // Aegislash
         'aegislash_shield' => 'fSHIELD',
