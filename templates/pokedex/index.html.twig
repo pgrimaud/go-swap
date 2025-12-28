@@ -33,12 +33,12 @@
                     <div class="space-y-3 sm:space-y-0">
                         <div class="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
                             {# Filters - scrollable on mobile, wrapped on desktop #}
-                            <div class="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-1">
+                            <div class="overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-1">
                                 <div class="flex gap-2 items-center">
                                     <button type="button" 
                                             data-action="click->pokedex#filter"
                                             data-variant=""
-                                            class="flex-shrink-0 p-2 sm:px-4 sm:py-2 rounded-lg text-sm font-medium inline-flex items-center justify-center cursor-pointer bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 opacity-60"
+                                            class="flex-shrink-0 p-2 h-10 sm:px-4 sm:py-2 rounded-lg text-sm font-medium inline-flex items-center justify-center cursor-pointer bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 opacity-60"
                                             title="All variants">
                                         All
                                     </button>
@@ -110,7 +110,7 @@
                             </div>
                             
                             {# Hide Completed Toggle - Below on mobile, same line on desktop #}
-                            <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition self-end sm:self-auto flex-shrink-0">
+                            <label class="flex items-center justify-center sm:justify-start gap-2 cursor-pointer px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition self-center sm:self-auto flex-shrink-0">
                                 <input type="checkbox" 
                                        data-pokedex-target="hideCompletedToggle"
                                        data-action="change->pokedex#toggleHideCompleted"

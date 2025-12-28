@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html class="bg-white dark:bg-gray-800">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <title>{% block title %}Go Swap{% endblock %}</title>
         <link rel="icon" href="/images/icon256.png" type="image/png">
         {% block stylesheets %}
@@ -12,7 +12,7 @@
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
-    <body class="bg-gray-50 dark:bg-gray-900">
+    <body class="bg-white dark:bg-gray-800">
         {% block body %}{% endblock %}
     </body>
 </html>
