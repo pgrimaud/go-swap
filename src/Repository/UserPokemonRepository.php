@@ -129,4 +129,42 @@ class UserPokemonRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    /**
+     * @return array<string, int>
+     */
+    public function countPokemonByGenerationAndVariant(User $user, string $variant): array
+    {
+        $field = match ($variant) {
+            'normal' => 'hasNormal',
+            'shiny' => 'hasShiny',
+            'shadow' => 'hasShadow',
+            'purified' => 'hasPurified',
+            'lucky' => 'hasLucky',
+            'xxl' => 'hasXxl',
+            'xxs' => 'hasXxs',
+            'perfect' => 'hasPerfect',
+            default => throw new \InvalidArgumentException(sprintf('Invalid variant: %s', $variant)),
+        };
+
+        /** @var array<array{generation: string, total: string}> $results */
+        $results = $this->createQueryBuilder('up')
+            ->select('p.generation, COUNT(DISTINCT p.number) as total')
+            ->join('up.pokemon', 'p')
+            ->where('up.user = :user')
+            ->andWhere(sprintf('up.%s = :true', $field))
+            ->groupBy('p.generation')
+            ->orderBy('p.generation', 'ASC')
+            ->setParameter('user', $user)
+            ->setParameter('true', true)
+            ->getQuery()
+            ->getResult();
+
+        $stats = [];
+        foreach ($results as $result) {
+            $stats[$result['generation']] = (int) $result['total'];
+        }
+
+        return $stats;
+    }
 }
