@@ -262,17 +262,10 @@ export default class extends Controller {
                 // Update stats
                 this.updateStatsBar();
                 
-                // Hide card if completed and hideCompleted is on
-                if (this.hideCompletedValue && pokemon) {
-                    const card = this.gridTarget.querySelector(`[data-pokemon-id="${pokemonId}"]`);
-                    if (card && this.isPokemonCompleted(pokemon)) {
-                        card.style.transition = 'opacity 0.3s ease-out';
-                        card.style.opacity = '0';
-                        setTimeout(() => {
-                            card.remove();
-                            this.displayedCount--;
-                        }, 300);
-                    }
+                // If completed and hideCompleted is on, re-filter to remove from display
+                if (this.hideCompletedValue && pokemon && this.isPokemonCompleted(pokemon)) {
+                    // Re-apply filters to rebuild filteredPokemon without completed ones
+                    this.applyFiltersAndDisplay();
                 }
             } else {
                 // Revert UI on error
