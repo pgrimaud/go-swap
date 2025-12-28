@@ -5,10 +5,13 @@ export default class extends Controller {
         key: String
     }
 
+    static targets = ['banner']
+
     connect() {
         const isDismissed = this.getCookie(this.keyValue);
-        if (isDismissed === 'true') {
-            this.element.remove();
+        if (isDismissed !== 'true') {
+            // Show banner only if not dismissed
+            this.element.classList.remove('hidden');
         }
     }
 
@@ -16,7 +19,7 @@ export default class extends Controller {
         this.setCookie(this.keyValue, 'true', 365);
         this.element.classList.add('transition-opacity', 'duration-300', 'opacity-0');
         setTimeout(() => {
-            this.element.remove();
+            this.element.classList.add('hidden');
         }, 300);
     }
 
