@@ -6,13 +6,17 @@ namespace App\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 
 final class LoginSubscriber implements EventSubscriberInterface
 {
-    private bool $shouldClearCookie = false;
+    public function __construct(
+        private RequestStack $requestStack,
+    ) {
+    }
 
     public static function getSubscribedEvents(): array
     {
@@ -24,13 +28,16 @@ final class LoginSubscriber implements EventSubscriberInterface
 
     public function onLoginSuccess(LoginSuccessEvent $event): void
     {
-        // Flag to clear cookie on next response
-        $this->shouldClearCookie = true;
+        // Store flag in session to persist across redirects
+        $session = $this->requestStack->getSession();
+        $session->set('clear_welcome_banner', true);
     }
 
     public function onKernelResponse(ResponseEvent $event): void
     {
-        if (!$this->shouldClearCookie) {
+        $session = $this->requestStack->getSession();
+
+        if (!$session->get('clear_welcome_banner', false)) {
             return;
         }
 
@@ -44,6 +51,7 @@ final class LoginSubscriber implements EventSubscriberInterface
                 ->withSameSite(Cookie::SAMESITE_LAX)
         );
 
-        $this->shouldClearCookie = false;
+        // Clear the session flag
+        $session->remove('clear_welcome_banner');
     }
 }
