@@ -10,8 +10,21 @@
     <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <!-- Page Header -->
         <div class="px-4 py-6 sm:px-0">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
-                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            <div 
+                data-controller="dismissible"
+                data-dismissible-key-value="welcome-banner-dismissed"
+                class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700 relative"
+            >
+                <button 
+                    data-action="click->dismissible#dismiss"
+                    class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition cursor-pointer"
+                    aria-label="Close welcome banner"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2 pr-8">
                     Welcome to Go Swap! 🎉
                 </h1>
                 <p class="text-gray-600 dark:text-gray-400">
