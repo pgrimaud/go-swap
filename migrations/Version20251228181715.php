@@ -17,6 +17,11 @@ final class Version20251228181715 extends AbstractMigration
         return '';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         // Create evolution_chain table
