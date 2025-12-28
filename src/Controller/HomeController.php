@@ -38,8 +38,6 @@ final class HomeController extends AbstractController
         $ownedXxs = $user ? $userPokemonRepository->countDistinctPokemonByUserAndVariant($user, 'xxs') : 0;
         $ownedPerfect = $user ? $userPokemonRepository->countDistinctPokemonByUserAndVariant($user, 'perfect') : 0;
 
-        $generationStats = $pokemonRepository->countPokemonByGeneration();
-
         $pokedexCategories = [
             [
                 'name' => 'Normal',
@@ -49,6 +47,7 @@ final class HomeController extends AbstractController
                 'total' => $totalDistinct,
                 'percentage' => $totalDistinct > 0 ? round(($ownedNormal / $totalDistinct) * 100) : 0,
                 'generationStats' => $user ? $userPokemonRepository->countPokemonByGenerationAndVariant($user, 'normal') : [],
+                'totalGenerationStats' => $pokemonRepository->countPokemonByGenerationAndVariant('normal'),
             ],
             [
                 'name' => 'Shiny',
@@ -58,6 +57,7 @@ final class HomeController extends AbstractController
                 'total' => $totalShinies,
                 'percentage' => $totalShinies > 0 ? round(($ownedShiny / $totalShinies) * 100) : 0,
                 'generationStats' => $user ? $userPokemonRepository->countPokemonByGenerationAndVariant($user, 'shiny') : [],
+                'totalGenerationStats' => $pokemonRepository->countPokemonByGenerationAndVariant('shiny'),
             ],
             [
                 'name' => 'Shadow',
@@ -67,6 +67,7 @@ final class HomeController extends AbstractController
                 'total' => $totalShadows,
                 'percentage' => $totalShadows > 0 ? round(($ownedShadow / $totalShadows) * 100) : 0,
                 'generationStats' => $user ? $userPokemonRepository->countPokemonByGenerationAndVariant($user, 'shadow') : [],
+                'totalGenerationStats' => $pokemonRepository->countPokemonByGenerationAndVariant('shadow'),
             ],
             [
                 'name' => 'Purified',
@@ -76,6 +77,7 @@ final class HomeController extends AbstractController
                 'total' => $totalShadows,
                 'percentage' => $totalShadows > 0 ? round(($ownedPurified / $totalShadows) * 100) : 0,
                 'generationStats' => $user ? $userPokemonRepository->countPokemonByGenerationAndVariant($user, 'purified') : [],
+                'totalGenerationStats' => $pokemonRepository->countPokemonByGenerationAndVariant('purified'),
             ],
             [
                 'name' => 'Lucky',
@@ -85,6 +87,7 @@ final class HomeController extends AbstractController
                 'total' => $totalLuckies,
                 'percentage' => $totalLuckies > 0 ? round(($ownedLucky / $totalLuckies) * 100) : 0,
                 'generationStats' => $user ? $userPokemonRepository->countPokemonByGenerationAndVariant($user, 'lucky') : [],
+                'totalGenerationStats' => $pokemonRepository->countPokemonByGenerationAndVariant('lucky'),
             ],
             [
                 'name' => 'XXL',
@@ -94,6 +97,7 @@ final class HomeController extends AbstractController
                 'total' => $totalDistinct,
                 'percentage' => $totalDistinct > 0 ? round(($ownedXxl / $totalDistinct) * 100) : 0,
                 'generationStats' => $user ? $userPokemonRepository->countPokemonByGenerationAndVariant($user, 'xxl') : [],
+                'totalGenerationStats' => $pokemonRepository->countPokemonByGenerationAndVariant('xxl'),
             ],
             [
                 'name' => 'XXS',
@@ -103,6 +107,7 @@ final class HomeController extends AbstractController
                 'total' => $totalDistinct,
                 'percentage' => $totalDistinct > 0 ? round(($ownedXxs / $totalDistinct) * 100) : 0,
                 'generationStats' => $user ? $userPokemonRepository->countPokemonByGenerationAndVariant($user, 'xxs') : [],
+                'totalGenerationStats' => $pokemonRepository->countPokemonByGenerationAndVariant('xxs'),
             ],
             [
                 'name' => 'Perfect',
@@ -112,12 +117,12 @@ final class HomeController extends AbstractController
                 'total' => $totalDistinct,
                 'percentage' => $totalDistinct > 0 ? round(($ownedPerfect / $totalDistinct) * 100) : 0,
                 'generationStats' => $user ? $userPokemonRepository->countPokemonByGenerationAndVariant($user, 'perfect') : [],
+                'totalGenerationStats' => $pokemonRepository->countPokemonByGenerationAndVariant('perfect'),
             ],
         ];
 
         return $this->render('home/index.html.twig', [
             'pokedexCategories' => $pokedexCategories,
-            'generationStats' => $generationStats,
         ]);
     }
 }

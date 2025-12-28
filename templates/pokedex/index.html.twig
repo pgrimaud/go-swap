@@ -12,7 +12,7 @@
         {% include 'partials/header.html.twig' %}
 
         {# Filters Section #}
-        <div class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-16 z-10">
+        <div class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-16 z-20">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 <div class="space-y-4">
                     {# Search Bar #}
@@ -109,15 +109,25 @@
                                 </div>
                             </div>
                             
-                            {# Hide Completed Toggle - Below on mobile, same line on desktop #}
-                            <label class="flex items-center justify-center sm:justify-start gap-2 cursor-pointer px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition self-center sm:self-auto flex-shrink-0">
-                                <input type="checkbox" 
-                                       data-pokedex-target="hideCompletedToggle"
-                                       data-action="change->pokedex#toggleHideCompleted"
-                                       checked
-                                       class="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-2 focus:ring-indigo-500">
-                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Hide completed</span>
-                            </label>
+                            {# Generation Select & Hide Completed Toggle #}
+                            <div class="flex items-center gap-3 justify-center sm:justify-start flex-shrink-0">
+                                {# Generation Select #}
+                                <select data-pokedex-target="generationSelect"
+                                        data-action="change->pokedex#filterGenerationFromSelect"
+                                        class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                                    <option value="">All Generations</option>
+                                </select>
+                                
+                                {# Hide Completed Toggle #}
+                                <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                                    <input type="checkbox" 
+                                           data-pokedex-target="hideCompletedToggle"
+                                           data-action="change->pokedex#toggleHideCompleted"
+                                           checked
+                                           class="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-2 focus:ring-indigo-500">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Hide completed</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>

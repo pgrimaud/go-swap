@@ -1,13 +1,14 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['grid', 'loader', 'searchInput', 'spinner', 'loaderText', 'statsBar', 'statsShowing', 'statsTotal', 'statsOwned', 'hideCompletedToggle'];
+    static targets = ['grid', 'loader', 'searchInput', 'spinner', 'loaderText', 'statsBar', 'statsShowing', 'statsTotal', 'statsOwned', 'hideCompletedToggle', 'generationSelect'];
     
     static values = {
         url: String,
         variant: { type: String, default: '' },
         search: { type: String, default: '' },
-        hideCompleted: { type: Boolean, default: true }
+        hideCompleted: { type: Boolean, default: true },
+        generation: { type: String, default: '' }
     };
 
     connect() {
@@ -18,6 +19,7 @@ export default class extends Controller {
         this.displayedCount = 0; // How many are currently displayed
         this.perPage = 50; // Display 50 at a time
         this.observer = null;
+        this.generations = []; // Store available generations
         
         // Read URL params on load
         this.readURLParams();
@@ -42,6 +44,7 @@ export default class extends Controller {
         const params = new URLSearchParams(window.location.search);
         this.variantValue = params.get('variant') || '';
         this.searchValue = params.get('search') || '';
+        this.generationValue = params.get('generation') || '';
         
         // Default to true if not in URL
         const hideCompletedParam = params.get('hideCompleted');
@@ -74,6 +77,10 @@ export default class extends Controller {
             
             const data = await response.json();
             this.allPokemon = data.pokemon;
+            this.generations = data.generations || [];
+            
+            // Populate generation select
+            this.populateGenerationSelect();
             
             // Apply filters and display
             this.applyFiltersAndDisplay();
@@ -89,6 +96,11 @@ export default class extends Controller {
     applyFiltersAndDisplay() {
         // Apply all filters to allPokemon
         this.filteredPokemon = this.allPokemon.filter(p => {
+            // Generation filter
+            if (this.generationValue && p.generation !== this.generationValue) {
+                return false;
+            }
+
             // Search filter
             if (this.searchValue) {
                 const search = this.searchValue.toLowerCase();
@@ -231,18 +243,17 @@ export default class extends Controller {
                 // Update data-owned attribute
                 button.dataset.owned = newValue ? 'true' : 'false';
                 
-                // Update the Pokemon in allPokemon array
+                // Update the Pokemon in allPokemon array with fresh data from API
                 const pokemon = this.allPokemon.find(p => p.id === pokemonId);
-                if (pokemon && pokemon.userPokemon) {
-                    const variantKey = this.getVariantKey(variant);
-                    pokemon.userPokemon[variantKey] = newValue;
+                if (pokemon) {
+                    // Use data from API to ensure consistency
+                    pokemon.userPokemon = data.data || pokemon.userPokemon;
                 }
                 
                 // Update the Pokemon in filteredPokemon array too
                 const filteredPokemon = this.filteredPokemon.find(p => p.id === pokemonId);
-                if (filteredPokemon && filteredPokemon.userPokemon) {
-                    const variantKey = this.getVariantKey(variant);
-                    filteredPokemon.userPokemon[variantKey] = newValue;
+                if (filteredPokemon) {
+                    filteredPokemon.userPokemon = data.data || filteredPokemon.userPokemon;
                 }
                 
                 // Update completion badge
@@ -252,9 +263,9 @@ export default class extends Controller {
                 this.updateStatsBar();
                 
                 // Hide card if completed and hideCompleted is on
-                if (this.hideCompletedValue) {
+                if (this.hideCompletedValue && pokemon) {
                     const card = this.gridTarget.querySelector(`[data-pokemon-id="${pokemonId}"]`);
-                    if (card && pokemon && this.isPokemonCompleted(pokemon)) {
+                    if (card && this.isPokemonCompleted(pokemon)) {
                         card.style.transition = 'opacity 0.3s ease-out';
                         card.style.opacity = '0';
                         setTimeout(() => {
@@ -383,12 +394,26 @@ export default class extends Controller {
             ? `/images/pokemon/shiny/${pokemon.picture}` 
             : `/images/pokemon/normal/${pokemon.picture}`;
 
+        // Add lucky background class if on lucky variant filter
+        const luckyBackgroundClass = this.variantValue === 'lucky' ? 'lucky-bg' : '';
+
+        // Add shadow/purified icon overlay based on variant filter (bottom-left)
+        let variantIconOverlay = '';
+        if (this.variantValue === 'shadow') {
+            variantIconOverlay = '<img src="/images/icon/shadow.png" alt="Shadow" class="absolute bottom-4 left-14 w-8 h-8 opacity-90 drop-shadow-lg z-10">';
+        } else if (this.variantValue === 'purified') {
+            variantIconOverlay = '<img src="/images/icon/purified.png" alt="Purified" class="absolute bottom-4 left-14 w-8 h-8 opacity-90 drop-shadow-lg z-10">';
+        } else if (this.variantValue === 'shiny') {
+            variantIconOverlay = '<img src="/images/icon/shiny.png" alt="Shiny" class="absolute top-8 left-14 w-8 h-8 opacity-90 drop-shadow-lg z-10">';
+        }
+
         return `
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-xl transition-all overflow-hidden ${borderClass}" data-pokemon-id="${pokemon.id}">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-xl transition-all overflow-hidden ${borderClass} ${luckyBackgroundClass}" data-pokemon-id="${pokemon.id}">
                 <div class="relative p-4">
                     <div class="absolute top-2 left-2 px-2 py-0.5 bg-gray-900/80 backdrop-blur-sm rounded-full">
                         <span class="text-xs font-bold text-white">#${number}</span>
                     </div>
+                    ${variantIconOverlay}
                     <div class="flex justify-center pt-4">
                         <img src="${imagePath}" 
                              alt="${pokemon.name}"
@@ -499,6 +524,7 @@ export default class extends Controller {
         const params = new URLSearchParams();
         if (this.variantValue) params.set('variant', this.variantValue);
         if (this.searchValue) params.set('search', this.searchValue);
+        if (this.generationValue) params.set('generation', this.generationValue);
         
         // Always set hideCompleted to be explicit
         params.set('hideCompleted', this.hideCompletedValue ? 'true' : 'false');
@@ -693,5 +719,29 @@ export default class extends Controller {
             "'": '&#039;'
         };
         return text.replace(/[&<>"']/g, m => map[m]);
+    }
+
+    populateGenerationSelect() {
+        if (!this.hasGenerationSelectTarget || !this.generations.length) return;
+
+        // Clear existing options except "All Gen"
+        this.generationSelectTarget.innerHTML = '<option value="">All Generations</option>';
+
+        // Add generation options (already sorted by backend)
+        this.generations.forEach(gen => {
+            const option = document.createElement('option');
+            option.value = gen;
+            // Capitalize first letter of each word
+            option.textContent = gen.charAt(0).toUpperCase() + gen.slice(1);
+            option.selected = this.generationValue === gen;
+            this.generationSelectTarget.appendChild(option);
+        });
+    }
+
+    filterGenerationFromSelect(event) {
+        const generation = event.target.value;
+        this.generationValue = generation;
+        this.updateURL();
+        this.applyFiltersAndDisplay();
     }
 }

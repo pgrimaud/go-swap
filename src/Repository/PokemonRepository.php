@@ -109,6 +109,42 @@ class PokemonRepository extends ServiceEntityRepository
     }
 
     /**
+     * Count distinct Pokemon by generation for a specific variant availability.
+     *
+     * @return array<string, int>
+     */
+    public function countPokemonByGenerationAndVariant(string $variant): array
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('p.generation, COUNT(DISTINCT p.number) as total')
+            ->groupBy('p.generation')
+            ->orderBy('p.generation', 'ASC');
+
+        // Filter by variant availability
+        if ($variant === 'shiny') {
+            $qb->where('p.shiny = :shiny')
+                ->setParameter('shiny', true);
+        } elseif ($variant === 'shadow' || $variant === 'purified') {
+            $qb->where('p.shadow = :shadow')
+                ->setParameter('shadow', true);
+        } elseif ($variant === 'lucky') {
+            $qb->where('p.lucky = :lucky')
+                ->setParameter('lucky', true);
+        }
+        // For normal, xxl, xxs, perfect: all Pokemon are available (no filter)
+
+        /** @var array<array{generation: string, total: string}> $results */
+        $results = $qb->getQuery()->getResult();
+
+        $stats = [];
+        foreach ($results as $result) {
+            $stats[$result['generation']] = (int) $result['total'];
+        }
+
+        return $this->sortByGenerationOrder($stats);
+    }
+
+    /**
      * @param array<string, int> $stats
      *
      * @return array<string, int>

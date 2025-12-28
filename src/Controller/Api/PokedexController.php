@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Entity\User;
+use App\Helper\GenerationHelper;
 use App\Repository\PokemonRepository;
 use App\Repository\UserPokemonRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,8 +27,19 @@ final class PokedexController extends AbstractController
             return $this->json(['error' => 'User not authenticated'], 401);
         }
 
-        // Get ALL Pokemon (no filters, no pagination)
+        // Get ALL Pokemon ordered by number
         $allPokemon = $pokemonRepository->findBy([], ['number' => 'ASC']);
+
+        // Get available generations sorted by GenerationHelper order
+        $pokemonGenerations = array_unique(array_map(
+            fn ($p) => $p->getGeneration(),
+            $allPokemon
+        ));
+
+        $generations = array_values(array_filter(
+            GenerationHelper::GENERATIONS,
+            fn ($gen) => in_array($gen, $pokemonGenerations, true)
+        ));
 
         // Get user's Pokemon collection
         $userPokemonMap = [];
@@ -78,6 +90,7 @@ final class PokedexController extends AbstractController
 
         return $this->json([
             'pokemon' => $enrichedPokemon,
+            'generations' => $generations,
         ]);
     }
 }

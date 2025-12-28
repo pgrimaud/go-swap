@@ -9,3 +9,28 @@
 .scrollbar-hide::-webkit-scrollbar {
     display: none;  /* Chrome, Safari and Opera */
 }
+
+/* Lucky background with opacity */
+.lucky-bg {
+    position: relative;
+}
+
+.lucky-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url(/images/bg/lucky.jpg);
+    background-size: cover;
+    background-position: center;
+    opacity: 0.3;
+    border-radius: 0.75rem; /* rounded-xl */
+    z-index: 0;
+}
+
+.lucky-bg > * {
+    position: relative;
+    z-index: 1;
+}
