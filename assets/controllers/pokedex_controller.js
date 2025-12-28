@@ -306,16 +306,21 @@ export default class extends Controller {
 
     updateCompletionBadge(pokemonId, userPokemonData) {
         const card = this.gridTarget.querySelector(`[data-pokemon-id="${pokemonId}"]`);
-        if (!card) return;
+        if (!card || !userPokemonData) return;
 
         // Determine border based on context
         let borderClass;
         if (this.variantValue) {
             const variantKey = this.getVariantKey(this.variantValue);
-            const isOwnedVariant = variantKey && userPokemonData[variantKey];
-            borderClass = isOwnedVariant 
-                ? 'border-2 border-emerald-600/60 dark:border-emerald-500/50' 
-                : 'border-2 border-gray-200 dark:border-gray-700';
+            if (!variantKey) {
+                // Unknown variant, use default border
+                borderClass = 'border-2 border-gray-200 dark:border-gray-700';
+            } else {
+                const isOwnedVariant = userPokemonData[variantKey];
+                borderClass = isOwnedVariant 
+                    ? 'border-2 border-emerald-600/60 dark:border-emerald-500/50' 
+                    : 'border-2 border-gray-200 dark:border-gray-700';
+            }
         } else {
             const completed = userPokemonData.hasNormal && userPokemonData.hasShiny && 
                              userPokemonData.hasShadow && userPokemonData.hasPurified && 
