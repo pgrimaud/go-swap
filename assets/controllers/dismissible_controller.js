@@ -6,6 +6,14 @@ export default class extends Controller {
     }
 
     connect() {
+        // Check if user just logged in (clear cookie if so)
+        const justLoggedIn = sessionStorage.getItem('just_logged_in');
+        if (justLoggedIn === 'true') {
+            // Clear the dismissed cookie
+            this.deleteCookie(this.keyValue);
+            sessionStorage.removeItem('just_logged_in');
+        }
+
         const isDismissed = this.getCookie(this.keyValue);
         if (isDismissed !== 'true') {
             // Show banner only if not dismissed
@@ -32,5 +40,9 @@ export default class extends Controller {
         const expires = new Date();
         expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
         document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+    }
+
+    deleteCookie(name) {
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;SameSite=Lax`;
     }
 }
