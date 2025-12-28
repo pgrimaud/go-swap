@@ -9,13 +9,12 @@
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <!-- Page Header -->
-        <div class="px-4 py-6 sm:px-0">
-            <div 
-                data-controller="dismissible"
-                data-dismissible-key-value="welcome-banner-dismissed"
-                class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700 relative hidden"
-                data-dismissible-target="banner"
-            >
+        <div 
+            data-controller="dismissible"
+            data-dismissible-key-value="welcome-banner-dismissed"
+            class="px-4 py-6 sm:px-0 hidden"
+        >
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700 relative">
                 <button 
                     data-action="click->dismissible#dismiss"
                     class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition cursor-pointer"

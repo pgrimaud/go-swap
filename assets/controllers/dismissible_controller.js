@@ -5,8 +5,6 @@ export default class extends Controller {
         key: String
     }
 
-    static targets = ['banner']
-
     connect() {
         const isDismissed = this.getCookie(this.keyValue);
         if (isDismissed !== 'true') {
