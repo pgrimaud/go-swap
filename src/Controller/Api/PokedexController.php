@@ -28,7 +28,7 @@ final class PokedexController extends AbstractController
         }
 
         // Get ALL Pokemon ordered by number
-        $allPokemon = $pokemonRepository->findBy([], ['number' => 'ASC']);
+        $allPokemon = $pokemonRepository->findBy([], ['number' => 'ASC', 'id' => 'ASC']);
 
         // Get available generations sorted by GenerationHelper order
         $pokemonGenerations = array_unique(array_map(
