@@ -315,19 +315,41 @@ final class UserPokemonControllerTest extends WebTestCase
 
         $entityManager->flush();
 
-        // Filter by shiny
-        $client->request('GET', '/api/pokedex?variant=shiny');
+        // Call API with variant parameter (for frontend filtering, but backend returns all)
+        $client->request('GET', '/api/pokedex?variant=shiny&perPage=10');
 
         self::assertResponseIsSuccessful();
         $data = json_decode($client->getResponse()->getContent(), true);
 
         self::assertArrayHasKey('pokemon', $data);
+        self::assertEquals('shiny', $data['variant']);
 
-        // All returned Pokemon should have shiny variant
+        // Should return ALL Pokemon (not just those with shiny)
+        self::assertGreaterThanOrEqual(2, count($data['pokemon']));
+
+        // Verify our test Pokemon are in the response with correct data
+        $pokemon1Data = null;
+        $pokemon2Data = null;
         foreach ($data['pokemon'] as $p) {
-            self::assertNotNull($p['userPokemon'], 'Pokemon should have userPokemon data');
-            self::assertTrue($p['userPokemon']['hasShiny'], 'Pokemon should have shiny variant');
+            if ($p['id'] === $pokemon1->getId()) {
+                $pokemon1Data = $p;
+            }
+            if ($p['id'] === $pokemon2->getId()) {
+                $pokemon2Data = $p;
+            }
         }
+
+        self::assertNotNull($pokemon1Data);
+        self::assertNotNull($pokemon2Data);
+
+        // Pokemon 1 should have shiny
+        self::assertNotNull($pokemon1Data['userPokemon']);
+        self::assertTrue($pokemon1Data['userPokemon']['hasShiny']);
+
+        // Pokemon 2 should have only normal (no shiny)
+        self::assertNotNull($pokemon2Data['userPokemon']);
+        self::assertFalse($pokemon2Data['userPokemon']['hasShiny']);
+        self::assertTrue($pokemon2Data['userPokemon']['hasNormal']);
     }
 
     public function testApiPokedexWithNoPokemon(): void

@@ -45,29 +45,8 @@ final class PokedexController extends AbstractController
                 ->setParameter('number', (int) $search);
         }
 
-        // Apply variant filter
-        if ($variant !== '' && $variant !== 'all') {
-            $field = match ($variant) {
-                'normal' => 'hasNormal',
-                'shiny' => 'hasShiny',
-                'shadow' => 'hasShadow',
-                'purified' => 'hasPurified',
-                'lucky' => 'hasLucky',
-                'xxl' => 'hasXxl',
-                'xxs' => 'hasXxs',
-                'perfect' => 'hasPerfect',
-                default => null,
-            };
-
-            if ($field !== null) {
-                $queryBuilder
-                    ->innerJoin('App\Entity\UserPokemon', 'up', 'WITH', 'up.pokemon = p.id')
-                    ->andWhere('up.user = :user')
-                    ->andWhere(sprintf('up.%s = :true', $field))
-                    ->setParameter('user', $user)
-                    ->setParameter('true', true);
-            }
-        }
+        // Note: variant filter is handled client-side for UI display
+        // All Pokemon are returned with their userPokemon data
 
         // Get total before pagination
         $total = (int) $queryBuilder
