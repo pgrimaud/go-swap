@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Pokemon;
+use App\Helper\GenerationHelper;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -32,11 +35,30 @@ class PokemonCrudController extends AbstractCrudController
     {
         return [
             IntegerField::new('number'),
+
+            ChoiceField::new('generation')
+                ->setChoices([
+                    'Kanto (#1-151)' => GenerationHelper::GENERATION_KANTO,
+                    'Johto (#152-251)' => GenerationHelper::GENERATION_JOHTO,
+                    'Hoenn (#252-386)' => GenerationHelper::GENERATION_HOENN,
+                    'Sinnoh (#387-493)' => GenerationHelper::GENERATION_SINNOH,
+                    'Unova (#494-649)' => GenerationHelper::GENERATION_UNOVA,
+                    'Kalos (#650-721)' => GenerationHelper::GENERATION_KALOS,
+                    'Alola (#722-809)' => GenerationHelper::GENERATION_ALOLA,
+                    'Galar (#810-898)' => GenerationHelper::GENERATION_GALAR,
+                    'Hisui (#899-905)' => GenerationHelper::GENERATION_HISUI,
+                    'Paldea (#906+)' => GenerationHelper::GENERATION_PALDEA,
+                    'Unidentified (Meltan #808-809)' => GenerationHelper::GENERATION_UNIDENTIFIED,
+                ])
+                ->hideOnIndex(),
+
             TextField::new('name'),
-            BooleanField::new('shiny'),
-            BooleanField::new('shadow'),
-            BooleanField::new('lucky'),
-            TextField::new('form')->setHelp('Check forms <a target="_blank" href="https://pogoapi.net/api/v1/pokemon_types.json">here</a>')->onlyOnForms(),
+            TextField::new('slug')->hideOnIndex(),
+
+            TextField::new('form')
+                ->setHelp('Check forms <a target="_blank" href="https://pogoapi.net/api/v1/pokemon_types.json">here</a>')
+                ->hideOnIndex(),
+
             ImageField::new('picture')
                 ->setUploadDir('public/images/pokemon/normal')
                 ->setBasePath('images/pokemon/normal')
@@ -57,6 +79,21 @@ class PokemonCrudController extends AbstractCrudController
                     ],
                 ])
                 ->setHelp('Check shiny pictures <a target="_blank" href="https://www.pokekalos.fr/pokedex/pokemongo/index.html">here</a>'),
+
+            AssociationField::new('types')
+                ->setHelp('Select one or two types for this Pokémon')
+                ->setFormTypeOptions([
+                    'by_reference' => false,
+                    'multiple' => true,
+                ])->hideOnIndex(),
+
+            BooleanField::new('shiny'),
+            BooleanField::new('shadow'),
+            BooleanField::new('lucky'),
+
+            IntegerField::new('attack')->setHelp('Base attack stat')->hideOnIndex(),
+            IntegerField::new('defense')->setHelp('Base defense stat')->hideOnIndex(),
+            IntegerField::new('stamina')->setHelp('Base stamina (HP) stat')->hideOnIndex(),
         ];
     }
 }

@@ -66,4 +66,12 @@ class PokemonMove
 
         return $this;
     }
+
+    public function __toString(): string
+    {
+        $moveName = $this->move?->getName() ?? 'UNKNOWN';
+        $elite = $this->elite ? ' (Elite)' : '';
+
+        return $moveName . $elite;
+    }
 }
