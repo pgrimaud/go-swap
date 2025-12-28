@@ -37,26 +37,26 @@
                         </p>
                         <span class="text-sm font-medium px-2 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400">{{ category.percentage }}%</span>
                     </div>
-                    
+
                     <!-- Action Buttons -->
                     <div class="flex gap-2">
                         <a href="{{ path('app_pokedex', category.slug ? {variant: category.slug} : {}) }}" class="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium text-center transition">
                             View
                         </a>
-                        <button 
+                        <button
                             data-action="click->modal#open"
-                            class="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition"
+                            class="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition cursor-pointer"
                         >
                             Details
                         </button>
                     </div>
-                    
+
                     <!-- Modal -->
                     <div data-modal-target="modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" data-action="click->modal#closeOnBackdrop">
                         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6">
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ category.name }} - Generation Stats</h3>
-                                <button data-action="click->modal#close" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                                <button data-action="click->modal#close" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                     </svg>
@@ -66,7 +66,7 @@
                                 {% for generation, totalCount in generationStats %}
                                 {% set ownedCount = category.generationStats[generation] ?? 0 %}
                                 <div class="flex justify-between items-center py-2 px-3 bg-gray-50 dark:bg-gray-700 rounded">
-                                    <span class="font-medium text-gray-700 dark:text-gray-300">Generation {{ generation }}</span>
+                                    <span class="font-medium text-gray-700 dark:text-gray-300">{{ generation|title }}</span>
                                     <div class="flex items-center gap-2">
                                         <span class="font-bold text-gray-900 dark:text-white">{{ ownedCount }}</span>
                                         <span class="text-gray-500 dark:text-gray-400">/</span>
