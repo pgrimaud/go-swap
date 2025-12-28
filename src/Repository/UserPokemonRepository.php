@@ -74,6 +74,31 @@ class UserPokemonRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    public function countDistinctPokemonByUserAndVariant(User $user, string $variant): int
+    {
+        $field = match ($variant) {
+            'normal' => 'hasNormal',
+            'shiny' => 'hasShiny',
+            'shadow' => 'hasShadow',
+            'purified' => 'hasPurified',
+            'lucky' => 'hasLucky',
+            'xxl' => 'hasXxl',
+            'xxs' => 'hasXxs',
+            'perfect' => 'hasPerfect',
+            default => throw new \InvalidArgumentException(sprintf('Invalid variant: %s', $variant)),
+        };
+
+        return (int) $this->createQueryBuilder('up')
+            ->select('COUNT(DISTINCT p.number)')
+            ->join('up.pokemon', 'p')
+            ->where('up.user = :user')
+            ->andWhere(sprintf('up.%s = :true', $field))
+            ->setParameter('user', $user)
+            ->setParameter('true', true)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
     public function countPokemonWithAtLeastOneVariant(User $user): int
     {
         return (int) $this->createQueryBuilder('up')

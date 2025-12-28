@@ -1,21 +1,23 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['grid', 'loader', 'searchInput', 'skeleton', 'spinner', 'loaderText'];
+    static targets = ['grid', 'loader', 'searchInput', 'spinner', 'loaderText', 'statsBar', 'statsShowing', 'statsTotal', 'statsOwned', 'hideCompletedToggle'];
     
     static values = {
         url: String,
-        page: { type: Number, default: 1 },
-        loading: { type: Boolean, default: false },
-        hasMore: { type: Boolean, default: true },
         variant: { type: String, default: '' },
-        search: { type: String, default: '' }
+        search: { type: String, default: '' },
+        hideCompleted: { type: Boolean, default: true }
     };
 
     connect() {
         console.log('Pokédex controller connected');
-        this.observer = null;
         this.debounceTimer = null;
+        this.allPokemon = []; // Store ALL pokemon from API
+        this.filteredPokemon = []; // Filtered pokemon
+        this.displayedCount = 0; // How many are currently displayed
+        this.perPage = 50; // Display 50 at a time
+        this.observer = null;
         
         // Read URL params on load
         this.readURLParams();
@@ -23,11 +25,8 @@ export default class extends Controller {
         // Set active filter button based on current variant
         this.setInitialActiveButton();
         
-        // Initial load
-        this.loadPokemon(false);
-        
-        // Setup infinite scroll
-        this.setupIntersectionObserver();
+        // Load all Pokemon once
+        this.loadAllPokemon();
     }
 
     disconnect() {
@@ -44,26 +43,26 @@ export default class extends Controller {
         this.variantValue = params.get('variant') || '';
         this.searchValue = params.get('search') || '';
         
+        // Default to true if not in URL
+        const hideCompletedParam = params.get('hideCompleted');
+        this.hideCompletedValue = hideCompletedParam === null ? true : hideCompletedParam === 'true';
+        
         // Update search input if present
         if (this.hasSearchInputTarget && this.searchValue) {
             this.searchInputTarget.value = this.searchValue;
         }
+        
+        // Sync hideCompleted checkbox
+        if (this.hasHideCompletedToggleTarget) {
+            this.hideCompletedToggleTarget.checked = this.hideCompletedValue;
+        }
     }
 
-    async loadPokemon(append = false) {
-        if (this.loadingValue || (!append && !this.hasMoreValue)) return;
-
-        this.loadingValue = true;
+    async loadAllPokemon() {
         this.showLoading();
 
-        const params = new URLSearchParams({
-            variant: this.variantValue,
-            search: this.searchValue,
-            page: this.pageValue
-        });
-
         try {
-            const response = await fetch(`${this.urlValue}?${params}`, {
+            const response = await fetch(this.urlValue, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 }
@@ -74,24 +73,98 @@ export default class extends Controller {
             }
             
             const data = await response.json();
-
-            // Update hasMore BEFORE appending
-            this.hasMoreValue = data.hasMore;
-
-            if (append) {
-                this.appendPokemon(data.pokemon);
-            } else {
-                this.replacePokemon(data.pokemon);
-            }
-
-            this.updateStatsBar(data);
+            this.allPokemon = data.pokemon;
+            
+            // Apply filters and display
+            this.applyFiltersAndDisplay();
 
         } catch (error) {
             console.error('Error loading Pokémon:', error);
             this.showError();
         } finally {
-            this.loadingValue = false;
             this.hideLoading();
+        }
+    }
+
+    applyFiltersAndDisplay() {
+        // Apply all filters to allPokemon
+        this.filteredPokemon = this.allPokemon.filter(p => {
+            // Search filter
+            if (this.searchValue) {
+                const search = this.searchValue.toLowerCase();
+                
+                // Check if search is purely numeric
+                const isNumericSearch = /^\d+$/.test(this.searchValue);
+                
+                if (isNumericSearch) {
+                    // For numeric search: exact match on Pokemon number ONLY
+                    const matchesNumber = p.number === parseInt(this.searchValue, 10);
+                    if (!matchesNumber) return false;
+                } else {
+                    // For text search: search in name only
+                    const matchesName = p.name.toLowerCase().includes(search);
+                    if (!matchesName) return false;
+                }
+                
+                // When searching, ignore hideCompleted filter - always show search results
+                return true;
+            }
+
+            // Variant filter (available variants)
+            if (this.variantValue) {
+                if (this.variantValue === 'shadow' || this.variantValue === 'purified') {
+                    if (!p.availableVariants.shadow) return false;
+                } else if (this.variantValue === 'shiny') {
+                    if (!p.availableVariants.shiny) return false;
+                } else if (this.variantValue === 'lucky') {
+                    if (!p.availableVariants.lucky) return false;
+                }
+            }
+
+            // Hide completed filter (only apply when NOT searching)
+            if (this.hideCompletedValue) {
+                if (this.isPokemonCompleted(p)) return false;
+            }
+
+            return true;
+        });
+
+        // Reset display
+        this.displayedCount = 0;
+        this.gridTarget.innerHTML = '';
+        
+        // Display first page
+        this.displayMore();
+        
+        // Update stats
+        this.updateStatsBar();
+        
+        // Setup infinite scroll
+        this.setupIntersectionObserver();
+    }
+
+    displayMore() {
+        const start = this.displayedCount;
+        const end = Math.min(start + this.perPage, this.filteredPokemon.length);
+        
+        if (start >= end) {
+            this.hideLoader();
+            return;
+        }
+
+        const toDisplay = this.filteredPokemon.slice(start, end);
+        
+        toDisplay.forEach(p => {
+            this.gridTarget.insertAdjacentHTML('beforeend', this.createPokemonCard(p));
+        });
+
+        this.displayedCount = end;
+
+        // Check if more to load
+        if (this.displayedCount >= this.filteredPokemon.length) {
+            this.hideLoader();
+        } else {
+            this.showLoader();
         }
     }
 
@@ -100,18 +173,16 @@ export default class extends Controller {
         const button = event.currentTarget;
         const variant = button.dataset.variant || '';
 
-        // Update active state on buttons IMMEDIATELY (synchronous)
+        // Update active state on buttons
         this.updateActiveFilterButton(button);
         
-        // Force immediate repaint by reading a property that requires layout
-        button.offsetHeight;
-
         this.variantValue = variant;
-        this.pageValue = 1;
-        this.hasMoreValue = true;
+
+        // Show/hide stats bar based on filter
+        this.toggleStatsBar();
 
         this.updateURL();
-        this.loadPokemon(false);
+        this.applyFiltersAndDisplay();
     }
 
     search(event) {
@@ -119,68 +190,208 @@ export default class extends Controller {
         
         this.debounceTimer = setTimeout(() => {
             this.searchValue = event.target.value.trim();
-            this.pageValue = 1;
-            this.hasMoreValue = true;
-
             this.updateURL();
-            this.loadPokemon(false);
+            this.applyFiltersAndDisplay();
         }, 300);
     }
 
-    replacePokemon(pokemon) {
-        if (pokemon.length === 0) {
-            this.gridTarget.innerHTML = this.emptyStateHTML();
-            this.hideLoader();
-            return;
-        }
-
-        this.gridTarget.innerHTML = '';
-        pokemon.forEach(p => {
-            this.gridTarget.insertAdjacentHTML('beforeend', this.createPokemonCard(p));
-        });
+    async toggleVariant(event) {
+        event.preventDefault();
+        event.stopPropagation();
         
-        // Show loader if there are more pages
-        this.showLoader();
+        const button = event.currentTarget;
+        const pokemonId = parseInt(button.dataset.pokemonId);
+        const variant = button.dataset.variant;
+        const currentlyOwned = button.dataset.owned === 'true';
+        const newValue = !currentlyOwned;
+
+        // Optimistic UI update
+        this.updateVariantUI(button, newValue);
+
+        try {
+            const response = await fetch(`/api/user-pokemon/${pokemonId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    variant: variant,
+                    value: newValue
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Update data-owned attribute
+                button.dataset.owned = newValue ? 'true' : 'false';
+                
+                // Update the Pokemon in allPokemon array
+                const pokemon = this.allPokemon.find(p => p.id === pokemonId);
+                if (pokemon && pokemon.userPokemon) {
+                    const variantKey = this.getVariantKey(variant);
+                    pokemon.userPokemon[variantKey] = newValue;
+                }
+                
+                // Update completion badge
+                this.updateCompletionBadge(pokemonId, data.data);
+                
+                // Update stats
+                this.updateStatsBar();
+                
+                // Hide card if completed and hideCompleted is on
+                if (this.hideCompletedValue) {
+                    const card = this.gridTarget.querySelector(`[data-pokemon-id="${pokemonId}"]`);
+                    if (card && pokemon && this.isPokemonCompleted(pokemon)) {
+                        card.style.transition = 'opacity 0.3s ease-out';
+                        card.style.opacity = '0';
+                        setTimeout(() => {
+                            card.remove();
+                            this.displayedCount--;
+                        }, 300);
+                    }
+                }
+            } else {
+                // Revert UI on error
+                this.updateVariantUI(button, currentlyOwned);
+            }
+
+        } catch (error) {
+            console.error('Error toggling variant:', error);
+            // Revert UI on error
+            this.updateVariantUI(button, currentlyOwned);
+        }
     }
 
-    appendPokemon(pokemon) {
-        pokemon.forEach(p => {
-            this.gridTarget.insertAdjacentHTML('beforeend', this.createPokemonCard(p));
-        });
+    getVariantKey(variant) {
+        return {
+            'normal': 'hasNormal',
+            'shiny': 'hasShiny',
+            'shadow': 'hasShadow',
+            'purified': 'hasPurified',
+            'lucky': 'hasLucky',
+            'xxl': 'hasXxl',
+            'xxs': 'hasXxs',
+            'perfect': 'hasPerfect'
+        }[variant];
+    }
+
+    updateVariantUI(button, owned) {
+        const img = button.querySelector('img');
+        const isFilteredView = this.variantValue !== '';
+        const sizeClass = isFilteredView ? 'w-12 h-12' : 'aspect-square';
         
-        // Show end message and hide loader if no more pages
-        if (!this.hasMoreValue) {
-            this.gridTarget.insertAdjacentHTML('beforeend', this.endOfListHTML());
-            this.hideLoader();
+        if (owned) {
+            button.className = `${sizeClass} bg-indigo-50 dark:bg-indigo-900/30 ring-2 ring-indigo-500 rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition cursor-pointer`;
+            if (img) img.className = 'w-5 h-5 opacity-100 pointer-events-none';
+            button.title = button.title.replace(' (owned)', '') + ' (owned)';
+        } else {
+            button.className = `${sizeClass} bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition cursor-pointer`;
+            if (img) img.className = 'w-5 h-5 opacity-30 pointer-events-none';
+            button.title = button.title.replace(' (owned)', '');
         }
+    }
+
+    updateCompletionBadge(pokemonId, userPokemonData) {
+        const card = this.gridTarget.querySelector(`[data-pokemon-id="${pokemonId}"]`);
+        if (!card) return;
+
+        // Determine border based on context
+        let borderClass;
+        if (this.variantValue) {
+            const variantKey = this.getVariantKey(this.variantValue);
+            const isOwnedVariant = variantKey && userPokemonData[variantKey];
+            borderClass = isOwnedVariant 
+                ? 'border-2 border-emerald-600/60 dark:border-emerald-500/50' 
+                : 'border-2 border-gray-200 dark:border-gray-700';
+        } else {
+            const completed = userPokemonData.hasNormal && userPokemonData.hasShiny && 
+                             userPokemonData.hasShadow && userPokemonData.hasPurified && 
+                             userPokemonData.hasLucky && userPokemonData.hasXxl && 
+                             userPokemonData.hasXxs && userPokemonData.hasPerfect;
+            
+            borderClass = completed 
+                ? 'border-2 border-emerald-600/60 dark:border-emerald-500/50' 
+                : 'border-2 border-gray-200 dark:border-gray-700';
+        }
+
+        // Update card border
+        card.className = `bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-xl transition-all overflow-hidden ${borderClass}`;
     }
 
     createPokemonCard(pokemon) {
         const number = String(pokemon.number).padStart(4, '0');
-        const completed = false; // TODO: Real completion check when UserPokemon entity is ready
+        const userPokemon = pokemon.userPokemon;
+        
+        // Calculate completion (all 8 variants owned)
+        const completed = userPokemon ? (
+            userPokemon.hasNormal &&
+            userPokemon.hasShiny &&
+            userPokemon.hasShadow &&
+            userPokemon.hasPurified &&
+            userPokemon.hasLucky &&
+            userPokemon.hasXxl &&
+            userPokemon.hasXxs &&
+            userPokemon.hasPerfect
+        ) : false;
+
+        // Determine border based on context
+        let borderClass;
+        if (this.variantValue && userPokemon) {
+            // When filtering by variant, show border if that specific variant is owned
+            const variantKey = {
+                'normal': 'hasNormal',
+                'shiny': 'hasShiny',
+                'shadow': 'hasShadow',
+                'purified': 'hasPurified',
+                'lucky': 'hasLucky',
+                'xxl': 'hasXxl',
+                'xxs': 'hasXxs',
+                'perfect': 'hasPerfect'
+            }[this.variantValue];
+            
+            const isOwnedVariant = variantKey && userPokemon[variantKey];
+            borderClass = isOwnedVariant 
+                ? 'border-2 border-emerald-600/60 dark:border-emerald-500/50' 
+                : 'border-2 border-gray-200 dark:border-gray-700';
+        } else {
+            // On "All" filter, show border only if all 8 variants are completed
+            borderClass = completed 
+                ? 'border-2 border-emerald-600/60 dark:border-emerald-500/50' 
+                : 'border-2 border-gray-200 dark:border-gray-700';
+        }
+
+        // Determine image path based on variant filter
+        const imagePath = this.variantValue === 'shiny' 
+            ? `/images/pokemon/shiny/${pokemon.picture}` 
+            : `/images/pokemon/normal/${pokemon.picture}`;
 
         return `
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg cursor-pointer overflow-hidden">
-                <div class="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-750 px-3 py-2 flex justify-between items-center">
-                    <span class="text-xs font-bold text-gray-500 dark:text-gray-400">#${number}</span>
-                    <span class="text-lg" title="${completed ? 'Completed' : 'Not completed'}">
-                        ${completed ? '✅' : '⬜'}
-                    </span>
-                </div>
-                <div class="p-4 flex justify-center">
-                    <img src="/images/pokemon/normal/${pokemon.picture}" 
-                         alt="${pokemon.name}"
-                         loading="lazy"
-                         class="w-24 h-24 object-contain">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-xl transition-all overflow-hidden ${borderClass}" data-pokemon-id="${pokemon.id}">
+                <div class="relative p-4">
+                    <div class="absolute top-2 left-2 px-2 py-0.5 bg-gray-900/80 backdrop-blur-sm rounded-full">
+                        <span class="text-xs font-bold text-white">#${number}</span>
+                    </div>
+                    <div class="flex justify-center pt-4">
+                        <img src="${imagePath}" 
+                             alt="${pokemon.name}"
+                             loading="lazy"
+                             class="w-28 h-28 object-contain drop-shadow-md">
+                    </div>
                 </div>
                 <div class="px-3 pb-2 text-center">
-                    <h3 class="font-semibold text-gray-800 dark:text-white text-sm mb-2">
+                    <h3 class="font-semibold text-gray-800 dark:text-white text-sm">
                         ${this.escapeHtml(pokemon.name)}
                     </h3>
                 </div>
                 <div class="px-3 pb-3">
-                    <div class="grid grid-cols-4 gap-1.5">
-                        ${this.createVariantBadges()}
+                    <div class="${this.variantValue ? 'flex justify-center' : 'grid grid-cols-4 gap-1.5'}">
+                        ${this.createVariantBadges(pokemon.id, userPokemon, this.variantValue)}
                     </div>
                 </div>
             </div>
@@ -201,23 +412,44 @@ export default class extends Controller {
         `;
     }
 
-    createVariantBadges() {
+    createVariantBadges(pokemonId, userPokemon, currentVariant = '') {
         const variants = [
-            { slug: 'normal', icon: 'normal.png' },
-            { slug: 'shiny', icon: 'shiny.png' },
-            { slug: 'shadow', icon: 'shadow.png' },
-            { slug: 'purified', icon: 'purified.png' },
-            { slug: 'lucky', icon: 'lucky.png' },
-            { slug: 'xxl', icon: 'xxl.png' },
-            { slug: 'xxs', icon: 'xxs.png' },
-            { slug: 'perfect', icon: 'perfect.png' }
+            { slug: 'normal', icon: 'normal.png', hasKey: 'hasNormal' },
+            { slug: 'shiny', icon: 'shiny.png', hasKey: 'hasShiny' },
+            { slug: 'shadow', icon: 'shadow.png', hasKey: 'hasShadow' },
+            { slug: 'purified', icon: 'purified.png', hasKey: 'hasPurified' },
+            { slug: 'lucky', icon: 'lucky.png', hasKey: 'hasLucky' },
+            { slug: 'xxl', icon: 'xxl.png', hasKey: 'hasXxl' },
+            { slug: 'xxs', icon: 'xxs.png', hasKey: 'hasXxs' },
+            { slug: 'perfect', icon: 'perfect.png', hasKey: 'hasPerfect' }
         ];
         
-        return variants.map(variant => `
-            <div class="aspect-square bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition" title="${variant.slug}">
-                <img src="/images/pokedex/${variant.icon}" alt="${variant.slug}" class="w-5 h-5 opacity-40">
-            </div>
-        `).join('');
+        // Filter variants based on current filter
+        const filteredVariants = currentVariant 
+            ? variants.filter(v => v.slug === currentVariant)
+            : variants;
+        
+        return filteredVariants.map(variant => {
+            const owned = userPokemon && userPokemon[variant.hasKey];
+            const opacityClass = owned ? 'opacity-100' : 'opacity-30';
+            const bgClass = owned 
+                ? 'bg-indigo-50 dark:bg-indigo-900/30 ring-2 ring-indigo-500' 
+                : 'bg-gray-200 dark:bg-gray-700';
+            
+            // When showing single variant, align left like the grid
+            const layoutClass = currentVariant ? 'w-12 h-12' : '';
+            
+            return `
+                <div class="${layoutClass} aspect-square ${bgClass} rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition cursor-pointer" 
+                     title="${variant.slug}${owned ? ' (owned)' : ''}"
+                     data-action="click->pokedex#toggleVariant"
+                     data-pokemon-id="${pokemonId}"
+                     data-variant="${variant.slug}"
+                     data-owned="${owned ? 'true' : 'false'}">
+                    <img src="/images/pokedex/${variant.icon}" alt="${variant.slug}" class="w-5 h-5 ${opacityClass} pointer-events-none">
+                </div>
+            `;
+        }).join('');
     }
 
     emptyStateHTML() {
@@ -230,21 +462,17 @@ export default class extends Controller {
         `;
     }
 
-    endOfListHTML() {
-        return `
-            <div class="col-span-full text-center py-8">
-                <p class="text-gray-500 dark:text-gray-400">✅ You've seen all Pokémon!</p>
-            </div>
-        `;
-    }
-
     setupIntersectionObserver() {
         if (!this.hasLoaderTarget) return;
 
+        // Disconnect existing observer
+        if (this.observer) {
+            this.observer.disconnect();
+        }
+
         this.observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting && this.hasMoreValue && !this.loadingValue) {
-                this.pageValue++;
-                this.loadPokemon(true);
+            if (entries[0].isIntersecting && this.displayedCount < this.filteredPokemon.length) {
+                this.displayMore();
             }
         }, {
             root: null,
@@ -259,14 +487,99 @@ export default class extends Controller {
         const params = new URLSearchParams();
         if (this.variantValue) params.set('variant', this.variantValue);
         if (this.searchValue) params.set('search', this.searchValue);
+        
+        // Always set hideCompleted to be explicit
+        params.set('hideCompleted', this.hideCompletedValue ? 'true' : 'false');
 
         const url = params.toString() ? `?${params}` : '';
         window.history.pushState({}, '', `/pokedex${url}`);
     }
 
-    updateStatsBar(data) {
-        // TODO: Update stats bar when UserPokemon entity is ready
-        console.log('Stats:', data.total, 'Pokémon');
+    toggleStatsBar() {
+        if (!this.hasStatsBarTarget) return;
+        
+        if (this.variantValue === '') {
+            // Hide stats bar on "All" filter
+            this.statsBarTarget.classList.add('hidden');
+        } else {
+            // Show stats bar for specific variants
+            this.statsBarTarget.classList.remove('hidden');
+        }
+    }
+
+    updateStatsBar() {
+        if (!this.hasStatsBarTarget) return;
+        
+        // Calculate showing count (filtered results)
+        const uniqueNumbersFiltered = new Set(this.filteredPokemon.map(p => p.number));
+        const showingCount = uniqueNumbersFiltered.size;
+        
+        // Calculate TOTAL count (all Pokemon with this variant available, ignoring search/hideCompleted)
+        const totalUnique = this.calculateTotalForVariant();
+        
+        // Update showing count
+        if (this.hasStatsShowingTarget) {
+            this.statsShowingTarget.textContent = showingCount;
+        }
+        if (this.hasStatsTotalTarget) {
+            this.statsTotalTarget.textContent = totalUnique;
+        }
+        
+        // Calculate owned count
+        if (this.hasStatsOwnedTarget) {
+            const ownedCount = this.calculateOwnedCount();
+            this.statsOwnedTarget.textContent = ownedCount;
+        }
+    }
+
+    calculateTotalForVariant() {
+        if (!this.variantValue) return 0;
+
+        // Count unique Pokemon numbers that have this variant available
+        const uniqueNumbers = new Set();
+        
+        this.allPokemon.forEach(p => {
+            // Check if Pokemon matches variant availability
+            if (this.variantValue === 'shadow' || this.variantValue === 'purified') {
+                if (!p.availableVariants.shadow) return;
+            } else if (this.variantValue === 'shiny') {
+                if (!p.availableVariants.shiny) return;
+            } else if (this.variantValue === 'lucky') {
+                if (!p.availableVariants.lucky) return;
+            }
+            
+            uniqueNumbers.add(p.number);
+        });
+
+        return uniqueNumbers.size;
+    }
+
+    calculateOwnedCount() {
+        if (!this.variantValue) return 0;
+
+        const variantKey = this.getVariantKey(this.variantValue);
+        if (!variantKey) return 0;
+
+        // Group by Pokemon number and count unique numbers where at least one form has the variant owned
+        const ownedNumbers = new Set();
+        
+        this.allPokemon.forEach(p => {
+            // Check if Pokemon matches variant availability
+            if (this.variantValue === 'shadow' || this.variantValue === 'purified') {
+                if (!p.availableVariants.shadow) return;
+            } else if (this.variantValue === 'shiny') {
+                if (!p.availableVariants.shiny) return;
+            } else if (this.variantValue === 'lucky') {
+                if (!p.availableVariants.lucky) return;
+            }
+            
+            // If user owns this variant for this form, add the Pokemon number to the set
+            if (p.userPokemon && p.userPokemon[variantKey]) {
+                ownedNumbers.add(p.number);
+            }
+        });
+
+        return ownedNumbers.size;
     }
 
     setInitialActiveButton() {
@@ -333,6 +646,30 @@ export default class extends Controller {
                 </button>
             </div>
         `;
+    }
+
+    toggleHideCompleted(event) {
+        this.hideCompletedValue = event.target.checked;
+        this.updateURL();
+        this.applyFiltersAndDisplay();
+    }
+
+    isPokemonCompleted(pokemon) {
+        const userPokemon = pokemon.userPokemon;
+        
+        if (!userPokemon) return false;
+        
+        // On "All" view: completed means all 8 variants owned
+        if (!this.variantValue || this.variantValue === '') {
+            return userPokemon.hasNormal && userPokemon.hasShiny && 
+                   userPokemon.hasShadow && userPokemon.hasPurified && 
+                   userPokemon.hasLucky && userPokemon.hasXxl && 
+                   userPokemon.hasXxs && userPokemon.hasPerfect;
+        }
+        
+        // On specific variant view: completed means that variant is owned
+        const variantKey = this.getVariantKey(this.variantValue);
+        return variantKey && userPokemon[variantKey];
     }
 
     escapeHtml(text) {

@@ -46,12 +46,15 @@ class Pokemon
     private ?string $hash = null;
 
     #[ORM\Column]
+    #[Groups(['pokemon:read'])]
     private bool $shadow = false;
 
     #[ORM\Column]
+    #[Groups(['pokemon:read'])]
     private bool $shiny = false;
 
     #[ORM\Column]
+    #[Groups(['pokemon:read'])]
     private bool $lucky = false;
 
     #[ORM\Column(length: 255)]

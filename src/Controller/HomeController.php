@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Repository\PokemonRepository;
+use App\Repository\UserPokemonRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -12,77 +14,94 @@ use Symfony\Component\Routing\Attribute\Route;
 final class HomeController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function index(PokemonRepository $pokemonRepository): Response
-    {
+    public function index(
+        PokemonRepository $pokemonRepository,
+        UserPokemonRepository $userPokemonRepository,
+    ): Response {
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            $user = null;
+        }
+
         $totalDistinct = $pokemonRepository->countTotalDistinctPokemon();
         $totalShinies = $pokemonRepository->countDistinctShinies();
         $totalShadows = $pokemonRepository->countDistinctShadows();
         $totalLuckies = $pokemonRepository->countDistinctLuckies();
 
+        // Calculate owned counts per variant (distinct pokemon numbers)
+        $ownedNormal = $user ? $userPokemonRepository->countDistinctPokemonByUserAndVariant($user, 'normal') : 0;
+        $ownedShiny = $user ? $userPokemonRepository->countDistinctPokemonByUserAndVariant($user, 'shiny') : 0;
+        $ownedShadow = $user ? $userPokemonRepository->countDistinctPokemonByUserAndVariant($user, 'shadow') : 0;
+        $ownedPurified = $user ? $userPokemonRepository->countDistinctPokemonByUserAndVariant($user, 'purified') : 0;
+        $ownedLucky = $user ? $userPokemonRepository->countDistinctPokemonByUserAndVariant($user, 'lucky') : 0;
+        $ownedXxl = $user ? $userPokemonRepository->countDistinctPokemonByUserAndVariant($user, 'xxl') : 0;
+        $ownedXxs = $user ? $userPokemonRepository->countDistinctPokemonByUserAndVariant($user, 'xxs') : 0;
+        $ownedPerfect = $user ? $userPokemonRepository->countDistinctPokemonByUserAndVariant($user, 'perfect') : 0;
+
         $pokedexCategories = [
             [
                 'name' => 'Normal',
-                'slug' => '',
+                'slug' => 'normal',
                 'icon' => 'normal.png',
-                'count' => 0,
+                'count' => $ownedNormal,
                 'total' => $totalDistinct,
-                'percentage' => 0,
+                'percentage' => $totalDistinct > 0 ? round(($ownedNormal / $totalDistinct) * 100) : 0,
             ],
             [
                 'name' => 'Shiny',
                 'slug' => 'shiny',
                 'icon' => 'shiny.png',
-                'count' => 0,
+                'count' => $ownedShiny,
                 'total' => $totalShinies,
-                'percentage' => 0,
+                'percentage' => $totalShinies > 0 ? round(($ownedShiny / $totalShinies) * 100) : 0,
             ],
             [
                 'name' => 'Shadow',
                 'slug' => 'shadow',
                 'icon' => 'shadow.png',
-                'count' => 0,
+                'count' => $ownedShadow,
                 'total' => $totalShadows,
-                'percentage' => 0,
+                'percentage' => $totalShadows > 0 ? round(($ownedShadow / $totalShadows) * 100) : 0,
             ],
             [
                 'name' => 'Purified',
                 'slug' => 'purified',
                 'icon' => 'purified.png',
-                'count' => 0,
+                'count' => $ownedPurified,
                 'total' => $totalShadows,
-                'percentage' => 0,
+                'percentage' => $totalShadows > 0 ? round(($ownedPurified / $totalShadows) * 100) : 0,
             ],
             [
                 'name' => 'Lucky',
                 'slug' => 'lucky',
                 'icon' => 'lucky.png',
-                'count' => 0,
+                'count' => $ownedLucky,
                 'total' => $totalLuckies,
-                'percentage' => 0,
+                'percentage' => $totalLuckies > 0 ? round(($ownedLucky / $totalLuckies) * 100) : 0,
             ],
             [
                 'name' => 'XXL',
                 'slug' => 'xxl',
                 'icon' => 'xxl.png',
-                'count' => 0,
+                'count' => $ownedXxl,
                 'total' => $totalDistinct,
-                'percentage' => 0,
+                'percentage' => $totalDistinct > 0 ? round(($ownedXxl / $totalDistinct) * 100) : 0,
             ],
             [
                 'name' => 'XXS',
                 'slug' => 'xxs',
                 'icon' => 'xxs.png',
-                'count' => 0,
+                'count' => $ownedXxs,
                 'total' => $totalDistinct,
-                'percentage' => 0,
+                'percentage' => $totalDistinct > 0 ? round(($ownedXxs / $totalDistinct) * 100) : 0,
             ],
             [
                 'name' => 'Perfect',
                 'slug' => 'perfect',
                 'icon' => 'perfect.png',
-                'count' => 0,
+                'count' => $ownedPerfect,
                 'total' => $totalDistinct,
-                'percentage' => 0,
+                'percentage' => $totalDistinct > 0 ? round(($ownedPerfect / $totalDistinct) * 100) : 0,
             ],
         ];
 

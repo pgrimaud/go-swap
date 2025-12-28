@@ -24,107 +24,116 @@
                                 data-action="input->pokedex#search"
                                 value="{{ currentSearch }}"
                                 placeholder="🔍 Search by name or number..."
-                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent dark:bg-gray-700 dark:text-white"
                             >
                         </div>
                     </div>
 
                     {# Variant Filters - Responsive: icons on mobile, text+icons on desktop #}
-                    <div class="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-                        <div class="flex gap-2 items-center sm:flex-wrap">
-                            <button type="button" 
-                                    data-action="click->pokedex#filter"
-                                    data-variant=""
-                                    class="flex-shrink-0 p-2 sm:px-4 sm:py-2 rounded-lg text-sm font-medium inline-flex items-center justify-center cursor-pointer bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 opacity-60"
-                                    title="All variants">
-                                All
-                            </button>
-                            <button type="button" 
-                                    data-action="click->pokedex#filter"
-                                    data-variant="normal"
-                                    class="flex-shrink-0 p-2 sm:px-4 sm:py-2 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium cursor-pointer bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 opacity-60"
-                                    title="Normal">
-                                <img src="{{ asset('images/pokedex/normal.png') }}" alt="Normal" class="w-6 h-6 sm:w-4 sm:h-4">
-                                <span class="hidden sm:inline">Normal</span>
-                            </button>
-                            <button type="button" 
-                                    data-action="click->pokedex#filter"
-                                    data-variant="shiny"
-                                    class="flex-shrink-0 p-2 sm:px-4 sm:py-2 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium cursor-pointer bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 opacity-60"
-                                    title="Shiny">
-                                <img src="{{ asset('images/pokedex/shiny.png') }}" alt="Shiny" class="w-6 h-6 sm:w-4 sm:h-4">
-                                <span class="hidden sm:inline">Shiny</span>
-                            </button>
-                            <button type="button" 
-                                    data-action="click->pokedex#filter"
-                                    data-variant="shadow"
-                                    class="flex-shrink-0 p-2 sm:px-4 sm:py-2 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium cursor-pointer bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 opacity-60"
-                                    title="Shadow">
-                                <img src="{{ asset('images/pokedex/shadow.png') }}" alt="Shadow" class="w-6 h-6 sm:w-4 sm:h-4">
-                                <span class="hidden sm:inline">Shadow</span>
-                            </button>
-                            <button type="button" 
-                                    data-action="click->pokedex#filter"
-                                    data-variant="purified"
-                                    class="flex-shrink-0 p-2 sm:px-4 sm:py-2 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium cursor-pointer bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 opacity-60"
-                                    title="Purified">
-                                <img src="{{ asset('images/pokedex/purified.png') }}" alt="Purified" class="w-6 h-6 sm:w-4 sm:h-4">
-                                <span class="hidden sm:inline">Purified</span>
-                            </button>
-                            <button type="button" 
-                                    data-action="click->pokedex#filter"
-                                    data-variant="lucky"
-                                    class="flex-shrink-0 p-2 sm:px-4 sm:py-2 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium cursor-pointer bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 opacity-60"
-                                    title="Lucky">
-                                <img src="{{ asset('images/pokedex/lucky.png') }}" alt="Lucky" class="w-6 h-6 sm:w-4 sm:h-4">
-                                <span class="hidden sm:inline">Lucky</span>
-                            </button>
-                            <button type="button" 
-                                    data-action="click->pokedex#filter"
-                                    data-variant="xxl"
-                                    class="flex-shrink-0 p-2 sm:px-4 sm:py-2 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium cursor-pointer bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 opacity-60"
-                                    title="XXL">
-                                <img src="{{ asset('images/pokedex/xxl.png') }}" alt="XXL" class="w-6 h-6 sm:w-4 sm:h-4">
-                                <span class="hidden sm:inline">XXL</span>
-                            </button>
-                            <button type="button" 
-                                    data-action="click->pokedex#filter"
-                                    data-variant="xxs"
-                                    class="flex-shrink-0 p-2 sm:px-4 sm:py-2 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium cursor-pointer bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 opacity-60"
-                                    title="XXS">
-                                <img src="{{ asset('images/pokedex/xxs.png') }}" alt="XXS" class="w-6 h-6 sm:w-4 sm:h-4">
-                                <span class="hidden sm:inline">XXS</span>
-                            </button>
-                            <button type="button" 
-                                    data-action="click->pokedex#filter"
-                                    data-variant="perfect"
-                                    class="flex-shrink-0 p-2 sm:px-4 sm:py-2 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium cursor-pointer bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 opacity-60"
-                                    title="Perfect">
-                                <img src="{{ asset('images/pokedex/perfect.png') }}" alt="Perfect" class="w-6 h-6 sm:w-4 sm:h-4">
-                                <span class="hidden sm:inline">Perfect</span>
-                            </button>
+                    <div class="space-y-3 sm:space-y-0">
+                        <div class="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                            {# Filters - scrollable on mobile, wrapped on desktop #}
+                            <div class="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-1">
+                                <div class="flex gap-2 items-center">
+                                    <button type="button" 
+                                            data-action="click->pokedex#filter"
+                                            data-variant=""
+                                            class="flex-shrink-0 p-2 sm:px-4 sm:py-2 rounded-lg text-sm font-medium inline-flex items-center justify-center cursor-pointer bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 opacity-60"
+                                            title="All variants">
+                                        All
+                                    </button>
+                                    <button type="button" 
+                                            data-action="click->pokedex#filter"
+                                            data-variant="normal"
+                                            class="flex-shrink-0 p-2 sm:px-4 sm:py-2 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium cursor-pointer bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 opacity-60"
+                                            title="Normal">
+                                        <img src="{{ asset('images/pokedex/normal.png') }}" alt="Normal" class="w-6 h-6 sm:w-4 sm:h-4">
+                                        <span class="hidden sm:inline">Normal</span>
+                                    </button>
+                                    <button type="button" 
+                                            data-action="click->pokedex#filter"
+                                            data-variant="shiny"
+                                            class="flex-shrink-0 p-2 sm:px-4 sm:py-2 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium cursor-pointer bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 opacity-60"
+                                            title="Shiny">
+                                        <img src="{{ asset('images/pokedex/shiny.png') }}" alt="Shiny" class="w-6 h-6 sm:w-4 sm:h-4">
+                                        <span class="hidden sm:inline">Shiny</span>
+                                    </button>
+                                    <button type="button" 
+                                            data-action="click->pokedex#filter"
+                                            data-variant="shadow"
+                                            class="flex-shrink-0 p-2 sm:px-4 sm:py-2 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium cursor-pointer bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 opacity-60"
+                                            title="Shadow">
+                                        <img src="{{ asset('images/pokedex/shadow.png') }}" alt="Shadow" class="w-6 h-6 sm:w-4 sm:h-4">
+                                        <span class="hidden sm:inline">Shadow</span>
+                                    </button>
+                                    <button type="button" 
+                                            data-action="click->pokedex#filter"
+                                            data-variant="purified"
+                                            class="flex-shrink-0 p-2 sm:px-4 sm:py-2 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium cursor-pointer bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 opacity-60"
+                                            title="Purified">
+                                        <img src="{{ asset('images/pokedex/purified.png') }}" alt="Purified" class="w-6 h-6 sm:w-4 sm:h-4">
+                                        <span class="hidden sm:inline">Purified</span>
+                                    </button>
+                                    <button type="button" 
+                                            data-action="click->pokedex#filter"
+                                            data-variant="lucky"
+                                            class="flex-shrink-0 p-2 sm:px-4 sm:py-2 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium cursor-pointer bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 opacity-60"
+                                            title="Lucky">
+                                        <img src="{{ asset('images/pokedex/lucky.png') }}" alt="Lucky" class="w-6 h-6 sm:w-4 sm:h-4">
+                                        <span class="hidden sm:inline">Lucky</span>
+                                    </button>
+                                    <button type="button" 
+                                            data-action="click->pokedex#filter"
+                                            data-variant="xxl"
+                                            class="flex-shrink-0 p-2 sm:px-4 sm:py-2 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium cursor-pointer bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 opacity-60"
+                                            title="XXL">
+                                        <img src="{{ asset('images/pokedex/xxl.png') }}" alt="XXL" class="w-6 h-6 sm:w-4 sm:h-4">
+                                        <span class="hidden sm:inline">XXL</span>
+                                    </button>
+                                    <button type="button" 
+                                            data-action="click->pokedex#filter"
+                                            data-variant="xxs"
+                                            class="flex-shrink-0 p-2 sm:px-4 sm:py-2 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium cursor-pointer bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 opacity-60"
+                                            title="XXS">
+                                        <img src="{{ asset('images/pokedex/xxs.png') }}" alt="XXS" class="w-6 h-6 sm:w-4 sm:h-4">
+                                        <span class="hidden sm:inline">XXS</span>
+                                    </button>
+                                    <button type="button" 
+                                            data-action="click->pokedex#filter"
+                                            data-variant="perfect"
+                                            class="flex-shrink-0 p-2 sm:px-4 sm:py-2 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium cursor-pointer bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 opacity-60"
+                                            title="Perfect">
+                                        <img src="{{ asset('images/pokedex/perfect.png') }}" alt="Perfect" class="w-6 h-6 sm:w-4 sm:h-4">
+                                        <span class="hidden sm:inline">Perfect</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            {# Hide Completed Toggle - Below on mobile, same line on desktop #}
+                            <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition self-end sm:self-auto flex-shrink-0">
+                                <input type="checkbox" 
+                                       data-pokedex-target="hideCompletedToggle"
+                                       data-action="change->pokedex#toggleHideCompleted"
+                                       checked
+                                       class="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-2 focus:ring-indigo-500">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Hide completed</span>
+                            </label>
                         </div>
                     </div>
                 </div>
 
-                {# Stats Bar - Only show when All filter is active #}
-                {% if currentVariant == '' %}
-                    <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                        <div class="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
-                            <span class="font-medium">
-                                Showing: <span class="text-blue-600 dark:text-blue-400">{{ allPokemon|length }}</span> Pokémon
-                            </span>
-                            <span class="text-gray-400">|</span>
-                            <span>
-                                Owned: <span class="text-green-600 dark:text-green-400 font-medium">0</span> / {{ allPokemon|length }}
-                            </span>
-                            <span class="text-gray-400">|</span>
-                            <span>
-                                Complete (8/8): <span class="text-purple-600 dark:text-purple-400 font-medium">0</span>
-                            </span>
-                        </div>
+                {# Stats Bar - Only show when a specific variant is selected #}
+                <div data-pokedex-target="statsBar" class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700{{ currentVariant == '' ? ' hidden' : '' }}">
+                    <div class="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
+                        <span class="font-medium">
+                            Showing: <span data-pokedex-target="statsShowing" class="text-blue-600 dark:text-blue-400">0</span> Pokémon
+                        </span>
+                        <span class="text-gray-400">|</span>
+                        <span>
+                            Owned: <span data-pokedex-target="statsOwned" class="text-green-600 dark:text-green-400 font-medium">0</span> / <span data-pokedex-target="statsTotal">0</span>
+                        </span>
                     </div>
-                {% endif %}
+                </div>
             </div>
         </div>
 
@@ -142,5 +151,36 @@
                 <p class="hidden mt-4 text-gray-600 dark:text-gray-400" data-pokedex-target="loaderText">Loading more Pokémon...</p>
             </div>
         </main>
+
+        {# Scroll to top button #}
+        <button
+            id="scrollToTop"
+            onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
+            class="fixed bottom-6 right-6 bg-indigo-600 hover:bg-indigo-700 text-white p-4 rounded-full shadow-lg transition-all opacity-0 invisible z-50 cursor-pointer"
+            aria-label="Scroll to top">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+            </svg>
+        </button>
+
+        <script>
+            // Show/hide scroll to top button
+            window.addEventListener('scroll', function() {
+                const scrollButton = document.getElementById('scrollToTop');
+                if (window.scrollY > 300) {
+                    scrollButton.classList.remove('opacity-0', 'invisible');
+                    scrollButton.classList.add('opacity-100', 'visible');
+                } else {
+                    scrollButton.classList.add('opacity-0', 'invisible');
+                    scrollButton.classList.remove('opacity-100', 'visible');
+                }
+            });
+            
+            // Faster scroll to top
+            document.getElementById('scrollToTop').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'instant' });
+            });
+        </script>
     </div>
 {% endblock %}

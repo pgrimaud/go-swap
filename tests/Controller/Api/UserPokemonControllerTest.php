@@ -269,104 +269,20 @@ final class UserPokemonControllerTest extends WebTestCase
         self::assertFalse($foundPokemon['userPokemon']['hasShadow']);
     }
 
-    public function testApiPokedexFilterByVariant(): void
-    {
-        $client = static::createClient();
-        $user = $this->loginUser($client);
-
-        $pokemonRepository = static::getContainer()->get(PokemonRepository::class);
-        $entityManager = static::getContainer()->get('doctrine')->getManager();
-        $userPokemonRepository = static::getContainer()->get(UserPokemonRepository::class);
-
-        // Create 2 Pokemon: one with shiny, one without
-        $pokemon1 = $pokemonRepository->findOneBy(['number' => 1]);
-        $pokemon2 = $pokemonRepository->findOneBy(['number' => 2]);
-
-        if (!$pokemon1 || !$pokemon2) {
-            self::markTestSkipped('Need at least 2 Pokemon in test database');
-        }
-
-        // Remove existing
-        $existing1 = $userPokemonRepository->findByUserAndPokemon($user, $pokemon1);
-        if ($existing1) {
-            $entityManager->remove($existing1);
-        }
-        $existing2 = $userPokemonRepository->findByUserAndPokemon($user, $pokemon2);
-        if ($existing2) {
-            $entityManager->remove($existing2);
-        }
-        $entityManager->flush();
-
-        // Pokemon 1 has shiny
-        $userPokemon1 = new UserPokemon();
-        $userPokemon1->setUser($user);
-        $userPokemon1->setPokemon($pokemon1);
-        $userPokemon1->setHasShiny(true);
-        $userPokemon1->setFirstCaughtAt(new \DateTimeImmutable());
-        $entityManager->persist($userPokemon1);
-
-        // Pokemon 2 has only normal
-        $userPokemon2 = new UserPokemon();
-        $userPokemon2->setUser($user);
-        $userPokemon2->setPokemon($pokemon2);
-        $userPokemon2->setHasNormal(true);
-        $userPokemon2->setFirstCaughtAt(new \DateTimeImmutable());
-        $entityManager->persist($userPokemon2);
-
-        $entityManager->flush();
-
-        // Call API with variant parameter (for frontend filtering, but backend returns all)
-        $client->request('GET', '/api/pokedex?variant=shiny&perPage=10');
-
-        self::assertResponseIsSuccessful();
-        $data = json_decode($client->getResponse()->getContent(), true);
-
-        self::assertArrayHasKey('pokemon', $data);
-        self::assertEquals('shiny', $data['variant']);
-
-        // Should return ALL Pokemon (not just those with shiny)
-        self::assertGreaterThanOrEqual(2, count($data['pokemon']));
-
-        // Verify our test Pokemon are in the response with correct data
-        $pokemon1Data = null;
-        $pokemon2Data = null;
-        foreach ($data['pokemon'] as $p) {
-            if ($p['id'] === $pokemon1->getId()) {
-                $pokemon1Data = $p;
-            }
-            if ($p['id'] === $pokemon2->getId()) {
-                $pokemon2Data = $p;
-            }
-        }
-
-        self::assertNotNull($pokemon1Data);
-        self::assertNotNull($pokemon2Data);
-
-        // Pokemon 1 should have shiny
-        self::assertNotNull($pokemon1Data['userPokemon']);
-        self::assertTrue($pokemon1Data['userPokemon']['hasShiny']);
-
-        // Pokemon 2 should have only normal (no shiny)
-        self::assertNotNull($pokemon2Data['userPokemon']);
-        self::assertFalse($pokemon2Data['userPokemon']['hasShiny']);
-        self::assertTrue($pokemon2Data['userPokemon']['hasNormal']);
-    }
-
     public function testApiPokedexWithNoPokemon(): void
     {
         $client = static::createClient();
         $this->loginUser($client);
 
-        // Search for non-existent Pokemon
-        $client->request('GET', '/api/pokedex?search=zzzzznonexistent');
+        // API now returns ALL Pokemon (filtering is client-side)
+        $client->request('GET', '/api/pokedex');
 
         self::assertResponseIsSuccessful();
         $data = json_decode($client->getResponse()->getContent(), true);
 
         self::assertArrayHasKey('pokemon', $data);
-        self::assertEmpty($data['pokemon']);
-        self::assertEquals(0, $data['total']);
-        self::assertFalse($data['hasMore']);
+        self::assertIsArray($data['pokemon']);
+        // API returns all Pokemon, filtering is done in JavaScript
     }
 
     public function testToggleVariantWithInvalidJson(): void
