@@ -40,8 +40,7 @@ class PokemonCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         $duplicate = Action::new('duplicate', 'Duplicate', 'fa fa-copy')
-            ->linkToCrudAction('duplicatePokemon')
-            ->setCssClass('btn btn-secondary');
+            ->linkToCrudAction('duplicatePokemon');
 
         return parent::configureActions($actions)
             ->add(Crud::PAGE_INDEX, $duplicate)
@@ -119,8 +118,23 @@ class PokemonCrudController extends AbstractCrudController
         EntityManagerInterface $entityManager,
         AdminUrlGenerator $adminUrlGenerator,
     ): RedirectResponse {
-        /** @var Pokemon $originalPokemon */
-        $originalPokemon = $context->getEntity()->getInstance();
+        // Get entityId from request instead of context
+        $entityId = $context->getRequest()->query->get('entityId');
+
+        if (!$entityId) {
+            $this->addFlash('error', 'Pokemon ID not found');
+
+            return $this->redirect($adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl());
+        }
+
+        /** @var Pokemon|null $originalPokemon */
+        $originalPokemon = $entityManager->getRepository(Pokemon::class)->find($entityId);
+
+        if (!$originalPokemon) {
+            $this->addFlash('error', 'Pokemon not found');
+
+            return $this->redirect($adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl());
+        }
 
         $duplicatedPokemon = new Pokemon();
         $duplicatedPokemon->setNumber($originalPokemon->getNumber() ?? 0);
@@ -135,8 +149,6 @@ class PokemonCrudController extends AbstractCrudController
         $duplicatedPokemon->setShadow($originalPokemon->isShadow());
         $duplicatedPokemon->setShiny($originalPokemon->isShiny());
         $duplicatedPokemon->setLucky($originalPokemon->isLucky());
-        $duplicatedPokemon->setPicture($originalPokemon->getPicture());
-        $duplicatedPokemon->setShinyPicture($originalPokemon->getShinyPicture());
 
         foreach ($originalPokemon->getTypes() as $type) {
             $duplicatedPokemon->addType($type);
@@ -153,6 +165,6 @@ class PokemonCrudController extends AbstractCrudController
             ->setEntityId($duplicatedPokemon->getId())
             ->generateUrl();
 
-        return new RedirectResponse($url);
+        return $this->redirect($url);
     }
 }
