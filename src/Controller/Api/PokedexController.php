@@ -27,8 +27,8 @@ final class PokedexController extends AbstractController
             return $this->json(['error' => 'User not authenticated'], 401);
         }
 
-        // Get ALL Pokemon ordered by number
-        $allPokemon = $pokemonRepository->findBy([], ['number' => 'ASC', 'id' => 'ASC']);
+        // Get ALL Pokemon with evolutionChain eager loaded (avoid N+1)
+        $allPokemon = $pokemonRepository->findAllWithEvolutionChain();
 
         // Get available generations sorted by GenerationHelper order
         $pokemonGenerations = array_unique(array_map(

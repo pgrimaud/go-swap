@@ -220,4 +220,23 @@ class PokemonRepository extends ServiceEntityRepository
 
         return $results;
     }
+
+    /**
+     * Find all Pokemon with evolutionChain eager loaded.
+     *
+     * @return Pokemon[]
+     */
+    public function findAllWithEvolutionChain(): array
+    {
+        /** @var Pokemon[] $results */
+        $results = $this->createQueryBuilder('p')
+            ->leftJoin('p.evolutionChain', 'ec')
+            ->addSelect('ec')
+            ->orderBy('p.number', 'ASC')
+            ->addOrderBy('p.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        return $results;
+    }
 }
