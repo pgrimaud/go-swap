@@ -38,6 +38,8 @@ final class HomeController extends AbstractController
         $ownedXxs = $user ? $userPokemonRepository->countDistinctPokemonByUserAndVariant($user, 'xxs') : 0;
         $ownedPerfect = $user ? $userPokemonRepository->countDistinctPokemonByUserAndVariant($user, 'perfect') : 0;
 
+        $generationStats = $pokemonRepository->countPokemonByGeneration();
+
         $pokedexCategories = [
             [
                 'name' => 'Normal',
@@ -107,6 +109,7 @@ final class HomeController extends AbstractController
 
         return $this->render('home/index.html.twig', [
             'pokedexCategories' => $pokedexCategories,
+            'generationStats' => $generationStats,
         ]);
     }
 }

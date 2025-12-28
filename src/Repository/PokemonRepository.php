@@ -85,4 +85,25 @@ class PokemonRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    /**
+     * @return array<string, int>
+     */
+    public function countPokemonByGeneration(): array
+    {
+        /** @var array<array{generation: string, total: string}> $results */
+        $results = $this->createQueryBuilder('p')
+            ->select('p.generation, COUNT(DISTINCT p.number) as total')
+            ->groupBy('p.generation')
+            ->orderBy('p.generation', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        $stats = [];
+        foreach ($results as $result) {
+            $stats[$result['generation']] = (int) $result['total'];
+        }
+
+        return $stats;
+    }
 }
