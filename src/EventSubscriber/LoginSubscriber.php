@@ -35,7 +35,7 @@ final class LoginSubscriber implements EventSubscriberInterface
         }
 
         $response = $event->getResponse();
-        
+
         // Clear the welcome banner cookie by setting it expired
         $response->headers->setCookie(
             Cookie::create('welcome-banner-dismissed')
