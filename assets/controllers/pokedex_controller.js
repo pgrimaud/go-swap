@@ -238,6 +238,13 @@ export default class extends Controller {
                     pokemon.userPokemon[variantKey] = newValue;
                 }
                 
+                // Update the Pokemon in filteredPokemon array too
+                const filteredPokemon = this.filteredPokemon.find(p => p.id === pokemonId);
+                if (filteredPokemon && filteredPokemon.userPokemon) {
+                    const variantKey = this.getVariantKey(variant);
+                    filteredPokemon.userPokemon[variantKey] = newValue;
+                }
+                
                 // Update completion badge
                 this.updateCompletionBadge(pokemonId, data.data);
                 
