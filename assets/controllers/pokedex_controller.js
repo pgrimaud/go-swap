@@ -24,9 +24,6 @@ export default class extends Controller {
         // Read URL params on load
         this.readURLParams();
         
-        // Set active filter button based on current variant
-        this.setInitialActiveButton();
-        
         // Load all Pokemon once
         this.loadAllPokemon();
     }
@@ -81,6 +78,9 @@ export default class extends Controller {
             
             // Populate generation select
             this.populateGenerationSelect();
+            
+            // Set active filter button based on current variant (after DOM is ready)
+            this.setInitialActiveButton();
             
             // Apply filters and display
             this.applyFiltersAndDisplay();
@@ -367,8 +367,11 @@ export default class extends Controller {
                 : 'border-2 border-gray-200 dark:border-gray-700';
         }
 
-        // Update card border
-        card.className = `bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-xl transition-all overflow-hidden ${borderClass}`;
+        // Preserve lucky-bg class if present
+        const luckyBackgroundClass = this.variantValue === 'lucky' ? 'lucky-bg' : '';
+
+        // Update card border while preserving lucky background
+        card.className = `bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-xl transition-all overflow-hidden ${borderClass} ${luckyBackgroundClass}`;
     }
 
     createPokemonCard(pokemon) {
@@ -645,19 +648,26 @@ export default class extends Controller {
     }
 
     setInitialActiveButton() {
-        // Find the button matching current variant
-        const filterButtons = document.querySelectorAll('[data-action*="pokedex#filter"]');
+        // Find the button matching current variant (only buttons, not select)
+        const filterButtons = document.querySelectorAll('button[data-action*="pokedex#filter"]');
+        let activeButton = null;
+        
         filterButtons.forEach(button => {
             const buttonVariant = button.dataset.variant || '';
             if (buttonVariant === this.variantValue) {
-                this.updateActiveFilterButton(button);
+                activeButton = button;
             }
         });
+        
+        // If a matching button was found, activate it
+        if (activeButton) {
+            this.updateActiveFilterButton(activeButton);
+        }
     }
 
     updateActiveFilterButton(activeButton) {
-        // Remove active class from all filter buttons
-        const filterButtons = document.querySelectorAll('[data-action*="pokedex#filter"]');
+        // Remove active class from all filter buttons (only buttons, not select)
+        const filterButtons = document.querySelectorAll('button[data-action*="pokedex#filter"]');
         filterButtons.forEach(button => {
             button.classList.remove('bg-indigo-600', 'text-white', 'shadow-md');
             button.classList.add('opacity-60', 'bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-200', 'dark:hover:bg-gray-600');
