@@ -1,3 +1,4 @@
+// Version: 2025-12-29-v2
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
@@ -248,6 +249,8 @@ export default class extends Controller {
         const currentlyOwned = button.dataset.owned === 'true';
         const newValue = !currentlyOwned;
 
+        console.log('Toggle variant:', variant, 'from', currentlyOwned, 'to', newValue);
+
         // Optimistic UI update
         this.updateVariantUI(button, newValue);
 
@@ -269,6 +272,8 @@ export default class extends Controller {
             }
 
             const data = await response.json();
+            
+            console.log('API response:', data);
 
             if (data.success) {
                 // Update data-owned attribute
@@ -277,18 +282,27 @@ export default class extends Controller {
                 // Update the Pokemon in allPokemon array with fresh data from API
                 const pokemon = this.allPokemon.find(p => p.id === pokemonId);
                 if (pokemon) {
-                    // Use data from API to ensure consistency
-                    pokemon.userPokemon = data.data || pokemon.userPokemon;
+                    if (data.deleted) {
+                        // If deleted, set userPokemon to null or create empty object
+                        pokemon.userPokemon = null;
+                    } else {
+                        // Use data from API to ensure consistency
+                        pokemon.userPokemon = data.data || pokemon.userPokemon;
+                    }
                 }
                 
                 // Update the Pokemon in filteredPokemon array too
                 const filteredPokemon = this.filteredPokemon.find(p => p.id === pokemonId);
                 if (filteredPokemon) {
-                    filteredPokemon.userPokemon = data.data || filteredPokemon.userPokemon;
+                    if (data.deleted) {
+                        filteredPokemon.userPokemon = null;
+                    } else {
+                        filteredPokemon.userPokemon = data.data || filteredPokemon.userPokemon;
+                    }
                 }
                 
-                // Update completion badge
-                this.updateCompletionBadge(pokemonId, data.data);
+                // Update completion badge (pass null if deleted, or data.data)
+                this.updateCompletionBadge(pokemonId, data.deleted ? null : data.data);
                 
                 // Update stats
                 this.updateStatsBar();
@@ -329,11 +343,11 @@ export default class extends Controller {
         const sizeClass = isFilteredView ? 'w-12 h-12' : 'aspect-square';
         
         if (owned) {
-            button.className = `${sizeClass} bg-indigo-50 dark:bg-indigo-900/30 ring-2 ring-indigo-500 rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition cursor-pointer`;
+            button.className = `${sizeClass} bg-violet-50 dark:bg-violet-900/30 ring-2 ring-violet-600 hover:ring-violet-500 rounded flex items-center justify-center transition cursor-pointer`;
             if (img) img.className = 'w-5 h-5 opacity-100 pointer-events-none';
             button.title = button.title.replace(' (owned)', '') + ' (owned)';
         } else {
-            button.className = `${sizeClass} bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition cursor-pointer`;
+            button.className = `${sizeClass} bg-black dark:bg-black border border-zinc-700 hover:border-zinc-600 rounded flex items-center justify-center transition cursor-pointer`;
             if (img) img.className = 'w-5 h-5 opacity-30 pointer-events-none';
             button.title = button.title.replace(' (owned)', '');
         }
@@ -341,19 +355,27 @@ export default class extends Controller {
 
     updateCompletionBadge(pokemonId, userPokemonData) {
         const card = this.gridTarget.querySelector(`[data-pokemon-id="${pokemonId}"]`);
-        if (!card || !userPokemonData) return;
+        if (!card) return;
+
+        console.log('Updating border for Pokemon', pokemonId, userPokemonData);
+        console.log('Variant filter:', this.variantValue);
 
         // Determine border based on context
         let borderClass;
-        if (this.variantValue) {
+        
+        // If userPokemonData is null (deleted), always show gray border
+        if (!userPokemonData) {
+            borderClass = 'border-2 border-gray-200 dark:border-gray-700';
+        } else if (this.variantValue) {
             const variantKey = this.getVariantKey(this.variantValue);
+            console.log('Variant key:', variantKey, 'Value:', userPokemonData[variantKey]);
             if (!variantKey) {
-                // Unknown variant, use default border
                 borderClass = 'border-2 border-gray-200 dark:border-gray-700';
             } else {
                 const isOwnedVariant = userPokemonData[variantKey];
+                console.log('Is owned variant:', isOwnedVariant);
                 borderClass = isOwnedVariant 
-                    ? 'border-2 border-emerald-600/60 dark:border-emerald-500/50' 
+                    ? 'border-2 border-emerald-700' 
                     : 'border-2 border-gray-200 dark:border-gray-700';
             }
         } else {
@@ -363,7 +385,7 @@ export default class extends Controller {
                              userPokemonData.hasXxs && userPokemonData.hasPerfect;
             
             borderClass = completed 
-                ? 'border-2 border-emerald-600/60 dark:border-emerald-500/50' 
+                ? 'border-2 border-emerald-700' 
                 : 'border-2 border-gray-200 dark:border-gray-700';
         }
 
@@ -371,7 +393,9 @@ export default class extends Controller {
         const luckyBackgroundClass = this.variantValue === 'lucky' ? 'lucky-bg' : '';
 
         // Update card border while preserving lucky background
-        card.className = `bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-xl transition-all overflow-hidden ${borderClass} ${luckyBackgroundClass}`;
+        card.className = `bg-white dark:bg-zinc-950 rounded-xl shadow hover:shadow-xl transition-all overflow-hidden ${borderClass} ${luckyBackgroundClass}`;
+        
+        console.log('New card classes:', card.className);
     }
 
     createPokemonCard(pokemon) {
@@ -407,12 +431,12 @@ export default class extends Controller {
             
             const isOwnedVariant = variantKey && userPokemon[variantKey];
             borderClass = isOwnedVariant 
-                ? 'border-2 border-emerald-600/60 dark:border-emerald-500/50' 
+                ? 'border-2 border-emerald-700 dark:border-emerald-700' 
                 : 'border-2 border-gray-200 dark:border-gray-700';
         } else {
             // On "All" filter, show border only if all 8 variants are completed
             borderClass = completed 
-                ? 'border-2 border-emerald-600/60 dark:border-emerald-500/50' 
+                ? 'border-2 border-emerald-700 dark:border-emerald-700' 
                 : 'border-2 border-gray-200 dark:border-gray-700';
         }
 
@@ -435,7 +459,7 @@ export default class extends Controller {
         }
 
         return `
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-xl transition-all overflow-hidden ${borderClass} ${luckyBackgroundClass}" data-pokemon-id="${pokemon.id}">
+            <div class="bg-white dark:bg-zinc-950 rounded-xl shadow hover:shadow-xl transition-all overflow-hidden ${borderClass} ${luckyBackgroundClass}" data-pokemon-id="${pokemon.id}">
                 <div class="relative p-4">
                     <div class="absolute top-2 left-2 px-2 py-0.5 bg-gray-900/80 backdrop-blur-sm rounded-full">
                         <span class="text-xs font-bold text-white">#${number}</span>
@@ -497,14 +521,14 @@ export default class extends Controller {
             const owned = userPokemon && userPokemon[variant.hasKey];
             const opacityClass = owned ? 'opacity-100' : 'opacity-30';
             const bgClass = owned 
-                ? 'bg-indigo-50 dark:bg-indigo-900/30 ring-2 ring-indigo-500' 
-                : 'bg-gray-200 dark:bg-gray-700';
+                ? 'bg-violet-50 dark:bg-violet-900/30 ring-2 ring-violet-600 hover:ring-violet-500' 
+                : 'bg-black dark:bg-black border border-zinc-700 hover:border-zinc-600';
             
             // When showing single variant, align left like the grid
             const layoutClass = currentVariant ? 'w-12 h-12' : '';
             
             return `
-                <div class="${layoutClass} aspect-square ${bgClass} rounded flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition cursor-pointer" 
+                <div class="${layoutClass} aspect-square ${bgClass} rounded flex items-center justify-center transition cursor-pointer" 
                      title="${variant.slug}${owned ? ' (owned)' : ''}"
                      data-action="click->pokedex#toggleVariant"
                      data-pokemon-id="${pokemonId}"
@@ -669,13 +693,13 @@ export default class extends Controller {
         // Remove active class from all filter buttons (only buttons, not select)
         const filterButtons = document.querySelectorAll('button[data-action*="pokedex#filter"]');
         filterButtons.forEach(button => {
-            button.classList.remove('bg-indigo-600', 'text-white', 'shadow-md');
-            button.classList.add('opacity-60', 'bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-200', 'dark:hover:bg-gray-600');
+            button.classList.remove('bg-violet-600', 'text-white', 'shadow-md');
+            button.classList.add('opacity-60', 'bg-gray-100', 'dark:bg-zinc-800', 'text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-200', 'dark:hover:bg-zinc-700');
         });
         
         // Add active class to clicked button (no hover on active)
-        activeButton.classList.remove('opacity-60', 'bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-200', 'dark:hover:bg-gray-600');
-        activeButton.classList.add('bg-indigo-600', 'text-white', 'shadow-md');
+        activeButton.classList.remove('opacity-60', 'bg-gray-100', 'dark:bg-zinc-800', 'text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-200', 'dark:hover:bg-zinc-700');
+        activeButton.classList.add('bg-violet-600', 'text-white', 'shadow-md');
     }
 
     showLoading() {
@@ -713,7 +737,7 @@ export default class extends Controller {
             <div class="col-span-full text-center py-12">
                 <div class="text-6xl mb-4">❌</div>
                 <h3 class="text-xl font-semibold text-red-600 mb-2">Error loading Pokémon</h3>
-                <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition">
                     Retry
                 </button>
             </div>

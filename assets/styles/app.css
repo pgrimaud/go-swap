@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Turbo progress bar color */
+.turbo-progress-bar {
+    background-color: #7c3aed !important; /* violet-600 */
+}
+
 /* Hide scrollbar but keep scroll functionality */
 .scrollbar-hide {
     -ms-overflow-style: none;  /* IE and Edge */

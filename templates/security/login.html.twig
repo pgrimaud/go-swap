@@ -3,7 +3,7 @@
 {% block title %}Go Swap - Login{% endblock %}
 
 {% block body %}
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-12 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 to-violet-100 dark:from-black dark:to-black py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8">
         <div>
             <div class="mx-auto h-24 w-24 flex items-center justify-center">
@@ -17,7 +17,7 @@
             </p>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8">
+        <div class="bg-white dark:bg-black rounded-lg shadow-xl p-8 border-2 border-gray-200 dark:border-zinc-800">
             {% if error %}
                 <div class="mb-4 bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 dark:border-red-400 p-4 rounded">
                     <div class="flex">
@@ -36,10 +36,10 @@
             {% endif %}
 
             {% if app.user %}
-                <div class="mb-4 bg-indigo-50 dark:bg-indigo-900/30 border-l-4 border-indigo-500 dark:border-indigo-400 p-4 rounded">
-                    <p class="text-sm text-indigo-700 dark:text-indigo-200">
+                <div class="mb-4 bg-violet-50 dark:bg-violet-900/30 border-l-4 border-violet-600 dark:border-violet-600 p-4 rounded">
+                    <p class="text-sm text-violet-700 dark:text-violet-200">
                         You are logged in as <span class="font-semibold">{{ app.user.userIdentifier }}</span>.
-                        <a href="{{ path('app_logout') }}" class="underline hover:text-indigo-900 dark:hover:text-indigo-100">Logout</a>
+                        <a href="{{ path('app_logout') }}" class="underline hover:text-violet-900 dark:hover:text-violet-100">Logout</a>
                     </p>
                 </div>
             {% endif %}
@@ -53,7 +53,7 @@
                            value="{{ last_username }}" 
                            name="email" 
                            id="inputEmail" 
-                           class="appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-indigo-500 dark:focus:border-indigo-400 focus:z-10 sm:text-sm transition" 
+                           class="appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-zinc-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-600 dark:focus:ring-violet-600 focus:border-violet-600 dark:focus:border-violet-600 focus:z-10 sm:text-sm transition" 
                            placeholder="you@example.com"
                            autocomplete="email" 
                            required 
@@ -67,7 +67,7 @@
                     <input type="password" 
                            name="password" 
                            id="inputPassword" 
-                           class="appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-indigo-500 dark:focus:border-indigo-400 focus:z-10 sm:text-sm transition" 
+                           class="appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-zinc-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-600 dark:focus:ring-violet-600 focus:border-violet-600 dark:focus:border-violet-600 focus:z-10 sm:text-sm transition" 
                            placeholder="••••••••"
                            autocomplete="current-password" 
                            required>
@@ -80,7 +80,7 @@
                         <input id="remember_me" 
                                name="_remember_me" 
                                type="checkbox" 
-                               class="h-4 w-4 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 dark:focus:ring-indigo-400 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded cursor-pointer">
+                               class="h-4 w-4 text-violet-600 dark:text-violet-600 focus:ring-violet-600 dark:focus:ring-violet-600 border-gray-300 dark:border-gray-600 dark:bg-zinc-800 rounded cursor-pointer">
                         <label for="remember_me" class="ml-2 block text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
                             Remember me
                         </label>
@@ -89,10 +89,10 @@
 
                 <div>
                     <button type="submit" 
-                            class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800 transition duration-150 ease-in-out"
+                            class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-violet-600 hover:bg-violet-700 dark:bg-violet-600 dark:hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-600 dark:focus:ring-offset-black transition duration-150 ease-in-out cursor-pointer"
                             onclick="sessionStorage.setItem('just_logged_in', 'true')">
                         <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-                            <svg class="h-5 w-5 text-indigo-500 dark:text-indigo-300 group-hover:text-indigo-400 dark:group-hover:text-indigo-200" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="h-5 w-5 text-violet-300 group-hover:text-violet-200" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
                             </svg>
                         </span>
@@ -103,7 +103,7 @@
                 <div class="text-center mt-4">
                     <p class="text-sm text-gray-600 dark:text-gray-400">
                         Don't have an account?
-                        <a href="{{ path('app_register') }}" class="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition">
+                        <a href="{{ path('app_register') }}" class="font-medium text-violet-600 dark:text-violet-600 hover:text-violet-600 dark:hover:text-violet-600 transition">
                             Sign up now
                         </a>
                     </p>
