@@ -22,6 +22,10 @@ export default class extends Controller {
         this.observer = null;
         this.generations = []; // Store available generations
         
+        // Auto-hide header on scroll (mobile UX)
+        this.lastScrollY = 0;
+        this.setupScrollBehavior();
+        
         // Read URL params on load
         this.readURLParams();
         
@@ -35,6 +39,9 @@ export default class extends Controller {
         }
         if (this.debounceTimer) {
             clearTimeout(this.debounceTimer);
+        }
+        if (this.scrollHandler) {
+            window.removeEventListener('scroll', this.scrollHandler);
         }
     }
 
@@ -766,6 +773,35 @@ export default class extends Controller {
         // On specific variant view: completed means that variant is owned
         const variantKey = this.getVariantKey(this.variantValue);
         return variantKey && userPokemon[variantKey];
+    }
+
+    setupScrollBehavior() {
+        const filtersSection = document.querySelector('.sticky.top-16');
+        if (!filtersSection) return;
+
+        this.scrollHandler = () => {
+            const currentScrollY = window.scrollY;
+            
+            // Only apply auto-hide behavior after scrolling past initial position
+            if (currentScrollY > 100) {
+                if (currentScrollY > this.lastScrollY && currentScrollY > 200) {
+                    // Scrolling down - hide filters
+                    filtersSection.style.transform = 'translateY(-100%)';
+                    filtersSection.style.transition = 'transform 0.3s ease-in-out';
+                } else if (currentScrollY < this.lastScrollY) {
+                    // Scrolling up - show filters
+                    filtersSection.style.transform = 'translateY(0)';
+                    filtersSection.style.transition = 'transform 0.3s ease-in-out';
+                }
+            } else {
+                // Near top - always show filters
+                filtersSection.style.transform = 'translateY(0)';
+            }
+            
+            this.lastScrollY = currentScrollY;
+        };
+
+        window.addEventListener('scroll', this.scrollHandler, { passive: true });
     }
 
     escapeHtml(text) {
