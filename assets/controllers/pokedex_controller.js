@@ -781,15 +781,17 @@ export default class extends Controller {
 
         this.scrollHandler = () => {
             const currentScrollY = window.scrollY;
+            const scrollDelta = currentScrollY - this.lastScrollY;
             
             // Only apply auto-hide behavior after scrolling past initial position
             if (currentScrollY > 100) {
-                if (currentScrollY > this.lastScrollY && currentScrollY > 200) {
-                    // Scrolling down - hide filters
+                // Scrolling down - hide filters (only if scrolling down by at least 5px)
+                if (scrollDelta > 5 && currentScrollY > 200) {
                     filtersSection.style.transform = 'translateY(-100%)';
                     filtersSection.style.transition = 'transform 0.3s ease-in-out';
-                } else if (currentScrollY < this.lastScrollY) {
-                    // Scrolling up - show filters
+                }
+                // Scrolling up - show filters (only if scrolling up by at least 50px)
+                else if (scrollDelta < -50) {
                     filtersSection.style.transform = 'translateY(0)';
                     filtersSection.style.transition = 'transform 0.3s ease-in-out';
                 }
