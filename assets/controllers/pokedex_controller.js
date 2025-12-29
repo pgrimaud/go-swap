@@ -2,7 +2,7 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['grid', 'loader', 'searchInput', 'spinner', 'loaderText', 'statsBar', 'statsShowing', 'statsTotal', 'statsOwned', 'hideCompletedToggle', 'generationSelect'];
+    static targets = ['grid', 'loader', 'searchInput', 'spinner', 'loaderText', 'statsBar', 'statsShowing', 'statsTotal', 'statsOwned', 'hideCompletedToggle', 'generationSelect', 'copyButton'];
     
     static values = {
         url: String,
@@ -839,5 +839,30 @@ export default class extends Controller {
         this.generationValue = generation;
         this.updateURL();
         this.applyFiltersAndDisplay();
+    }
+
+    copySelection() {
+        // Get unique Pokemon numbers from filtered results
+        const uniqueNumbers = [...new Set(this.filteredPokemon.map(p => p.number))];
+        
+        // Sort numbers
+        uniqueNumbers.sort((a, b) => a - b);
+        
+        // Join with commas
+        const numbersText = uniqueNumbers.join(',');
+        
+        // Copy to clipboard
+        navigator.clipboard.writeText(numbersText).then(() => {
+            // Visual feedback
+            if (this.hasCopyButtonTarget) {
+                const originalText = this.copyButtonTarget.textContent;
+                this.copyButtonTarget.textContent = '✓';
+                setTimeout(() => {
+                    this.copyButtonTarget.textContent = originalText;
+                }, 1000);
+            }
+        }).catch(err => {
+            console.error('Failed to copy:', err);
+        });
     }
 }
