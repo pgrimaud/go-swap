@@ -85,7 +85,7 @@ class PokemonCrudController extends AbstractCrudController
                         'accept' => 'image/*',
                     ],
                 ])
-                ->setHelp('Check normal pictures <a target="_blank" href="https://www.pokekalos.fr/pokedex/pokemongo/index.html">here</a>'),
+                ->setHelp('Check normal pictures <a target="_blank" href="https://db.pokemongohub.net/">here</a>, format is <a target="_blank" href="https://db.pokemongohub.net/images/ingame/normal/pm854.fPHONY.icon.png"></a>'),
             ImageField::new('shinyPicture')
                 ->setUploadDir('public/images/pokemon/shiny')
                 ->setBasePath('images/pokemon/shiny')
@@ -95,7 +95,7 @@ class PokemonCrudController extends AbstractCrudController
                         'accept' => 'image/*',
                     ],
                 ])
-                ->setHelp('Check shiny pictures <a target="_blank" href="https://www.pokekalos.fr/pokedex/pokemongo/index.html">here</a>'),
+                ->setHelp('Check shiny pictures <a target="_blank" href="https://db.pokemongohub.net/">here</a>, format is <a target="_blank" href="https://db.pokemongohub.net/images/ingame/normal/pm854.fPHONY.s.icon.png"></a>'),
 
             AssociationField::new('types')
                 ->setHelp('Select one or two types for this Pokémon')
