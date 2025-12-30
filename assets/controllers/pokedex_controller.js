@@ -109,7 +109,18 @@ export default class extends Controller {
                 return false;
             }
 
-            // Search filter
+            // Variant filter (available variants) - MUST BE CHECKED BEFORE SEARCH
+            if (this.variantValue) {
+                if (this.variantValue === 'shadow' || this.variantValue === 'purified') {
+                    if (!p.availableVariants.shadow) return false;
+                } else if (this.variantValue === 'shiny') {
+                    if (!p.availableVariants.shiny) return false;
+                } else if (this.variantValue === 'lucky') {
+                    if (!p.availableVariants.lucky) return false;
+                }
+            }
+
+            // Search filter (applied AFTER variant filter)
             if (this.searchValue) {
                 const search = this.searchValue.toLowerCase();
                 
@@ -138,38 +149,26 @@ export default class extends Controller {
                     const matchesName = p.name.toLowerCase().includes(search);
                     
                     if (matchesName) {
-                        // This Pokemon matches, show it
-                        return true;
+                        // This Pokemon matches, continue to other filters
+                    } else {
+                        // Check if any Pokemon in this evolution chain matches the search
+                        if (p.evolutionChain && p.evolutionChain.chainId) {
+                            const chainId = p.evolutionChain.chainId;
+                            const chainHasMatch = this.allPokemon.some(poke => 
+                                poke.evolutionChain && 
+                                poke.evolutionChain.chainId === chainId && 
+                                poke.name.toLowerCase().includes(search)
+                            );
+                            if (!chainHasMatch) return false;
+                        } else {
+                            // No match
+                            return false;
+                        }
                     }
-                    
-                    // Check if any Pokemon in this evolution chain matches the search
-                    if (p.evolutionChain && p.evolutionChain.chainId) {
-                        const chainId = p.evolutionChain.chainId;
-                        const chainHasMatch = this.allPokemon.some(poke => 
-                            poke.evolutionChain && 
-                            poke.evolutionChain.chainId === chainId && 
-                            poke.name.toLowerCase().includes(search)
-                        );
-                        if (chainHasMatch) return true;
-                    }
-                    
-                    // No match
-                    return false;
                 }
                 
-                // When searching, ignore hideCompleted filter - always show search results
+                // When searching, ignore hideCompleted filter
                 return true;
-            }
-
-            // Variant filter (available variants)
-            if (this.variantValue) {
-                if (this.variantValue === 'shadow' || this.variantValue === 'purified') {
-                    if (!p.availableVariants.shadow) return false;
-                } else if (this.variantValue === 'shiny') {
-                    if (!p.availableVariants.shiny) return false;
-                } else if (this.variantValue === 'lucky') {
-                    if (!p.availableVariants.lucky) return false;
-                }
             }
 
             // Hide completed filter (only apply when NOT searching)
@@ -184,8 +183,14 @@ export default class extends Controller {
         this.displayedCount = 0;
         this.gridTarget.innerHTML = '';
         
-        // Display first page
-        this.displayMore();
+        // Check if empty results
+        if (this.filteredPokemon.length === 0) {
+            this.gridTarget.innerHTML = this.emptyStateHTML();
+            this.hideLoader();
+        } else {
+            // Display first page
+            this.displayMore();
+        }
         
         // Update stats
         this.updateStatsBar();
@@ -354,7 +359,7 @@ export default class extends Controller {
             if (img) img.className = 'w-5 h-5 opacity-100 pointer-events-none';
             button.title = button.title.replace(' (owned)', '') + ' (owned)';
         } else {
-            button.className = `${sizeClass} bg-black dark:bg-black border border-zinc-700 hover:border-zinc-600 rounded flex items-center justify-center transition cursor-pointer`;
+            button.className = `${sizeClass} bg-white dark:bg-black border border-zinc-700 hover:border-zinc-600 rounded flex items-center justify-center transition cursor-pointer`;
             if (img) img.className = 'w-5 h-5 opacity-30 pointer-events-none';
             button.title = button.title.replace(' (owned)', '');
         }
@@ -529,7 +534,7 @@ export default class extends Controller {
             const opacityClass = owned ? 'opacity-100' : 'opacity-30';
             const bgClass = owned 
                 ? 'bg-violet-50 dark:bg-violet-900/30 ring-2 ring-violet-600 hover:ring-violet-500' 
-                : 'bg-black dark:bg-black border border-zinc-700 hover:border-zinc-600';
+                : 'bg-white dark:bg-black border border-zinc-700 hover:border-zinc-600';
             
             // When showing single variant, align left like the grid
             const layoutClass = currentVariant ? 'w-12 h-12' : '';
