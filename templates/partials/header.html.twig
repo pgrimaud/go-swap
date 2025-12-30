@@ -11,13 +11,13 @@
 
             <!-- Navigation Links (Desktop) -->
             <div class="hidden md:flex items-center space-x-2">
-                <a href="{{ path('app_pokedex') }}" class="{{ app.request.attributes.get('_route') == 'app_pokedex' ? 'text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/20' : 'text-gray-700 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-gray-100 dark:hover:bg-zinc-800' }} px-4 py-2 text-sm font-semibold transition rounded-lg">
+                <a href="{{ path('app_pokedex') }}" class="{{ app.request.attributes.get('_route') == 'app_pokedex' ? 'text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/20' : 'text-gray-700 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-gray-100 dark:hover:bg-zinc-800' }} px-4 py-2 text-base font-semibold transition rounded-lg">
                     📱 Pokédex
                 </a>
-                <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-gray-100 dark:hover:bg-zinc-800 px-4 py-2 text-sm font-semibold transition rounded-lg">
+                <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-gray-100 dark:hover:bg-zinc-800 px-4 py-2 text-base font-semibold transition rounded-lg">
                     ⚔️ PvP
                 </a>
-                <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-gray-100 dark:hover:bg-zinc-800 px-4 py-2 text-sm font-semibold transition rounded-lg">
+                <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-gray-100 dark:hover:bg-zinc-800 px-4 py-2 text-base font-semibold transition rounded-lg">
                     📝 My Lists
                 </a>
             </div>
@@ -27,12 +27,12 @@
                 <!-- Desktop User Menu -->
                 <div class="hidden md:flex items-center space-x-4">
                     {% if is_granted('ROLE_ADMIN') %}
-                        <a href="/admin" class="text-gray-700 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-gray-100 dark:hover:bg-zinc-800 px-4 py-2 text-sm font-semibold transition rounded-lg">
+                        <a href="/admin" class="text-gray-700 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-gray-100 dark:hover:bg-zinc-800 px-4 py-2 text-base font-semibold transition rounded-lg">
                             ⚙️ Admin
                         </a>
                     {% endif %}
                     <a href="{{ path('app_logout') }}"
-                       class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-lg text-white bg-violet-600 hover:bg-violet-700 dark:bg-violet-600 dark:hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-600 dark:focus:ring-offset-black transition cursor-pointer">
+                       class="inline-flex items-center px-4 py-2 border border-transparent text-base font-semibold rounded-lg text-white bg-violet-600 hover:bg-violet-700 dark:bg-violet-600 dark:hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-600 dark:focus:ring-offset-black transition cursor-pointer">
                         Logout
                     </a>
                 </div>
