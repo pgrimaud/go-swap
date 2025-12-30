@@ -11,14 +11,41 @@
 
             <!-- Navigation Links (Desktop) -->
             <div class="hidden md:flex items-center space-x-2">
-                <a href="{{ path('app_pokedex') }}" class="{{ app.request.attributes.get('_route') == 'app_pokedex' ? 'text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/20' : 'text-gray-700 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-gray-100 dark:hover:bg-zinc-800' }} px-4 py-2 text-base font-semibold transition rounded-lg">
-                    📱 Pokédex
+                <a href="{{ path('app_pokedex') }}" class="{{ app.request.attributes.get('_route') == 'app_pokedex' ? 'text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/20' : 'text-gray-700 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-gray-100 dark:hover:bg-zinc-800' }} px-4 py-2 text-base font-semibold transition rounded-lg flex items-center gap-2">
+                    <img src="{{ asset('images/icon/pokeball.png') }}" alt="Pokédex" class="h-5 w-5">
+                    Pokédex
                 </a>
-                <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-gray-100 dark:hover:bg-zinc-800 px-4 py-2 text-base font-semibold transition rounded-lg">
-                    ⚔️ PvP
-                </a>
-                <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-gray-100 dark:hover:bg-zinc-800 px-4 py-2 text-base font-semibold transition rounded-lg">
-                    📝 My Lists
+                
+                <!-- PvP Dropdown -->
+                <div class="relative" 
+                     data-controller="dropdown"
+                     data-action="click@window->dropdown#closeOnClickOutside">
+                    <button type="button"
+                            data-action="click->dropdown#toggle"
+                            class="text-gray-700 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-gray-100 dark:hover:bg-zinc-800 px-4 py-2 text-base font-semibold transition rounded-lg flex items-center gap-2 cursor-pointer">
+                        <img src="{{ asset('images/icon/pvp.png') }}" alt="PvP" class="h-5 w-5">
+                        PvP
+                        <svg data-dropdown-target="caret" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div data-dropdown-target="menu"
+                         class="hidden absolute left-0 mt-1 w-48 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-lg shadow-lg py-1 z-50">
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 hover:text-violet-600 dark:hover:text-violet-400 transition">
+                            🏆 Great League
+                        </a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 hover:text-violet-600 dark:hover:text-violet-400 transition">
+                            🌟 Ultra League
+                        </a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 hover:text-violet-600 dark:hover:text-violet-400 transition">
+                            👶 Little Cup
+                        </a>
+                    </div>
+                </div>
+
+                <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-gray-100 dark:hover:bg-zinc-800 px-4 py-2 text-base font-semibold transition rounded-lg flex items-center gap-2">
+                    <img src="{{ asset('images/icon/list.png') }}" alt="My Lists" class="h-5 w-5">
+                    My Lists
                 </a>
             </div>
 
@@ -28,7 +55,7 @@
                 <div class="hidden md:flex items-center space-x-4">
                     {% if is_granted('ROLE_ADMIN') %}
                         <a href="/admin" class="text-gray-700 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-gray-100 dark:hover:bg-zinc-800 px-4 py-2 text-base font-semibold transition rounded-lg">
-                            ⚙️ Admin
+                            Admin
                         </a>
                     {% endif %}
                     <a href="{{ path('app_logout') }}"
@@ -52,14 +79,40 @@
     <!-- Mobile menu -->
     <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200 dark:border-gray-700">
         <div class="px-2 pt-2 pb-3 space-y-1">
-            <a href="{{ path('app_pokedex') }}" class="{{ app.request.attributes.get('_route') == 'app_pokedex' ? 'block px-3 py-2 rounded-lg text-base font-medium text-violet-600 dark:text-violet-600 bg-violet-50 dark:bg-violet-900/30' : 'block px-3 py-2 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-violet-600 dark:hover:text-violet-600 transition' }}">
-                📱 Pokédex
+            <a href="{{ path('app_pokedex') }}" class="{{ app.request.attributes.get('_route') == 'app_pokedex' ? 'flex items-center gap-2 px-3 py-2 rounded-lg text-base font-medium text-violet-600 dark:text-violet-600 bg-violet-50 dark:bg-violet-900/30' : 'flex items-center gap-2 px-3 py-2 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-violet-600 dark:hover:text-violet-600 transition' }}">
+                <img src="{{ asset('images/icon/pokeball.png') }}" alt="Pokédex" class="h-5 w-5">
+                Pokédex
             </a>
-            <a href="#" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-violet-600 dark:hover:text-violet-600 transition">
-                ⚔️ PvP
-            </a>
-            <a href="#" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-violet-600 dark:hover:text-violet-600 transition">
-                📝 My Lists
+            
+            <!-- PvP Mobile Dropdown -->
+            <div data-controller="dropdown">
+                <button type="button"
+                        data-action="click->dropdown#toggle"
+                        class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-violet-600 dark:hover:text-violet-600 transition cursor-pointer">
+                    <span class="flex items-center gap-2">
+                        <img src="{{ asset('images/icon/pvp.png') }}" alt="PvP" class="h-5 w-5">
+                        PvP
+                    </span>
+                    <svg data-dropdown-target="caret" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                <div data-dropdown-target="menu" class="hidden pl-4 mt-1 space-y-1">
+                    <a href="#" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-violet-600 dark:hover:text-violet-600 transition">
+                        🏆 Great League
+                    </a>
+                    <a href="#" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-violet-600 dark:hover:text-violet-600 transition">
+                        🌟 Ultra League
+                    </a>
+                    <a href="#" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-violet-600 dark:hover:text-violet-600 transition">
+                        👶 Little Cup
+                    </a>
+                </div>
+            </div>
+
+            <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-violet-600 dark:hover:text-violet-600 transition">
+                <img src="{{ asset('images/icon/list.png') }}" alt="My Lists" class="h-5 w-5">
+                My Lists
             </a>
         </div>
         <div class="pt-4 pb-3 border-t border-gray-200 dark:border-gray-700">
