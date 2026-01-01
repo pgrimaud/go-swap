@@ -46,7 +46,7 @@
                     </div>
                 </div>
 
-                <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-gray-100 dark:hover:bg-zinc-800 px-4 py-2 text-base font-semibold transition rounded-lg flex items-center gap-2">
+                <a href="{{ path('app_custom_lists') }}" class="{{ app.request.attributes.get('_route') == 'app_custom_lists' ? 'text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/20' : 'text-gray-700 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-gray-100 dark:hover:bg-zinc-800' }} px-4 py-2 text-base font-semibold transition rounded-lg flex items-center gap-2">
                     <img src="{{ asset('images/icon/list.png') }}" alt="My Lists" class="h-5 w-5">
                     My Lists
                 </a>
@@ -116,7 +116,7 @@
                 </div>
             </div>
 
-            <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-violet-600 dark:hover:text-violet-600 transition">
+            <a href="{{ path('app_custom_lists') }}" class="{{ app.request.attributes.get('_route') == 'app_custom_lists' ? 'flex items-center gap-2 px-3 py-2 rounded-lg text-base font-medium text-violet-600 dark:text-violet-600 bg-violet-50 dark:bg-violet-900/30' : 'flex items-center gap-2 px-3 py-2 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-violet-600 dark:hover:text-violet-600 transition' }}">
                 <img src="{{ asset('images/icon/list.png') }}" alt="My Lists" class="h-5 w-5">
                 My Lists
             </a>

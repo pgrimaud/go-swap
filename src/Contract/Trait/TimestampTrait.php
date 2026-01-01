@@ -26,4 +26,9 @@ trait TimestampTrait
     {
         $this->updatedAt = new \DateTimeImmutable();
     }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
 }

@@ -17,6 +17,7 @@ final class HomeController extends AbstractController
     public function index(
         PokemonRepository $pokemonRepository,
         UserPokemonRepository $userPokemonRepository,
+        \App\Repository\CustomListRepository $customListRepository,
     ): Response {
         $user = $this->getUser();
         if (!$user instanceof User) {
@@ -40,6 +41,9 @@ final class HomeController extends AbstractController
             'xxs' => 0,
             'perfect' => 0,
         ];
+
+        // Get custom lists count
+        $customListsCount = $user ? $customListRepository->countByUser($user) : 0;
 
         // Get all generation stats in 2 queries (or 0 if not logged in)
         $userGenerationStats = $user ? $userPokemonRepository->countAllVariantsByGenerationForUser($user) : [];
@@ -130,6 +134,7 @@ final class HomeController extends AbstractController
 
         return $this->render('home/index.html.twig', [
             'pokedexCategories' => $pokedexCategories,
+            'customListsCount' => $customListsCount,
         ]);
     }
 }

@@ -1,0 +1,115 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Lists - Go Swap{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-50 dark:bg-black">
+    {% include 'partials/header.html.twig' %}
+
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <!-- Lists Grid -->
+        <div class="px-4 py-6 sm:px-0">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">My Lists</h2>
+                <button class="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium transition flex items-center gap-2 cursor-pointer text-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Create
+                </button>
+            </div>
+            {% if customLists is empty %}
+                <!-- Empty State -->
+                <div class="bg-white dark:bg-zinc-950 rounded-lg shadow-lg border-2 border-gray-300 dark:border-gray-600 p-12 text-center">
+                    <div class="mx-auto w-24 h-24 bg-gray-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-4">
+                        <span class="text-5xl">📝</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">No lists yet</h2>
+                    <p class="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+                        Create your first custom list to organize your Pokémon collection the way you want.
+                    </p>
+                    <button class="px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium transition inline-flex items-center gap-2 cursor-pointer">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Create Your First List
+                    </button>
+                </div>
+            {% else %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {% for list in customLists %}
+                        <div class="bg-white dark:bg-zinc-950 rounded-lg shadow-lg border-2 border-gray-300 dark:border-gray-600 hover:border-violet-600 dark:hover:border-violet-600 hover:shadow-xl transition overflow-hidden flex flex-col">
+                            <!-- List Header -->
+                            <div class="p-6 flex-1">
+                                <div class="flex items-start justify-between mb-4">
+                                    <div class="flex-1">
+                                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-1">
+                                            {{ list.name }}
+                                        </h3>
+                                        {% if list.description %}
+                                            <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                                                {{ list.description }}
+                                            </p>
+                                        {% endif %}
+                                    </div>
+                                    {% if list.isPublic %}
+                                        <span class="ml-2 px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 text-xs font-semibold rounded">
+                                            Public
+                                        </span>
+                                    {% else %}
+                                        <span class="ml-2 px-2 py-1 bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400 text-xs font-semibold rounded">
+                                            Private
+                                        </span>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Pokemon Count -->
+                                <div class="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-4">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                    </svg>
+                                    <span class="font-medium">{{ list.pokemonCount }} Pokémon</span>
+                                </div>
+
+                                <!-- Pokemon Preview -->
+                                {% if list.pokemonCount > 0 %}
+                                    <div class="flex -space-x-3 mb-4">
+                                        {% for pokemon in list.pokemons|slice(0, 5) %}
+                                            <img 
+                                                src="{{ asset('images/pokemon/normal/' ~ pokemon.slug ~ '.png') }}" 
+                                                alt="{{ pokemon.name }}"
+                                                class="w-12 h-12 rounded-full border-2 border-white dark:border-zinc-950 bg-gray-100 dark:bg-zinc-800"
+                                                title="{{ pokemon.name }}"
+                                            >
+                                        {% endfor %}
+                                        {% if list.pokemonCount > 5 %}
+                                            <div class="w-12 h-12 rounded-full border-2 border-white dark:border-zinc-950 bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
+                                                <span class="text-sm font-bold text-violet-600 dark:text-violet-400">+{{ list.pokemonCount - 5 }}</span>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+
+                                <!-- Created Date -->
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                                    Created {{ list.createdAt|date('M d, Y') }}
+                                </p>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="bg-gray-50 dark:bg-zinc-900 px-6 py-4 flex gap-2">
+                                <a href="#" class="flex-1 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium text-center transition cursor-pointer">
+                                    View
+                                </a>
+                                <button class="px-4 py-2 bg-white dark:bg-zinc-950 border-2 border-gray-300 dark:border-zinc-600 hover:border-gray-400 dark:hover:border-zinc-500 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition cursor-pointer">
+                                    Edit
+                                </button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </main>
+</div>
+{% endblock %}
