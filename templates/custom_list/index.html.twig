@@ -114,9 +114,9 @@
                                         </svg>
                                     </button>
                                 {% endif %}
-                                <button class="px-4 py-2 bg-white dark:bg-zinc-950 border-2 border-gray-300 dark:border-zinc-600 hover:border-gray-400 dark:hover:border-zinc-500 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition cursor-pointer">
+                                <a href="{{ path('app_custom_list_edit', {uid: list.uid}) }}" class="px-4 py-2 bg-white dark:bg-zinc-950 border-2 border-gray-300 dark:border-zinc-600 hover:border-gray-400 dark:hover:border-zinc-500 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition">
                                     Edit
-                                </button>
+                                </a>
                             </div>
                         </div>
                     {% endfor %}

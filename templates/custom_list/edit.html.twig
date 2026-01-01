@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit {{ customList.name }} - Go Swap{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-50 dark:bg-black">
+    {% include 'partials/header.html.twig' %}
+
+    <main class="max-w-3xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="px-4 py-6 sm:px-0">
+            <!-- Page Header -->
+            <div class="mb-6">
+                <a href="{{ path('app_custom_lists') }}" class="inline-flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 mb-4">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Back to My Lists
+                </a>
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Edit List</h1>
+                <p class="mt-2 text-gray-600 dark:text-gray-400">Update your list information</p>
+            </div>
+
+            <!-- Form Card -->
+            <div class="bg-white dark:bg-zinc-950 rounded-lg shadow-lg border-2 border-gray-300 dark:border-gray-600 p-6">
+                {{ form_start(form) }}
+                    <div class="space-y-6">
+                        <!-- Name Field -->
+                        <div>
+                            {{ form_label(form.name, null, {
+                                'label_attr': {'class': 'block text-sm font-medium text-gray-900 dark:text-white mb-2'}
+                            }) }}
+                            {{ form_widget(form.name) }}
+                            {{ form_errors(form.name) }}
+                        </div>
+
+                        <!-- Description Field -->
+                        <div>
+                            {{ form_label(form.description, null, {
+                                'label_attr': {'class': 'block text-sm font-medium text-gray-900 dark:text-white mb-2'}
+                            }) }}
+                            {{ form_widget(form.description) }}
+                            {{ form_errors(form.description) }}
+                        </div>
+
+                        <!-- Is Public Checkbox -->
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            {{ form_widget(form.isPublic) }}
+                            <div>
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Make this list public</span>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                    Public lists can be shared with anyone via a link
+                                </p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="mt-8 flex gap-3">
+                        <button type="submit" class="flex-1 px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium transition">
+                            Save Changes
+                        </button>
+                        <a href="{{ path('app_custom_lists') }}" class="px-6 py-3 bg-white dark:bg-zinc-950 border-2 border-gray-300 dark:border-zinc-600 hover:border-gray-400 dark:hover:border-zinc-500 text-gray-700 dark:text-gray-300 rounded-lg font-medium text-center transition">
+                            Cancel
+                        </a>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

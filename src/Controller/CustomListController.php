@@ -68,4 +68,35 @@ final class CustomListController extends AbstractController
             'form' => $form,
         ]);
     }
+
+    #[Route('/lists/{uid}/edit', name: 'app_custom_list_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, CustomList $customList): Response
+    {
+        $user = $this->getUser();
+
+        if (!$user instanceof User) {
+            throw $this->createAccessDeniedException();
+        }
+
+        // Check that the user owns this list
+        if ($customList->getUser() !== $user) {
+            throw $this->createAccessDeniedException('You cannot edit this list.');
+        }
+
+        $form = $this->createForm(CustomListType::class, $customList);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->flush();
+
+            $this->addFlash('success', 'Your list has been updated successfully!');
+
+            return $this->redirectToRoute('app_custom_lists');
+        }
+
+        return $this->render('custom_list/edit.html.twig', [
+            'form' => $form,
+            'customList' => $customList,
+        ]);
+    }
 }
