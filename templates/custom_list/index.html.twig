@@ -11,12 +11,12 @@
         <div class="px-4 py-6 sm:px-0">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white">My Lists</h2>
-                <button class="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium transition flex items-center gap-2 cursor-pointer text-sm">
+                <a href="{{ path('app_custom_list_new') }}" class="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium transition flex items-center gap-2 text-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>
                     Create
-                </button>
+                </a>
             </div>
             {% if customLists is empty %}
                 <!-- Empty State -->
@@ -28,12 +28,12 @@
                     <p class="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
                         Create your first custom list to organize your Pokémon collection the way you want.
                     </p>
-                    <button class="px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium transition inline-flex items-center gap-2 cursor-pointer">
+                    <a href="{{ path('app_custom_list_new') }}" class="px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium transition inline-flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
                         Create Your First List
-                    </button>
+                    </a>
                 </div>
             {% else %}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
