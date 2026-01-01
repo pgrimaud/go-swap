@@ -53,7 +53,7 @@ class CustomListType extends AbstractType
                 'label' => false,
                 'required' => false,
                 'attr' => [
-                    'class' => 'w-4 h-4 text-violet-600 bg-gray-100 dark:bg-zinc-900 border-gray-300 dark:border-zinc-600 rounded focus:ring-violet-600 focus:ring-2',
+                    'class' => 'w-4 h-4 rounded border-gray-300 text-violet-600 focus:ring-2 focus:ring-violet-600',
                 ],
             ])
         ;
