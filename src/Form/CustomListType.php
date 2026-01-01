@@ -50,7 +50,7 @@ class CustomListType extends AbstractType
                 ],
             ])
             ->add('isPublic', CheckboxType::class, [
-                'label' => 'Make this list public',
+                'label' => false,
                 'required' => false,
                 'attr' => [
                     'class' => 'w-4 h-4 text-violet-600 bg-gray-100 dark:bg-zinc-900 border-gray-300 dark:border-zinc-600 rounded focus:ring-violet-600 focus:ring-2',
