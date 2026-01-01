@@ -35,10 +35,10 @@ Créer des listes custom pour organiser mes Pokémon :
 
 ---
 
-## 🏗️ **Phase 1 : Setup & Infrastructure**
+## 🏗️ **Phase 1 : Setup & Infrastructure** ✅ COMPLÈTE
 
 ### 1.1 Projet de base
-- [x] Créer branche `v3` depuis `main` (fresh start)
+- [x] Créer branche `v3` depuis `main` (fresh start) - **Merged dans main le 2026-01-01**
 - [x] **Installer Symfony 8.0** (nouveau projet)
   ```bash
   composer create-project symfony/skeleton:"8.0.*" .
@@ -75,7 +75,7 @@ Créer des listes custom pour organiser mes Pokémon :
 
 ---
 
-## 📦 **Phase 2 : Data Import (Foundation)**
+## 📦 **Phase 2 : Data Import (Foundation)** ✅ COMPLÈTE
 
 ### 2.1 Commands d'import
 **Ref : `_archive_v2/src/Command/`** - À récupérer et adapter pour Symfony 8.0
@@ -85,7 +85,7 @@ Créer des listes custom pour organiser mes Pokémon :
 - [x] `UpdateMovesCommand` - Import attaques PvP (fast + charged)
 - [x] `UpdatePicturesCommand` - Download images Pokémon (normal + shiny)
 
-**Note** : ✅ Commands migrées avec PHP 8.4 attributes + 950/954 shiny pictures téléchargées
+**Note** : ✅ Commands migrées avec PHP 8.4 attributes + Toutes les images téléchargées (normal + shiny)
 
 ### 2.2 Entities de base
 - [x] **`Type`** (id, name, slug, icon, timestamps)
@@ -127,8 +127,9 @@ Créer des listes custom pour organiser mes Pokémon :
 php bin/console app:update:types
 php bin/console app:update:pokemon
 php bin/console app:update:moves
-php bin/console app:update:pictures  # TODO
+php bin/console app:update:pictures
 ```
+**Note** : ✅ Toutes les données importées avec succès
 
 ---
 
@@ -660,13 +661,13 @@ Au clic sur carte :
 3. [x] Auth (login/register)
 4. [x] Layout de base (header/footer)
 
-### Sprint 2 (Data)
+### Sprint 2 (Data) ✅ COMPLÉTÉ
 5. [x] Copier Commands v2 → v3
 6. [x] Entities : Pokemon, Move, Type, User
-7. [ ] Run import data
-8. [ ] Vérifier images OK
+7. [x] Run import data
+8. [x] Vérifier images OK
 
-### Sprint 3 (Pokédex)
+### Sprint 3 (Pokédex) 🎯 EN COURS
 9. [ ] Entity UserPokemon (8 variants)
 10. [ ] Page listing grille cartes
 11. [ ] Modal + toggle variants (AJAX)
@@ -820,7 +821,7 @@ vendor/bin/phpstan analyze src --level=max
 vendor/bin/php-cs-fixer fix
 
 # Deploy
-git push origin v3  # Trigger CI/CD
+git push origin main  # Trigger CI/CD
 ```
 
 ---
@@ -835,7 +836,7 @@ Une feature est complète quand :
 - [ ] Dark mode : fonctionne dans les 2 thèmes
 - [ ] Turbo : pas de rechargement full page
 - [ ] Commit : message clair (feat/fix/refactor)
-- [ ] Push : code sur branche v3
+- [ ] Push : code sur branche main
 
 ---
 
@@ -844,8 +845,8 @@ Une feature est complète quand :
 | Phase | Status | Priorité |
 |-------|--------|----------|
 | Phase 1 - Setup | ✅ DONE | P0 |
-| Phase 2 - Data | 🔄 IN PROGRESS (90%) | P0 (maintenant) |
-| Phase 3 - Pokédex | 🔄 TODO | P1 (ensuite) |
+| Phase 2 - Data | ✅ DONE | P0 |
+| Phase 3 - Pokédex | 🔄 TODO | P1 (maintenant) |
 | Phase 4 - PvP | 🔄 TODO | P1 (ensuite) |
 | Phase 5 - Listes Perso | 🔄 TODO | P1 (ensuite) |
 | Phase 6 - Tools | 📅 LATER | P2 |
@@ -855,7 +856,7 @@ Une feature est complète quand :
 
 ---
 
-**Dernière mise à jour** : 2025-12-20  
+**Dernière mise à jour** : 2026-01-01  
 **Auteur** : @pgrimaud  
 **Version** : V3 Roadmap Complete - Symfony 8.0 + PHP 8.4  
-**Phase 1 complète ✅ - Phase 2 en cours 🔄 (90%)**
+**Phase 1 & 2 complètes ✅ - Phase 3 (Pokédex) à démarrer 🎯**
