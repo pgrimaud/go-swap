@@ -206,6 +206,7 @@ return $this->json(
 - Utiliser `path('route_name')` pour les liens
 - Turbo Frames pour AJAX : `<turbo-frame id="...">`
 - Stimulus controllers : `data-controller="name"`
+- **⚠️ IMPORTANT** : Toujours ajouter `cursor-pointer` sur les éléments cliquables (`<button>`, `<a>` stylés comme des boutons, labels cliquables, etc.)
 
 ### CSS / TailwindCSS v4
 
