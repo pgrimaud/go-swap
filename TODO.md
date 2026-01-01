@@ -133,90 +133,41 @@ php bin/console app:update:pictures
 
 ---
 
-## 📚 **Phase 3 : Pokédex Complet (comme Pokémon GO)**
+## 📚 **Phase 3 : Pokédex Complet (comme Pokémon GO)** ✅ COMPLÈTE
 
 ### 3.1 Entity UserPokemon
-**Structure** : Table qui stocke TOUS les variants possédés par user
-```php
-UserPokemon:
-- user_id (relation User)
-- pokemon_id (relation Pokemon)
-- has_normal (bool)
-- has_shiny (bool)
-- has_shadow (bool)
-- has_purified (bool)
-- has_lucky (bool)
-- has_xxl (bool)
-- has_xxs (bool)
-- has_perfect (bool) // 100% IVs
-- first_caught_at (datetime)
-- updated_at (datetime)
-```
+- [x] **Structure** : Table qui stocke TOUS les variants possédés par user
+  - ✅ user_id, pokemon_id
+  - ✅ has_normal, has_shiny, has_shadow, has_purified
+  - ✅ has_lucky, has_xxl, has_xxs, has_perfect
+  - ✅ first_caught_at, created_at, updated_at
+  - ✅ Migration créée
 
 ### 3.2 Page Pokédex - Listing
-- [ ] Route `/pokedex`
-- [ ] Controller `PokedexController::index()`
-- [ ] Template : **Grille de cartes Pokémon**
-
-**Design carte** :
-```
-┌─────────────────┐
-│   [Image]       │
-│                 │
-│  #001 Bulbizarre│
-│  🌿 ☠️          │  <- Badges types
-│                 │
-│  [8 badges]     │  <- Normal/Shiny/Shadow/etc.
-│  ✅✅❌❌        │     Vert si possédé, gris sinon
-│  ❌❌❌❌        │
-└─────────────────┘
-```
-
-**Badges à afficher** (icônes cliquables) :
-- 🔵 Normal
-- ✨ Shiny
-- 👤 Shadow
-- 🕊️ Purified
-- ⭐ Lucky
-- 📏 XXL
-- 📐 XXS
-- 💯 Perfect (100%)
+- [x] Route `/pokedex` + `/api/pokedex`
+- [x] Controller `PokedexController::index()` + API
+- [x] Template : **Grille de cartes Pokémon**
+- [x] Design carte avec 8 badges variants (icônes)
+- [x] Pagination AJAX (50 Pokémon par page)
 
 ### 3.3 Filtres
-- [ ] Par génération (Gen 1-9) - Boutons horizontaux
-- [ ] Par type (dropdown multi-select)
-- [ ] Filtres variants :
-  - Tous
-  - Pokémon avec au moins 1 variant possédé
-  - Pokémon complets (les 8 variants)
-  - Pokémon manquants (0 variant)
-- [ ] Search bar (nom/numéro)
-- [ ] **Turbo Frame** pour filtrage AJAX
+- [x] Par variant (All, Normal, Shiny, Shadow, Purified, Lucky, XXL, XXS, Perfect)
+- [x] Search bar (nom/numéro) en temps réel
+- [x] Filtrage AJAX avec Stimulus controller
+- [x] Gestion état actif des filtres
 
 ### 3.4 Modal Détails + Toggle Variants
-Au clic sur une carte :
-- [ ] Modal avec image grande + nom + numéro + types
-- [ ] **8 checkboxes interactives** pour toggle chaque variant
-  - Clic checkbox → AJAX `POST /pokedex/{pokemon_id}/toggle/{variant}`
-  - Update en temps réel (Turbo Stream)
-- [ ] Afficher date de première capture si variant possédé
-- [ ] Bouton "Marquer tout" / "Tout effacer" (bulk)
+- [x] Modal avec image grande + nom + numéro + types
+- [x] **8 checkboxes interactives** pour toggle chaque variant
+- [x] AJAX update en temps réel
+- [x] Affichage date de première capture
+- [x] Gestion état visuel (vert si possédé)
 
 ### 3.5 Dashboard / Stats
-- [ ] Route `/pokedex/stats`
-- [ ] **Compteurs globaux** :
-  - X / Y Pokémon possédés (au moins 1 variant)
-  - X / Y Pokémon complets (8/8 variants)
-  - Total variants : X / (Y × 8)
-- [ ] **Par génération** :
-  - Progress bar avec %
-  - Compteur par gen
-- [ ] **Par variant** (combien de chaque type) :
-  - Normal : 450/1000
-  - Shiny : 120/1000
-  - Shadow : 80/1000
-  - etc.
-- [ ] **Top missing** : Pokémon les plus recherchés (0 variant)
+- [ ] Route `/pokedex/stats` (TODO - Phase 6)
+- [ ] Compteurs globaux de completion
+- [ ] Stats par génération
+- [ ] Stats par variant
 
 ---
 
@@ -667,13 +618,13 @@ Au clic sur carte :
 7. [x] Run import data
 8. [x] Vérifier images OK
 
-### Sprint 3 (Pokédex) 🎯 EN COURS
-9. [ ] Entity UserPokemon (8 variants)
-10. [ ] Page listing grille cartes
-11. [ ] Modal + toggle variants (AJAX)
-12. [ ] Filtres basiques (gen, type, search)
+### Sprint 3 (Pokédex) ✅ COMPLÉTÉ
+9. [x] Entity UserPokemon (8 variants)
+10. [x] Page listing grille cartes
+11. [x] Modal + toggle variants (AJAX)
+12. [x] Filtres basiques (variant, search)
 
-### Sprint 4 (PvP)
+### Sprint 4 (PvP) 🎯 EN COURS
 13. [ ] Entity UserPvPPokemon
 14. [ ] Page grille cartes PvP
 15. [ ] Form ajout (avec moves AJAX)
@@ -846,8 +797,8 @@ Une feature est complète quand :
 |-------|--------|----------|
 | Phase 1 - Setup | ✅ DONE | P0 |
 | Phase 2 - Data | ✅ DONE | P0 |
-| Phase 3 - Pokédex | 🔄 TODO | P1 (maintenant) |
-| Phase 4 - PvP | 🔄 TODO | P1 (ensuite) |
+| Phase 3 - Pokédex | ✅ DONE | P1 |
+| Phase 4 - PvP | 🔄 TODO | P1 (maintenant) |
 | Phase 5 - Listes Perso | 🔄 TODO | P1 (ensuite) |
 | Phase 6 - Tools | 📅 LATER | P2 |
 | Phase 7 - Polish | 📅 LATER | P2 |
@@ -859,4 +810,4 @@ Une feature est complète quand :
 **Dernière mise à jour** : 2026-01-01  
 **Auteur** : @pgrimaud  
 **Version** : V3 Roadmap Complete - Symfony 8.0 + PHP 8.4  
-**Phase 1 & 2 complètes ✅ - Phase 3 (Pokédex) à démarrer 🎯**
+**Phase 1, 2 & 3 complètes ✅ - Phase 4 (PvP) à démarrer 🎯**
