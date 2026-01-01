@@ -69,8 +69,8 @@ final class CustomListController extends AbstractController
         ]);
     }
 
-    #[Route('/lists/{uid}/edit', name: 'app_custom_list_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, string $uid): Response
+    #[Route('/lists/{id}/edit', name: 'app_custom_list_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, int $id): Response
     {
         $user = $this->getUser();
 
@@ -78,7 +78,7 @@ final class CustomListController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $customList = $this->customListRepository->findByUid($uid);
+        $customList = $this->customListRepository->find($id);
 
         if (!$customList) {
             throw $this->createNotFoundException('List not found.');
