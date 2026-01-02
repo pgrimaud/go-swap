@@ -8,10 +8,16 @@ export default class extends Controller {
 
     async remove(event) {
         event.preventDefault();
+        event.stopPropagation();
+        
+        console.log('Remove pokemon clicked', this.urlValue);
         
         if (!confirm('Remove this Pokémon from the list?')) {
+            console.log('User cancelled');
             return;
         }
+        
+        console.log('User confirmed, deleting...');
 
         try {
             const response = await fetch(this.urlValue, {
@@ -36,7 +42,7 @@ export default class extends Controller {
                     
                     // Show empty state if no more Pokemon
                     if (currentCount - 1 === 0) {
-                        const grid = document.querySelector('.grid.grid-cols-3');
+                        const grid = document.querySelector('[data-add-pokemon-target="pokemonGrid"] .grid');
                         if (grid) {
                             grid.parentElement.innerHTML = '<div class="text-center py-8"><p class="text-gray-500 dark:text-gray-400">No Pokémon in this list yet</p></div>';
                         }
