@@ -69,8 +69,9 @@
 
                                 <!-- Pokemon Preview -->
                                 {% if list.pokemonCount > 0 %}
-                                    <div class="flex -space-x-3 mb-4">
-                                        {% for customListPokemon in list.customListPokemonSortedByNumber|slice(0, 8) %}
+                                    <!-- Mobile: 6 Pokemon -->
+                                    <div class="flex -space-x-3 mb-4 md:hidden">
+                                        {% for customListPokemon in list.customListPokemonSortedByNumber|slice(0, 6) %}
                                             {% set pokemon = customListPokemon.pokemon %}
                                             {% set variant = customListPokemon.isShiny ? 'shiny' : 'normal' %}
                                             <div class="relative inline-block">
@@ -85,9 +86,32 @@
                                                 {% endif %}
                                             </div>
                                         {% endfor %}
-                                        {% if list.pokemonCount > 5 %}
+                                        {% if list.pokemonCount > 6 %}
                                             <div class="w-12 h-12 rounded-full border-2 border-white dark:border-zinc-950 bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
-                                                <span class="text-sm font-bold text-violet-600 dark:text-violet-400">+{{ list.pokemonCount - 5 }}</span>
+                                                <span class="text-sm font-bold text-violet-600 dark:text-violet-400">+{{ list.pokemonCount - 6 }}</span>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <!-- Desktop: 12 Pokemon -->
+                                    <div class="hidden md:flex -space-x-3 mb-4">
+                                        {% for customListPokemon in list.customListPokemonSortedByNumber|slice(0, 12) %}
+                                            {% set pokemon = customListPokemon.pokemon %}
+                                            {% set variant = customListPokemon.isShiny ? 'shiny' : 'normal' %}
+                                            <div class="relative inline-block">
+                                                <img
+                                                    src="{{ asset('images/pokemon/' ~ variant ~ '/' ~ pokemon.slug ~ '.png') }}"
+                                                    alt="{{ pokemon.name }}"
+                                                    class="w-12 h-12 rounded-full border-2 border-white dark:border-zinc-950 bg-gray-100 dark:bg-zinc-800"
+                                                    title="{{ pokemon.name }}"
+                                                >
+                                                {% if customListPokemon.isShiny %}
+                                                    <span class="absolute top-2 left-2 text-[10px] leading-none w-4 h-4 flex items-center justify-center">✨</span>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                        {% if list.pokemonCount > 12 %}
+                                            <div class="w-12 h-12 rounded-full border-2 border-white dark:border-zinc-950 bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
+                                                <span class="text-sm font-bold text-violet-600 dark:text-violet-400">+{{ list.pokemonCount - 12 }}</span>
                                             </div>
                                         {% endif %}
                                     </div>
