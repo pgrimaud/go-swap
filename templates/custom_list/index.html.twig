@@ -70,7 +70,7 @@
                                 <!-- Pokemon Preview -->
                                 {% if list.pokemonCount > 0 %}
                                     <div class="flex -space-x-3 mb-4">
-                                        {% for customListPokemon in list.customListPokemonSortedByNumber|slice(0, 5) %}
+                                        {% for customListPokemon in list.customListPokemonSortedByNumber|slice(0, 8) %}
                                             {% set pokemon = customListPokemon.pokemon %}
                                             {% set variant = customListPokemon.isShiny ? 'shiny' : 'normal' %}
                                             <div class="relative inline-block">

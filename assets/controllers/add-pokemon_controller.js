@@ -63,7 +63,7 @@ export default class extends Controller {
 
         const html = pokemon.map(p => `
             <div class="p-3 hover:bg-gray-100 dark:hover:bg-zinc-800 transition">
-                <div class="flex items-center gap-3 mb-2">
+                <div class="flex items-center gap-3 mb-2 sm:mb-0">
                     <img 
                         src="/images/pokemon/normal/${p.slug}.png" 
                         alt="${p.name}"
@@ -74,7 +74,7 @@ export default class extends Controller {
                         <div class="font-medium text-gray-900 dark:text-white truncate">${p.name}</div>
                         <div class="text-sm text-gray-500 dark:text-gray-400">#${String(p.number).padStart(4, '0')}</div>
                     </div>
-                    <div class="hidden sm:flex gap-2 flex-shrink-0">
+                    <div class="hidden sm:flex gap-2 flex-shrink-0 items-center">
                         <button
                             type="button"
                             data-pokemon-id="${p.id}"

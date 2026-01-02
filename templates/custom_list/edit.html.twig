@@ -160,7 +160,7 @@
                         </div>
                         <div data-add-pokemon-target="pokemonGrid">
                             {% if customList.pokemonCount > 0 %}
-                                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-8 gap-3">
                                     {% for customListPokemon in customList.customListPokemonSortedByNumber %}
                                         {% set pokemon = customListPokemon.pokemon %}
                                         {% set variant = customListPokemon.isShiny ? 'shiny' : 'normal' %}
