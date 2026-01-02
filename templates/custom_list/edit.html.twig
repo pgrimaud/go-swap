@@ -5,8 +5,6 @@
 {% block body %}
 <div class="min-h-screen bg-gray-50 dark:bg-black">
     {% include 'partials/header.html.twig' %}
-    
-    {% include 'partials/flash_messages.html.twig' %}
 
     <main class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="px-4 py-6 sm:px-0">
@@ -21,6 +19,8 @@
                 <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Edit List</h1>
                 <p class="mt-2 text-gray-600 dark:text-gray-400">Update your list information and manage Pokémon</p>
             </div>
+            
+            {% include 'partials/flash_messages.html.twig' %}
 
             <!-- Two Column Layout -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
