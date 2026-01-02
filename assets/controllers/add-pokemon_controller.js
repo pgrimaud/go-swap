@@ -74,8 +74,32 @@ export default class extends Controller {
                         <div class="font-medium text-gray-900 dark:text-white truncate">${p.name}</div>
                         <div class="text-sm text-gray-500 dark:text-gray-400">#${String(p.number).padStart(4, '0')}</div>
                     </div>
+                    <div class="hidden sm:flex gap-2 flex-shrink-0">
+                        <button
+                            type="button"
+                            data-pokemon-id="${p.id}"
+                            data-is-shiny="false"
+                            data-action="click->add-pokemon#add"
+                            class="px-3 py-2 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-600 hover:bg-violet-50 dark:hover:bg-violet-900/20 hover:border-violet-600 dark:hover:border-violet-600 text-gray-700 dark:text-gray-300 hover:text-violet-700 dark:hover:text-violet-400 rounded font-medium text-sm transition cursor-pointer"
+                            title="Add Normal"
+                        >
+                            Normal
+                        </button>
+                        ${p.availableVariants?.shiny ? `
+                        <button
+                            type="button"
+                            data-pokemon-id="${p.id}"
+                            data-is-shiny="true"
+                            data-action="click->add-pokemon#add"
+                            class="px-3 py-2 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-600 hover:bg-violet-50 dark:hover:bg-violet-900/20 hover:border-violet-600 dark:hover:border-violet-600 text-gray-700 dark:text-gray-300 hover:text-violet-700 dark:hover:text-violet-400 rounded font-medium text-sm transition cursor-pointer inline-flex items-center justify-center gap-1"
+                            title="Add Shiny"
+                        >
+                            <span>✨</span> Shiny
+                        </button>
+                        ` : ''}
+                    </div>
                 </div>
-                <div class="flex gap-2">
+                <div class="flex sm:hidden gap-2">
                     <button
                         type="button"
                         data-pokemon-id="${p.id}"
