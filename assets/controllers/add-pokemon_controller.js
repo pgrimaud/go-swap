@@ -180,15 +180,15 @@ export default class extends Controller {
         const variant = isShiny ? 'shiny' : 'normal';
         
         // Check if grid exists or create it
-        let grid = this.pokemonGridTarget.querySelector('.grid.grid-cols-3');
+        let grid = this.pokemonGridTarget.querySelector('.grid.grid-cols-2');
         
         if (!grid) {
             // Create grid if it doesn't exist (empty state)
             this.pokemonGridTarget.innerHTML = `
-                <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
                 </div>
             `;
-            grid = this.pokemonGridTarget.querySelector('.grid.grid-cols-3');
+            grid = this.pokemonGridTarget.querySelector('.grid.grid-cols-2');
         }
 
         const card = document.createElement('div');
@@ -196,26 +196,30 @@ export default class extends Controller {
         card.dataset.controller = 'remove-pokemon';
         card.dataset.removePokemonUrlValue = `/api/custom-lists/pokemon/${id}`;
         card.innerHTML = `
-            <div class="bg-gray-50 dark:bg-zinc-900 rounded-lg p-3 hover:bg-gray-100 dark:hover:bg-zinc-800 transition">
+            <div 
+                class="bg-gray-50 dark:bg-zinc-900 rounded-lg p-3 hover:bg-red-50 dark:hover:bg-red-950/30 hover:border-red-500 dark:hover:border-red-500 border-2 border-transparent transition cursor-pointer relative"
+                data-action="click->remove-pokemon#remove"
+                title="Click to remove ${pokemon.name} from list"
+            >
+                ${isShiny ? '<span class="absolute top-3 left-3 text-[14px] leading-none pointer-events-none" title="Shiny">✨</span>' : ''}
                 <img 
                     src="/images/pokemon/${variant}/${pokemon.slug}.png" 
                     alt="${pokemon.name}"
-                    class="w-full h-auto mb-1"
+                    class="w-full h-auto mb-1 pointer-events-none"
                     onerror="this.src='/images/pokemon/normal/0.png'"
                 >
-                <p class="text-xs text-center font-medium text-gray-900 dark:text-white truncate">
-                    ${isShiny ? '✨ ' : ''}${pokemon.name}
+                <p class="text-xs text-center font-medium text-gray-900 dark:text-white truncate pointer-events-none">
+                    ${pokemon.name}
                 </p>
+                <!-- Visual indicator on hover -->
+                <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                    <div class="bg-red-600 text-white rounded-full p-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                    </div>
+                </div>
             </div>
-            <button 
-                data-action="click->remove-pokemon#remove"
-                class="absolute top-1 right-1 w-5 h-5 bg-red-600 hover:bg-red-700 text-white rounded-full md:opacity-0 md:group-hover:opacity-100 transition flex items-center justify-center cursor-pointer z-20"
-                title="Remove from list"
-            >
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
         `;
 
         grid.insertBefore(card, grid.firstChild);

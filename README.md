@@ -10,7 +10,7 @@
 ## Prerequisites
 
 - PHP 8.4
-- Symfony 7.3
+- Symfony 8.0
 - MySQL
 
 ## Installation

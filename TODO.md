@@ -308,27 +308,37 @@ Au clic sur carte :
 
 ---
 
-## 📝 **Phase 5 : Listes Personnalisées**
+## 📝 **Phase 5 : Listes Personnalisées** ✅ COMPLÈTE
 
-### 5.1 Entities (déjà créées en Phase 2)
-- [x] `CustomList` (nom, user, public/privé, slug)
+### 5.1 Entities ✅ COMPLÉTÉ
+- [x] `CustomList` (nom, user, public/privé, UUID)
+  - ✅ Support UUID pour partage public
+  - ✅ Relations avec User et Pokémon
+  - ✅ Timestamps (created_at, updated_at)
 - [x] `CustomListPokemon` (ManyToMany List ↔ Pokemon)
+  - ✅ Relations configurées correctement
+  - ✅ added_at timestamp
 
-### 5.2 Page Mes Listes
+### 5.2 Page Mes Listes ✅ COMPLÉTÉ
 - [x] Route `/lists`
 - [x] Controller `CustomListController::index()`
-- [x] Template : **Grille de cartes listes**
+- [x] Template : **Grille de cartes listes** (2 colonnes)
+- [x] Layout moderne avec stats (nombre de Pokémon, visibilité)
 
-### 5.3 Créer une Liste
+### 5.3 Créer une Liste ✅ COMPLÉTÉ
 - [x] Bouton "Nouvelle liste" → page dédiée
 - [x] Form : Nom (requis), Description (optionnel), Public/Privé (toggle)
 - [x] Submit → `POST /lists/new`
 - [x] Validation : nom unique par user
+- [x] Flash messages de confirmation
 
-### 5.4 Vue Détails d'une Liste
-- [x] Route `/lists/{id}`
+### 5.4 Vue Détails d'une Liste ✅ COMPLÉTÉ
+- [x] Route `/lists/{id}` (avec UUID)
 - [x] Afficher : Header + Compteur + Grille Pokémon
 - [x] Badge privé/public
+- [x] Pokémon triés par numéro
+- [x] Indicateur shiny (⭐ emoji)
+- [x] Stat de completion globale
 
 ### 5.5 Ajouter des Pokémon à une Liste ✅ COMPLÉTÉ (2026-01-02)
 - [x] Route API : `POST /api/custom-lists/{listId}/pokemon/{pokemonId}`
@@ -338,33 +348,44 @@ Au clic sur carte :
 - [x] Validation : pas de doublons
 - [x] Tests : `CustomListApiControllerTest`
 
-### 5.6 Retirer Pokémon d'une Liste
+### 5.6 Retirer Pokémon d'une Liste ✅ COMPLÉTÉ
 - [x] Bouton trash sur chaque carte
 - [x] Confirmation : "Retirer ce Pokémon de la liste ?"
 - [x] `DELETE /api/custom-lists/pokemon/{id}`
 - [x] Stimulus controller : `remove_pokemon_controller.js`
 - [x] Update grille dynamique
 
-### 5.7 Éditer une Liste
+### 5.7 Éditer une Liste ✅ COMPLÉTÉ
 - [x] Route `/lists/{id}/edit`
 - [x] Form pré-rempli
 - [x] `POST /lists/{id}/edit`
 - [x] Update nom/description/visibilité
+- [x] Flash messages de confirmation
 
-### 5.8 Supprimer une Liste
+### 5.8 Supprimer une Liste ✅ COMPLÉTÉ
 - [x] Route `POST /lists/{id}/delete`
 - [x] Redirect vers `/lists`
+- [x] Confirmation avant suppression
 
-### 5.9 Partage Public (bonus)
-- [ ] Si liste publique → générer slug unique
-- [ ] Route publique : `/lists/public/{slug}`
-- [ ] Page visible sans login :
+### 5.9 Partage Public ✅ COMPLÉTÉ
+- [x] Si liste publique → utiliser UUID comme identifiant unique
+- [x] Route publique : `/lists/public/{uid}`
+- [x] Controller : `PublicListController`
+- [x] Page visible sans login :
   - Nom + Description
   - Grille Pokémon (read-only)
-  - "Créé par {username}"
-- [ ] Bouton "Copier lien" (clipboard)
+  - Badge "Public"
+- [x] Bouton "Share" avec copie du lien (clipboard)
 
-### 5.10 Associer Pokémon depuis Pokédex
+### 5.10 UX Améliorations ✅ COMPLÉTÉ
+- [x] Flash messages notifications (succès/erreur)
+- [x] Police Open Sans
+- [x] Bouton "Copy Numbers" pour copier liste de numéros
+- [x] Curseur pointer sur tous les éléments cliquables
+- [x] Emoji shiny (⭐) sur les cartes Pokémon
+- [x] Stat de completion globale sur page détails
+
+### 5.11 Associer Pokémon depuis Pokédex (Future)
 - [ ] Dans page Pokédex, sur modal détails Pokémon :
   - Bouton "Ajouter à une liste"
   - Dropdown : sélection liste existante
@@ -601,23 +622,27 @@ Au clic sur carte :
 11. [x] Modal + toggle variants (AJAX)
 12. [x] Filtres basiques (variant, search)
 
-### Sprint 4 (PvP) 🎯 EN COURS
-13. [ ] Entity UserPvPPokemon
-14. [ ] Page grille cartes PvP
-15. [ ] Form ajout (avec moves AJAX)
-16. [ ] Modal détails + edit/delete
+### Sprint 4 (Listes Perso) ✅ COMPLÉTÉ
+13. [x] Entities CustomList + CustomListPokemon (UUID support)
+14. [x] Page mes listes (grille 2 colonnes)
+15. [x] Créer/éditer/supprimer liste
+16. [x] Ajouter/retirer Pokémon (API + Stimulus)
+17. [x] Partage public avec lien copiable
+18. [x] Flash messages notifications
+19. [x] Stats et compteurs
+20. [x] Tests API
 
-### Sprint 5 (Listes Perso)
-17. [ ] Entities CustomList + CustomListPokemon
-18. [ ] Page mes listes (grille)
-19. [ ] Créer/éditer/supprimer liste
-20. [ ] Ajouter/retirer Pokémon
+### Sprint 5 (PvP) 🎯 À DÉMARRER
+21. [ ] Entity UserPvPPokemon
+22. [ ] Page grille cartes PvP
+23. [ ] Form ajout (avec moves AJAX)
+24. [ ] Modal détails + edit/delete
 
 ### Sprint 6 (Polish)
-21. [ ] Dashboard avec stats
-22. [ ] Type effectiveness chart
-23. [ ] Dark mode
-24. [ ] Deploy v3 en prod 🚀
+25. [ ] Dashboard avec stats
+26. [ ] Type effectiveness chart
+27. [ ] Dark mode
+28. [ ] Deploy v3 en prod 🚀
 
 ---
 
@@ -776,7 +801,7 @@ Une feature est complète quand :
 | Phase 2 - Data | ✅ DONE | P0 |
 | Phase 3 - Pokédex | ✅ DONE | P1 |
 | Phase 4 - PvP | 🔄 TODO | P1 (maintenant) |
-| Phase 5 - Listes Perso | 🔄 TODO | P1 (ensuite) |
+| Phase 5 - Listes Perso | ✅ DONE | P1 |
 | Phase 6 - Tools | 📅 LATER | P2 |
 | Phase 7 - Polish | 📅 LATER | P2 |
 | Phase 8 - Deploy | 📅 LATER | P3 |
@@ -784,7 +809,7 @@ Une feature est complète quand :
 
 ---
 
-**Dernière mise à jour** : 2026-01-01  
+**Dernière mise à jour** : 2026-01-02  
 **Auteur** : @pgrimaud  
 **Version** : V3 Roadmap Complete - Symfony 8.0 + PHP 8.4  
-**Phase 1, 2 & 3 complètes ✅ - Phase 4 (PvP) à démarrer 🎯**
+**Phase 1, 2, 3 & 5 complètes ✅ - Phase 4 (PvP) à démarrer 🎯**
