@@ -2,8 +2,12 @@ import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
     static values = {
-        key: String
+        key: String,
+        autoDismiss: { type: Boolean, default: false },
+        delay: { type: Number, default: 5000 }
     }
+
+    timeout = null;
 
     connect() {
         // Check if user just logged in (clear cookie if so)
@@ -14,15 +18,31 @@ export default class extends Controller {
             sessionStorage.removeItem('just_logged_in');
         }
 
-        const isDismissed = this.getCookie(this.keyValue);
-        if (isDismissed !== 'true') {
-            // Show banner only if not dismissed
+        // For flash messages (auto-dismiss)
+        if (this.autoDismissValue) {
             this.element.classList.remove('hidden');
+            this.timeout = setTimeout(() => {
+                this.dismiss();
+            }, this.delayValue);
+        } else {
+            // For banners (persistent with cookie)
+            const isDismissed = this.getCookie(this.keyValue);
+            if (isDismissed !== 'true') {
+                this.element.classList.remove('hidden');
+            }
+        }
+    }
+
+    disconnect() {
+        if (this.timeout) {
+            clearTimeout(this.timeout);
         }
     }
 
     dismiss() {
-        this.setCookie(this.keyValue, 'true', 365);
+        if (!this.autoDismissValue && this.keyValue) {
+            this.setCookie(this.keyValue, 'true', 365);
+        }
         this.element.classList.add('transition-opacity', 'duration-300', 'opacity-0');
         setTimeout(() => {
             this.element.classList.add('hidden');
