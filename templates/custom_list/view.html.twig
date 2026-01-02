@@ -36,9 +36,26 @@
                         {% if customList.description %}
                             <p class="mt-2 text-gray-600 dark:text-gray-400">{{ customList.description }}</p>
                         {% endif %}
-                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                            {{ customList.pokemonCount }} Pokémon in this list
-                        </p>
+                        <div class="mt-2 flex items-center gap-3">
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                {{ customList.pokemonCount }} Pokémon in this list
+                            </p>
+                            {% if customList.pokemonCount > 0 %}
+                                {% set pokemonNumbers = [] %}
+                                {% for customListPokemon in customList.customListPokemonSortedByNumber %}
+                                    {% set pokemonNumbers = pokemonNumbers|merge([customListPokemon.pokemon.number]) %}
+                                {% endfor %}
+                                <div data-controller="copy-list" data-copy-list-numbers-value="{{ pokemonNumbers|join(',') }}">
+                                    <button 
+                                        data-action="click->copy-list#copy"
+                                        data-copy-list-target="button"
+                                        class="inline-flex items-center px-2 py-1 border border-transparent text-xs font-semibold rounded text-white bg-violet-600 hover:bg-violet-700 dark:bg-violet-600 dark:hover:bg-violet-700 transition cursor-pointer"
+                                        title="Copy Pokémon numbers">
+                                        📋 Copy Numbers
+                                    </button>
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
                     
                     <div class="flex gap-2">

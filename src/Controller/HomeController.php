@@ -132,9 +132,17 @@ final class HomeController extends AbstractController
             ],
         ];
 
+        // Calculate overall completion percentage
+        $totalPercentage = 0;
+        foreach ($pokedexCategories as $category) {
+            $totalPercentage += $category['percentage'];
+        }
+        $overallCompletion = round($totalPercentage / count($pokedexCategories), 2);
+
         return $this->render('home/index.html.twig', [
             'pokedexCategories' => $pokedexCategories,
             'customListsCount' => $customListsCount,
+            'overallCompletion' => $overallCompletion,
         ]);
     }
 }
