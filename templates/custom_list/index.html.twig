@@ -93,13 +93,13 @@
 
                             <!-- Actions -->
                             <div class="bg-gray-50 dark:bg-zinc-900 px-6 py-4 flex gap-2">
-                                <a href="#" class="flex-1 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium text-center transition cursor-pointer">
+                                <a href="{{ path('app_custom_list_view', {id: list.id}) }}" class="flex-1 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium text-center transition cursor-pointer">
                                     View
                                 </a>
                                 {% if list.isPublic %}
                                     <button 
                                         data-controller="clipboard"
-                                        data-clipboard-text-value="{{ url('app_custom_lists') ~ '/' ~ list.uid }}"
+                                        data-clipboard-text-value="{{ url('app_custom_list_view', {id: list.id}) }}"
                                         data-action="click->clipboard#copy"
                                         class="px-4 py-2 bg-white dark:bg-zinc-950 border-2 border-gray-300 dark:border-zinc-600 hover:border-gray-400 dark:hover:border-zinc-500 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition cursor-pointer"
                                         title="Copy share link"

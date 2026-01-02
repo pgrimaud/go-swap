@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Apply Open Sans globally */
+body {
+    font-family: 'Open Sans', sans-serif;
+}
+
 /* Turbo progress bar color */
 .turbo-progress-bar {
     background-color: #7c3aed !important; /* violet-600 */

@@ -27,6 +27,9 @@ class CustomListPokemon
     #[ORM\Column(options: ['default' => 0])]
     private int $position = 0;
 
+    #[ORM\Column(options: ['default' => false])]
+    private bool $isShiny = false;
+
     #[ORM\Column]
     private ?\DateTimeImmutable $addedAt = null;
 
@@ -84,6 +87,18 @@ class CustomListPokemon
     public function setAddedAt(\DateTimeImmutable $addedAt): static
     {
         $this->addedAt = $addedAt;
+
+        return $this;
+    }
+
+    public function isShiny(): bool
+    {
+        return $this->isShiny;
+    }
+
+    public function setIsShiny(bool $isShiny): static
+    {
+        $this->isShiny = $isShiny;
 
         return $this;
     }

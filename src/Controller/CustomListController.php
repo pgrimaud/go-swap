@@ -97,11 +97,36 @@ final class CustomListController extends AbstractController
 
             $this->addFlash('success', 'Your list has been updated successfully!');
 
-            return $this->redirectToRoute('app_custom_lists');
+            return $this->redirectToRoute('app_custom_list_edit', ['id' => $id]);
         }
 
         return $this->render('custom_list/edit.html.twig', [
             'form' => $form,
+            'customList' => $customList,
+        ]);
+    }
+
+    #[Route('/lists/{id}', name: 'app_custom_list_view', methods: ['GET'])]
+    public function view(int $id): Response
+    {
+        $user = $this->getUser();
+
+        if (!$user instanceof User) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $customList = $this->customListRepository->find($id);
+
+        if (!$customList) {
+            throw $this->createNotFoundException('List not found.');
+        }
+
+        // Check that the user owns this list
+        if ($customList->getUser() !== $user) {
+            throw $this->createAccessDeniedException('You cannot view this list.');
+        }
+
+        return $this->render('custom_list/view.html.twig', [
             'customList' => $customList,
         ]);
     }
