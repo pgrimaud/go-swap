@@ -8,6 +8,7 @@ use App\Entity\Move;
 use App\Entity\Pokemon;
 use App\Entity\PokemonMove;
 use App\Entity\Type;
+use App\Helper\GenerationHelper;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -27,7 +28,7 @@ class PokemonFixtures extends Fixture implements DependentFixtureInterface
                 'stamina' => 128,
                 'picture' => 'bulbasaur.png',
                 'shiny_picture' => 'bulbasaur-shiny.png',
-                'generation' => 'Generation I',
+                'generation' => GenerationHelper::GENERATION_KANTO,
                 'form' => null,
                 'shadow' => false,
                 'shiny' => true,
@@ -45,7 +46,7 @@ class PokemonFixtures extends Fixture implements DependentFixtureInterface
                 'stamina' => 118,
                 'picture' => 'charmander.png',
                 'shiny_picture' => 'charmander-shiny.png',
-                'generation' => 'Generation I',
+                'generation' => GenerationHelper::GENERATION_KANTO,
                 'form' => null,
                 'shadow' => true,
                 'shiny' => true,
@@ -63,7 +64,7 @@ class PokemonFixtures extends Fixture implements DependentFixtureInterface
                 'stamina' => 127,
                 'picture' => 'squirtle.png',
                 'shiny_picture' => 'squirtle-shiny.png',
-                'generation' => 'Generation I',
+                'generation' => GenerationHelper::GENERATION_KANTO,
                 'form' => null,
                 'shadow' => false,
                 'shiny' => true,
@@ -81,7 +82,7 @@ class PokemonFixtures extends Fixture implements DependentFixtureInterface
                 'stamina' => 111,
                 'picture' => 'pikachu.png',
                 'shiny_picture' => 'pikachu-shiny.png',
-                'generation' => 'Generation I',
+                'generation' => GenerationHelper::GENERATION_KANTO,
                 'form' => null,
                 'shadow' => false,
                 'shiny' => true,
@@ -99,7 +100,7 @@ class PokemonFixtures extends Fixture implements DependentFixtureInterface
                 'stamina' => 93,
                 'picture' => 'abra.png',
                 'shiny_picture' => 'abra-shiny.png',
-                'generation' => 'Generation I',
+                'generation' => GenerationHelper::GENERATION_KANTO,
                 'form' => null,
                 'shadow' => false,
                 'shiny' => true,
@@ -117,7 +118,7 @@ class PokemonFixtures extends Fixture implements DependentFixtureInterface
                 'stamina' => 121,
                 'picture' => 'dratini.png',
                 'shiny_picture' => 'dratini-shiny.png',
-                'generation' => 'Generation I',
+                'generation' => GenerationHelper::GENERATION_KANTO,
                 'form' => null,
                 'shadow' => false,
                 'shiny' => true,
@@ -135,7 +136,7 @@ class PokemonFixtures extends Fixture implements DependentFixtureInterface
                 'stamina' => 128,
                 'picture' => 'houndour.png',
                 'shiny_picture' => 'houndour-shiny.png',
-                'generation' => 'Generation II',
+                'generation' => GenerationHelper::GENERATION_JOHTO,
                 'form' => null,
                 'shadow' => true,
                 'shiny' => true,
@@ -153,7 +154,7 @@ class PokemonFixtures extends Fixture implements DependentFixtureInterface
                 'stamina' => 146,
                 'picture' => 'eevee.png',
                 'shiny_picture' => 'eevee-shiny.png',
-                'generation' => 'Generation I',
+                'generation' => GenerationHelper::GENERATION_KANTO,
                 'form' => null,
                 'shadow' => false,
                 'shiny' => true,
