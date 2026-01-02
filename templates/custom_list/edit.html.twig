@@ -16,122 +16,191 @@
                     </svg>
                     Back to My Lists
                 </a>
-                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Edit List</h1>
-                <p class="mt-2 text-gray-600 dark:text-gray-400">Update your list information and manage Pokémon</p>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Edit List</h1>
+                        <p class="mt-1 text-lg font-semibold text-violet-600 dark:text-violet-400">{{ customList.name }}</p>
+                        <p class="mt-1 text-gray-600 dark:text-gray-400">Update your list information and manage Pokémon</p>
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        {% if customList.isPublic %}
+                            <button 
+                                data-controller="share"
+                                data-share-url-value="{{ absolute_url(path('app_public_list', {uid: customList.uid})) }}"
+                                data-action="click->share#copy"
+                                class="px-4 py-2 bg-white dark:bg-zinc-950 border-2 border-gray-300 dark:border-zinc-600 hover:border-gray-400 dark:hover:border-zinc-500 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition cursor-pointer inline-flex items-center gap-2"
+                                title="Copy share link"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                                </svg>
+                                Share
+                            </button>
+                        {% endif %}
+                        <a href="{{ path('app_custom_list_view', {id: customList.id}) }}" class="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium transition cursor-pointer">
+                            View
+                        </a>
+                    </div>
+                </div>
             </div>
             
             {% include 'partials/flash_messages.html.twig' %}
 
-            <!-- Two Column Layout -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Left Column: Form -->
-                <div class="bg-white dark:bg-zinc-950 rounded-lg shadow-lg border-2 border-gray-300 dark:border-gray-600 p-6">
-                    <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">List Information</h2>
-                    {{ form_start(form) }}
-                        <div class="space-y-6">
-                            <!-- Name Field -->
-                            <div>
-                                {{ form_label(form.name, null, {
-                                    'label_attr': {'class': 'block text-sm font-medium text-gray-900 dark:text-white mb-2'}
-                                }) }}
-                                {{ form_widget(form.name) }}
-                                {{ form_errors(form.name) }}
-                            </div>
-
-                            <!-- Description Field -->
-                            <div>
-                                {{ form_label(form.description, null, {
-                                    'label_attr': {'class': 'block text-sm font-medium text-gray-900 dark:text-white mb-2'}
-                                }) }}
-                                {{ form_widget(form.description) }}
-                                {{ form_errors(form.description) }}
-                            </div>
-
-                            <!-- Is Public Checkbox -->
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                {{ form_widget(form.isPublic) }}
+            <!-- List Information Section (Accordion - Collapsed by default) -->
+            <div 
+                class="bg-white dark:bg-zinc-950 rounded-lg shadow-lg border-2 border-gray-300 dark:border-gray-600 mb-6"
+                data-controller="dropdown"
+            >
+                <button 
+                    type="button"
+                    class="w-full p-6 flex justify-between items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-900 transition"
+                    data-action="click->dropdown#toggle"
+                >
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white">List Information</h2>
+                    <svg 
+                        data-dropdown-target="caret"
+                        class="w-5 h-5 text-gray-500 dark:text-gray-400 transform transition-transform"
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                    >
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                
+                <div data-dropdown-target="menu" class="hidden border-t border-gray-200 dark:border-zinc-700">
+                    <div class="p-6">
+                        {{ form_start(form) }}
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Name Field -->
                                 <div>
-                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Make this list public</span>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">
-                                        Public lists can be shared with anyone via a link
-                                    </p>
+                                    {{ form_label(form.name, null, {
+                                        'label_attr': {'class': 'block text-sm font-medium text-gray-900 dark:text-white mb-2'}
+                                    }) }}
+                                    {{ form_widget(form.name) }}
+                                    {{ form_errors(form.name) }}
                                 </div>
-                            </label>
-                        </div>
 
-                        <!-- Actions -->
-                        <div class="mt-6">
-                            <button type="submit" class="w-full px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium transition cursor-pointer">
-                                Save Changes
-                            </button>
-                        </div>
-                    {{ form_end(form) }}
-                </div>
-
-                <!-- Right Column: Pokemon Management -->
-                <div>
-                    <!-- Pokemon List -->
-                    <div class="bg-white dark:bg-zinc-950 rounded-lg shadow-lg border-2 border-gray-300 dark:border-gray-600 p-6 mb-6">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold text-gray-900 dark:text-white">Pokémon ({{ customList.pokemonCount }})</h2>
-                        </div>
-
-                        {% if customList.pokemonCount > 0 %}
-                            <div class="grid grid-cols-3 gap-3 max-h-96 overflow-y-auto">
-                                {% for customListPokemon in customList.customListPokemon %}
-                                    {% set pokemon = customListPokemon.pokemon %}
-                                    {% set variant = customListPokemon.isShiny ? 'shiny' : 'normal' %}
-                                    <div 
-                                        class="relative group"
-                                        data-controller="remove-pokemon"
-                                        data-remove-pokemon-url-value="{{ path('api_custom_list_pokemon_delete', {id: customListPokemon.id}) }}"
-                                    >
-                                        <div class="bg-gray-50 dark:bg-zinc-900 rounded-lg p-3 hover:bg-gray-100 dark:hover:bg-zinc-800 transition">
-                                            {% if customListPokemon.isShiny %}
-                                                <div class="absolute top-1 left-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center z-10" title="Shiny">
-                                                    <span class="text-xs">✨</span>
-                                                </div>
-                                            {% endif %}
-                                            <img 
-                                                src="{{ asset('images/pokemon/' ~ variant ~ '/' ~ pokemon.slug ~ '.png') }}" 
-                                                alt="{{ pokemon.name }}"
-                                                class="w-full h-auto mb-1"
-                                            >
-                                            <p class="text-xs text-center font-medium text-gray-900 dark:text-white truncate">
-                                                {{ pokemon.name }}
+                                <!-- Is Public Checkbox -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2 invisible">Visibility</label>
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        {{ form_widget(form.isPublic) }}
+                                        <div>
+                                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Make this list public</span>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                Public lists can be shared with anyone via a link
                                             </p>
                                         </div>
-                                        <button 
-                                            data-action="click->remove-pokemon#remove"
-                                            class="absolute top-1 right-1 w-5 h-5 bg-red-600 hover:bg-red-700 text-white rounded-full md:opacity-0 md:group-hover:opacity-100 transition flex items-center justify-center cursor-pointer z-20"
-                                            title="Remove from list"
-                                        >
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            <div class="text-center py-8">
-                                <p class="text-gray-500 dark:text-gray-400">No Pokémon in this list yet</p>
-                            </div>
-                        {% endif %}
-                    </div>
+                                    </label>
+                                </div>
 
+                                <!-- Description Field (Full Width) -->
+                                <div class="md:col-span-2">
+                                    {{ form_label(form.description, null, {
+                                        'label_attr': {'class': 'block text-sm font-medium text-gray-900 dark:text-white mb-2'}
+                                    }) }}
+                                    {{ form_widget(form.description) }}
+                                    {{ form_errors(form.description) }}
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="mt-6 flex gap-3">
+                                <button type="submit" class="px-6 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium transition cursor-pointer">
+                                    Save Changes
+                                </button>
+                                <button 
+                                    type="button"
+                                    onclick="if(confirm('Are you sure you want to delete this list?')) { document.getElementById('delete-form').submit(); }"
+                                    class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition cursor-pointer">
+                                    Delete
+                                </button>
+                            </div>
+                        {{ form_end(form) }}
+                        
+                        <!-- Hidden delete form -->
+                        <form id="delete-form" action="{{ path('app_custom_list_delete', {id: customList.id}) }}" method="post" class="hidden">
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pokemon Management Section (Full Width) -->
+            <div
+                data-controller="add-pokemon"
+                data-add-pokemon-search-url-value="{{ path('api_pokedex') }}"
+                data-add-pokemon-add-url-value="{{ path('api_custom_list_pokemon_add', {listId: 'LIST_ID', pokemonId: 'POKEMON_ID'}) }}"
+                data-add-pokemon-list-id-value="{{ customList.id }}"
+            >
                     <!-- Add Pokemon Section -->
-                    <div class="bg-white dark:bg-zinc-950 rounded-lg shadow-lg border-2 border-gray-300 dark:border-gray-600 p-6">
+                    <div 
+                        class="bg-white dark:bg-zinc-950 rounded-lg shadow-lg border-2 border-gray-300 dark:border-gray-600 p-6 mb-6 relative"
+                    >
                         <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Add Pokémon</h2>
-                        <div class="flex gap-2">
+                        <div class="relative">
                             <input 
                                 type="text" 
                                 placeholder="Search by name or number..."
-                                class="flex-1 px-4 py-2 border border-gray-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-950 text-gray-900 dark:text-white focus:ring-2 focus:ring-violet-600 focus:border-transparent"
+                                class="w-full px-4 py-2 border border-gray-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-950 text-gray-900 dark:text-white focus:ring-2 focus:ring-violet-600 focus:border-transparent"
+                                data-add-pokemon-target="searchInput"
+                                data-action="input->add-pokemon#search"
                             >
-                            <button class="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium transition cursor-pointer">
-                                Search
-                            </button>
+                            <!-- Search Results Dropdown -->
+                            <div 
+                                class="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-zinc-950 border border-gray-300 dark:border-zinc-600 rounded-lg shadow-lg max-h-96 overflow-y-auto z-10 hidden"
+                                data-add-pokemon-target="resultsContainer"
+                            ></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pokemon List -->
+                    <div class="bg-white dark:bg-zinc-950 rounded-lg shadow-lg border-2 border-gray-300 dark:border-gray-600 p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold text-gray-900 dark:text-white">Pokémon (<span id="pokemon-count">{{ customList.pokemonCount }}</span>)</h2>
+                        </div>
+                        <div data-add-pokemon-target="pokemonGrid">
+                            {% if customList.pokemonCount > 0 %}
+                                <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                                    {% for customListPokemon in customList.customListPokemonSortedByNumber %}
+                                        {% set pokemon = customListPokemon.pokemon %}
+                                        {% set variant = customListPokemon.isShiny ? 'shiny' : 'normal' %}
+                                        <div 
+                                            class="relative group"
+                                            data-controller="remove-pokemon"
+                                            data-remove-pokemon-url-value="{{ path('api_custom_list_pokemon_delete', {id: customListPokemon.id}) }}"
+                                        >
+                                            <div class="bg-gray-50 dark:bg-zinc-900 rounded-lg p-3 hover:bg-gray-100 dark:hover:bg-zinc-800 transition relative">
+                                                {% if customListPokemon.isShiny %}
+                                                    <span class="absolute top-3 left-3 text-[14px] leading-none" title="Shiny">✨</span>
+                                                {% endif %}
+                                                <img 
+                                                    src="{{ asset('images/pokemon/' ~ variant ~ '/' ~ pokemon.slug ~ '.png') }}" 
+                                                    alt="{{ pokemon.name }}"
+                                                    class="w-full h-auto mb-1"
+                                                >
+                                                <p class="text-xs text-center font-medium text-gray-900 dark:text-white truncate">
+                                                    {{ pokemon.name }}
+                                                </p>
+                                            </div>
+                                            <button 
+                                                data-action="click->remove-pokemon#remove"
+                                                class="absolute top-1 right-1 w-5 h-5 bg-red-600 hover:bg-red-700 text-white rounded-full md:opacity-0 md:group-hover:opacity-100 transition flex items-center justify-center cursor-pointer z-20"
+                                                title="Remove from list"
+                                            >
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-8">
+                                    <p class="text-gray-500 dark:text-gray-400">No Pokémon in this list yet</p>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

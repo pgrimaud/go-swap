@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ customList.name }} - Go Swap{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-50 dark:bg-black">
+    {% include 'partials/header.html.twig' %}
+
+    <main class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="px-4 py-6 sm:px-0">
+            <!-- Page Header -->
+            <div class="mb-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 mb-2">
+                            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ customList.name }}</h1>
+                            <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 text-sm font-semibold rounded">
+                                Public
+                            </span>
+                        </div>
+                        {% if customList.description %}
+                            <p class="text-gray-600 dark:text-gray-400">{{ customList.description }}</p>
+                        {% endif %}
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                            {{ customList.pokemonCount }} Pokémon in this list
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pokemon Grid -->
+            <div class="bg-white dark:bg-zinc-950 rounded-lg shadow-lg border-2 border-gray-300 dark:border-gray-600 p-6">
+                {% if customList.pokemonCount > 0 %}
+                    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+                        {% for customListPokemon in customList.customListPokemonSortedByNumber %}
+                            {% set pokemon = customListPokemon.pokemon %}
+                            {% set variant = customListPokemon.isShiny ? 'shiny' : 'normal' %}
+                            <div class="bg-gray-50 dark:bg-zinc-900 rounded-lg p-3 hover:bg-gray-100 dark:hover:bg-zinc-800 transition relative">
+                                {% if customListPokemon.isShiny %}
+                                    <span class="absolute top-3 left-3 text-[14px] leading-none z-10" title="Shiny">✨</span>
+                                {% endif %}
+                                <img 
+                                    src="{{ asset('images/pokemon/' ~ variant ~ '/' ~ pokemon.slug ~ '.png') }}" 
+                                    alt="{{ pokemon.name }}"
+                                    class="w-full h-auto mb-1"
+                                >
+                                <p class="text-xs text-center font-medium text-gray-900 dark:text-white truncate">
+                                    {{ pokemon.name }}
+                                </p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-8">
+                        <p class="text-gray-500 dark:text-gray-400">No Pokémon in this list yet</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

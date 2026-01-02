@@ -23,7 +23,8 @@ class CustomListType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'List Name',
+                'label' => 'List Name <span class="text-red-600">*</span>',
+                'label_html' => true,
                 'attr' => [
                     'placeholder' => 'e.g. My Shiny Collection',
                     'class' => 'w-full px-4 py-2 border border-gray-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-950 text-gray-900 dark:text-white focus:ring-2 focus:ring-violet-600 focus:border-transparent',

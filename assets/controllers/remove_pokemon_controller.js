@@ -28,6 +28,21 @@ export default class extends Controller {
                 // Remove the card from DOM
                 this.element.remove();
                 
+                // Update counter
+                const counter = document.getElementById('pokemon-count');
+                if (counter) {
+                    const currentCount = parseInt(counter.textContent);
+                    counter.textContent = currentCount - 1;
+                    
+                    // Show empty state if no more Pokemon
+                    if (currentCount - 1 === 0) {
+                        const grid = document.querySelector('.grid.grid-cols-3');
+                        if (grid) {
+                            grid.parentElement.innerHTML = '<div class="text-center py-8"><p class="text-gray-500 dark:text-gray-400">No Pokémon in this list yet</p></div>';
+                        }
+                    }
+                }
+                
                 // Show success message (optional)
                 console.log(data.message);
             } else {

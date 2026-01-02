@@ -59,9 +59,9 @@ final class CustomListController extends AbstractController
             $this->entityManager->persist($customList);
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'Your list has been created successfully!');
+            $this->addFlash('success', 'List created!');
 
-            return $this->redirectToRoute('app_custom_lists');
+            return $this->redirectToRoute('app_custom_list_edit', ['id' => $customList->getId()]);
         }
 
         return $this->render('custom_list/new.html.twig', [
@@ -95,7 +95,7 @@ final class CustomListController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'Your list has been updated successfully!');
+            $this->addFlash('success', 'List updated!');
 
             return $this->redirectToRoute('app_custom_list_edit', ['id' => $id]);
         }
@@ -129,5 +129,31 @@ final class CustomListController extends AbstractController
         return $this->render('custom_list/view.html.twig', [
             'customList' => $customList,
         ]);
+    }
+
+    #[Route('/lists/{id}/delete', name: 'app_custom_list_delete', methods: ['POST'])]
+    public function delete(int $id): Response
+    {
+        $user = $this->getUser();
+
+        if (!$user instanceof User) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $customList = $this->customListRepository->find($id);
+
+        if (!$customList) {
+            throw $this->createNotFoundException('List not found.');
+        }
+
+        // Check that the user owns this list
+        if ($customList->getUser() !== $user) {
+            throw $this->createAccessDeniedException('You cannot delete this list.');
+        }
+
+        $this->entityManager->remove($customList);
+        $this->entityManager->flush();
+
+        return $this->redirectToRoute('app_custom_lists');
     }
 }

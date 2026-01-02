@@ -21,11 +21,16 @@ final class PokedexController extends AbstractController
     public function index(
         PokemonRepository $pokemonRepository,
         UserPokemonRepository $userPokemonRepository,
+        \Symfony\Component\HttpFoundation\Request $request,
     ): JsonResponse {
         $user = $this->getUser();
         if (!$user instanceof User) {
             return $this->json(['error' => 'User not authenticated'], 401);
         }
+
+        // Get search params
+        $search = $request->query->get('search', '');
+        $limit = (int) $request->query->get('limit', '0');
 
         // Get ALL Pokemon with evolutionChain eager loaded (avoid N+1)
         $allPokemon = $pokemonRepository->findAllWithEvolutionChain();
@@ -62,6 +67,17 @@ final class PokedexController extends AbstractController
                 continue;
             }
 
+            // Apply search filter if provided
+            if ($search !== '') {
+                $pokemonName = $p->getName() ?? '';
+                $matchName = stripos($pokemonName, $search) !== false;
+                $matchNumber = stripos((string) $p->getNumber(), $search) !== false;
+
+                if (!$matchName && !$matchNumber) {
+                    continue;
+                }
+            }
+
             $userPokemon = $userPokemonMap[$pokemonId] ?? null;
 
             $evolutionChain = $p->getEvolutionChain();
@@ -69,6 +85,7 @@ final class PokedexController extends AbstractController
                 'id' => $pokemonId,
                 'number' => $p->getNumber(),
                 'name' => $p->getName(),
+                'slug' => $p->getSlug(),
                 'picture' => $p->getPicture(),
                 'generation' => $p->getGeneration(),
                 'evolutionChain' => $evolutionChain ? [
@@ -92,6 +109,11 @@ final class PokedexController extends AbstractController
                     'hasPerfect' => $userPokemon->hasPerfect(),
                 ] : null,
             ];
+
+            // Apply limit if provided
+            if ($limit > 0 && count($enrichedPokemon) >= $limit) {
+                break;
+            }
         }
 
         return $this->json([

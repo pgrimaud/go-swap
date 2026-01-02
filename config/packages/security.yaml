@@ -43,6 +43,7 @@ security:
         - { path: ^/admin, roles: ROLE_ADMIN, requires_channel: https }
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: PUBLIC_ACCESS }
+        - { path: ^/list/[a-f0-9-]+$, roles: PUBLIC_ACCESS }
         - { path: ^/, roles: ROLE_USER }
 
 when@test:

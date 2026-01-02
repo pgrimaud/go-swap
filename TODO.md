@@ -314,69 +314,46 @@ Au clic sur carte :
 - [x] `CustomList` (nom, user, public/privé, slug)
 - [x] `CustomListPokemon` (ManyToMany List ↔ Pokemon)
 
-### 9.2 Page Mes Listes
-- [ ] Route `/lists`
-- [ ] Controller `CustomListController::index()`
-- [ ] Template : **Grille de cartes listes**
+### 5.2 Page Mes Listes
+- [x] Route `/lists`
+- [x] Controller `CustomListController::index()`
+- [x] Template : **Grille de cartes listes**
 
-**Design carte liste** :
-```
-┌─────────────────────┐
-│ 📋 Nom de la liste  │
-│                     │
-│ [3 mini Pokémon]    │  <- Aperçu des premiers Pokémon
-│                     │
-│ 12 Pokémon          │  <- Compteur
-│ 🔒 Privée           │  <- Badge public/privé
-└─────────────────────┘
-```
+### 5.3 Créer une Liste
+- [x] Bouton "Nouvelle liste" → page dédiée
+- [x] Form : Nom (requis), Description (optionnel), Public/Privé (toggle)
+- [x] Submit → `POST /lists/new`
+- [x] Validation : nom unique par user
 
-### 9.3 Créer une Liste
-- [ ] Bouton "Nouvelle liste" → modal
-- [ ] Form :
-  - Nom (requis, max 50 chars)
-  - Description (optionnel, textarea)
-  - Public/Privé (toggle)
-- [ ] Submit → `POST /lists/create`
-- [ ] Validation : nom unique par user
+### 5.4 Vue Détails d'une Liste
+- [x] Route `/lists/{id}`
+- [x] Afficher : Header + Compteur + Grille Pokémon
+- [x] Badge privé/public
 
-### 9.4 Vue Détails d'une Liste
-- [ ] Route `/lists/{id}`
-- [ ] Afficher :
-  - Header : Nom + Description + Badge privé/public
-  - Compteur : X Pokémon dans la liste
-  - **Grille cartes Pokémon** (comme Pokédex)
-  - Bouton "Ajouter Pokémon" → modal search
-  - Bouton "Partager" (si publique)
-- [ ] Actions par Pokémon :
-  - Retirer de la liste (icône trash)
-
-### 5.5 Ajouter des Pokémon à une Liste
-- [ ] Modal "Ajouter Pokémon" :
-  - Search bar (autocomplete)
-  - Liste tous les Pokémon disponibles
-  - Checkbox sélection multiple
-  - Bouton "Ajouter (X sélectionnés)"
-- [ ] Submit → `POST /lists/{id}/add-pokemon`
-- [ ] Validation : pas de doublons
+### 5.5 Ajouter des Pokémon à une Liste ✅ COMPLÉTÉ (2026-01-02)
+- [x] Route API : `POST /api/custom-lists/{listId}/pokemon/{pokemonId}`
+- [x] Controller API : `CustomListApiController::addPokemon()`
+- [x] Stimulus controller : `add_pokemon_controller.js`
+- [x] Interface de recherche avec autocomplete
+- [x] Validation : pas de doublons
+- [x] Tests : `CustomListApiControllerTest`
 
 ### 5.6 Retirer Pokémon d'une Liste
-- [ ] Bouton trash sur chaque carte
-- [ ] Confirmation : "Retirer ce Pokémon de la liste ?"
-- [ ] `DELETE /lists/{id}/pokemon/{pokemon_id}`
-- [ ] Update grille (Turbo Stream)
+- [x] Bouton trash sur chaque carte
+- [x] Confirmation : "Retirer ce Pokémon de la liste ?"
+- [x] `DELETE /api/custom-lists/pokemon/{id}`
+- [x] Stimulus controller : `remove_pokemon_controller.js`
+- [x] Update grille dynamique
 
 ### 5.7 Éditer une Liste
-- [ ] Bouton "Éditer" dans header
-- [ ] Modal form pré-rempli
-- [ ] `PUT /lists/{id}/edit`
-- [ ] Update nom/description/visibilité
+- [x] Route `/lists/{id}/edit`
+- [x] Form pré-rempli
+- [x] `POST /lists/{id}/edit`
+- [x] Update nom/description/visibilité
 
 ### 5.8 Supprimer une Liste
-- [ ] Bouton "Supprimer la liste" (danger zone)
-- [ ] Confirmation : "Supprimer définitivement cette liste ?"
-- [ ] `DELETE /lists/{id}`
-- [ ] Redirect vers `/lists`
+- [x] Route `POST /lists/{id}/delete`
+- [x] Redirect vers `/lists`
 
 ### 5.9 Partage Public (bonus)
 - [ ] Si liste publique → générer slug unique

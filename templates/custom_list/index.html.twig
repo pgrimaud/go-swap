@@ -5,7 +5,7 @@
 {% block body %}
 <div class="min-h-screen bg-gray-50 dark:bg-black">
     {% include 'partials/header.html.twig' %}
-    
+
     {% include 'partials/flash_messages.html.twig' %}
 
     <main class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -13,10 +13,7 @@
         <div class="px-4 py-6 sm:px-0">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white">My Lists</h2>
-                <a href="{{ path('app_custom_list_new') }}" class="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium transition flex items-center gap-2 text-sm">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                    </svg>
+                <a href="{{ path('app_custom_list_new') }}" class="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium transition cursor-pointer">
                     Create
                 </a>
             </div>
@@ -30,11 +27,8 @@
                     <p class="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
                         Create your first custom list to organize your Pokémon collection the way you want.
                     </p>
-                    <a href="{{ path('app_custom_list_new') }}" class="px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium transition inline-flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
-                        Create Your First List
+                    <a href="{{ path('app_custom_list_new') }}" class="px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium transition cursor-pointer">
+                        Create your first list
                     </a>
                 </div>
             {% else %}
@@ -59,8 +53,8 @@
                                             Public
                                         </span>
                                     {% else %}
-                                        <span class="ml-2 px-2 py-1 bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400 text-xs font-semibold rounded">
-                                            Private
+                                        <span class="ml-2 px-2 py-1 bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400 text-xs font-semibold rounded inline-flex items-center gap-1">
+                                            🔒 Private
                                         </span>
                                     {% endif %}
                                 </div>
@@ -76,13 +70,20 @@
                                 <!-- Pokemon Preview -->
                                 {% if list.pokemonCount > 0 %}
                                     <div class="flex -space-x-3 mb-4">
-                                        {% for pokemon in list.pokemons|slice(0, 5) %}
-                                            <img 
-                                                src="{{ asset('images/pokemon/normal/' ~ pokemon.slug ~ '.png') }}" 
-                                                alt="{{ pokemon.name }}"
-                                                class="w-12 h-12 rounded-full border-2 border-white dark:border-zinc-950 bg-gray-100 dark:bg-zinc-800"
-                                                title="{{ pokemon.name }}"
-                                            >
+                                        {% for customListPokemon in list.customListPokemonSortedByNumber|slice(0, 5) %}
+                                            {% set pokemon = customListPokemon.pokemon %}
+                                            {% set variant = customListPokemon.isShiny ? 'shiny' : 'normal' %}
+                                            <div class="relative inline-block">
+                                                <img
+                                                    src="{{ asset('images/pokemon/' ~ variant ~ '/' ~ pokemon.slug ~ '.png') }}"
+                                                    alt="{{ pokemon.name }}"
+                                                    class="w-12 h-12 rounded-full border-2 border-white dark:border-zinc-950 bg-gray-100 dark:bg-zinc-800"
+                                                    title="{{ pokemon.name }}"
+                                                >
+                                                {% if customListPokemon.isShiny %}
+                                                    <span class="absolute top-2 left-2 text-[10px] leading-none w-4 h-4 flex items-center justify-center">✨</span>
+                                                {% endif %}
+                                            </div>
                                         {% endfor %}
                                         {% if list.pokemonCount > 5 %}
                                             <div class="w-12 h-12 rounded-full border-2 border-white dark:border-zinc-950 bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
@@ -95,15 +96,15 @@
 
                             <!-- Actions -->
                             <div class="bg-gray-50 dark:bg-zinc-900 px-6 py-4 flex gap-2">
-                                <a href="{{ path('app_custom_list_view', {id: list.id}) }}" class="flex-1 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium text-center transition cursor-pointer">
+                                <a href="{{ path('app_custom_list_view', {id: list.id}) }}" class="flex-1 flex items-center justify-center px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium transition cursor-pointer">
                                     View
                                 </a>
                                 {% if list.isPublic %}
-                                    <button 
-                                        data-controller="clipboard"
-                                        data-clipboard-text-value="{{ url('app_custom_list_view', {id: list.id}) }}"
-                                        data-action="click->clipboard#copy"
-                                        class="px-4 py-2 bg-white dark:bg-zinc-950 border-2 border-gray-300 dark:border-zinc-600 hover:border-gray-400 dark:hover:border-zinc-500 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition cursor-pointer"
+                                    <button
+                                        data-controller="share"
+                                        data-share-url-value="{{ absolute_url(path('app_public_list', {uid: list.uid})) }}"
+                                        data-action="click->share#copy"
+                                        class="px-4 py-2 bg-white dark:bg-zinc-950 border-2 border-gray-300 dark:border-zinc-600 hover:border-gray-400 dark:hover:border-zinc-500 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition cursor-pointer inline-flex items-center justify-center"
                                         title="Copy share link"
                                     >
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -111,7 +112,7 @@
                                         </svg>
                                     </button>
                                 {% endif %}
-                                <a href="{{ path('app_custom_list_edit', {id: list.id}) }}" class="px-4 py-2 bg-white dark:bg-zinc-950 border-2 border-gray-300 dark:border-zinc-600 hover:border-gray-400 dark:hover:border-zinc-500 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition">
+                                <a href="{{ path('app_custom_list_edit', {id: list.id}) }}" class="flex items-center justify-center px-4 py-2 bg-white dark:bg-zinc-950 border-2 border-gray-300 dark:border-zinc-600 hover:border-gray-400 dark:hover:border-zinc-500 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition">
                                     Edit
                                 </a>
                             </div>

@@ -127,6 +127,20 @@ class CustomList
         return $this->customListPokemon;
     }
 
+    /**
+     * @return array<CustomListPokemon>
+     */
+    public function getCustomListPokemonSortedByNumber(): array
+    {
+        $pokemon = $this->customListPokemon->toArray();
+        usort(
+            $pokemon,
+            fn (CustomListPokemon $a, CustomListPokemon $b) => ($a->getPokemon()?->getNumber() ?? 9999) <=> ($b->getPokemon()?->getNumber() ?? 9999)
+        );
+
+        return $pokemon;
+    }
+
     public function addCustomListPokemon(CustomListPokemon $customListPokemon): static
     {
         if (!$this->customListPokemon->contains($customListPokemon)) {
